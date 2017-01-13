@@ -23,10 +23,23 @@ Things we need to do somewhere in this paper:
 
 \todo[inline]{Explain necessary aspects of PUSH, PLUSH, and the like.}
 
+\section{Automatic Simplification in Push}
+\label{sec:simplification}
+
+Automatic simplification of Push programs was first described in work detailing post-run simplification \cite{Spector:2014:GECCOcomp}, but was in use even before then to help with understandability of evolved Push programs. It has also been used as a genetic operator, with the idea of simplification being used as a bloat control operator \cite{Zhan:2014:GECCOcomp}. \todo[inline]{TMH: These sentences are sloppy and should be cleaned up/expanded.}
+
+
+Types of automatic simplification (EXPLAIN THESE): program, genome, genome-backtracking, genome-noop, genome-backtracking-noop.
+
+
 \section{Experimental setup}
 \label{sec:setup}
 
 \todo[inline]{Describe the setup, problems, etc.}
+
+
+
+
 
 \section{Results}
 \label{sec:results}
@@ -61,6 +74,9 @@ Differentiate between our work and algebraic simplification (as used in semantic
 
 \item
 Algebraic Simplification of GP Programs During Evolution (I think this is an actual paper title)
+
+\item
+Investigation of simplification threshold and noise level of input data in numerical simplification of genetic programs \cite{Kinzett:2010:cec}
 
 \item
 Smaller networks in neural nets: https://push-language.hampshire.edu/t/gecco-2017-simplification-for-generalization/660/21?u=thelmuth
