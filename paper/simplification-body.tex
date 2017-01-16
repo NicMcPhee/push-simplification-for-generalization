@@ -28,7 +28,42 @@ Smaller solutions have other benefits as well: understandability, faster runtime
 \section{Automatic Simplification in Push}
 \label{sec:simplification}
 
-Automatic simplification of Push programs was first described in work detailing post-run simplification \cite{Spector:2014:GECCOcomp}, but was in use even before then to help with understandability of evolved Push programs. It has also been used as a genetic operator, with the idea of simplification being used as a bloat control operator \cite{Zhan:2014:GECCOcomp}. \todo[inline]{TMH: These sentences are sloppy and should be cleaned up/expanded.}
+Automatic simplification was introduced to Push as a tool for making evolved programs easier to understand. While it can be applied to any program, it has typically been used post-run to make solution programs easier to understand without changing their behavior \cite{Spector:2014:GECCOcomp}. It has also been used as a bloat-control genetic operator during genetic programming runs, with mixed success \cite{Zhan:2014:GECCOcomp}.
+
+Automatic simplification is a simple hill-climbing algorithm that tries to make an individual's program smaller without changing the program's behavior on the training cases. At each step, we first make small changes to the program to make it smaller. We then check whether the smaller program produces the same error vector as the original program. If so, we continue with the new program; otherwise, we reverts to the previous program. This process repeats for a set number of simplification steps, and then returns the resulting simplified program. The algorithm is presented in detail in Algorithm \ref{alg:simplification}.
+
+\begin{algorithm}[ht]
+\caption{Automatic Simplification}
+\label{alg:simplification}
+
+\SetKwInOut{Input}{Input}
+\SetKwData{ErrorVector}{errorVector}
+\SetKwData{NewErrorVector}{newErrorVector}
+\SetKwData{Ind}{ind}
+\SetKwData{NewInd}{newInd}
+\SetKwData{Steps}{steps}
+\SetKwData{S}{s}
+\SetKwFunction{ComputeErrors}{computeErrorVector}
+\SetKwFunction{TakeStep}{takeSimplificationStep}
+
+\Input{individual \Ind, number of simplification \Steps, method for simplification step \TakeStep}
+\BlankLine
+
+\ErrorVector $\leftarrow$ \ComputeErrors{\Ind} \;
+\For{\S $\leftarrow 0$ \KwTo \Steps}{
+
+	\NewInd $\leftarrow$ \TakeStep{\Ind} \;
+	\NewErrorVector $\leftarrow$ \ComputeErrors{\NewInd} \;
+	\If{\NewErrorVector $=$ \ErrorVector}{
+		\Ind $\leftarrow$ \NewInd
+	}
+}
+\Return \Ind
+\end{algorithm}
+
+In this paper we explore five different variations of automatic simplification. Each variation follows the same general algorithm; they only differ in the particular steps taken to make programs smaller. %The five variations are listed in Table ???, along with a description of what they do at each simplification step.
+Below is a description of each variation:
+
 
 
 Types of automatic simplification (EXPLAIN THESE): program, genome, genome-backtracking, genome-noop, genome-backtracking-noop.
