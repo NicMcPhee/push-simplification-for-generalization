@@ -23,12 +23,12 @@ Smaller solutions have other benefits as well: understandability, faster runtime
 \section{PUSH, PLUSH, etc.}
 \label{sec:push}
 
-\todo[inline]{Explain necessary aspects of PUSH, PLUSH, and the like.}
+\todo[inline]{Explain necessary aspects of PUSH, PLUSH, and the like. Include talk of silencing genes, and how a silenced gene does not affect the resulting program, including instructions and closing parentheses.}
 
 \section{Automatic Simplification in Push}
 \label{sec:simplification}
 
-Automatic simplification was introduced to Push as a tool for making evolved programs easier to understand. While it can be applied to any program, it has typically been used post-run to make solution programs easier to understand without changing their behavior \cite{Spector:2014:GECCOcomp}. It has also been used as a bloat-control genetic operator during genetic programming runs, with mixed success \cite{Zhan:2014:GECCOcomp}.
+Automatic simplification was introduced to Push as a tool for making evolved programs easier to understand \cite{Robinson:2001:GPtieus, spector:2002:GPEM}. While it can be applied to any program, it has typically been used post-run to make solution programs easier to understand without changing their behavior \cite{Spector:2014:GECCOcomp}. It has also been used as a bloat-control genetic operator during genetic programming runs, with mixed success \cite{Zhan:2014:GECCOcomp}. \todo[inline]{Might make more sense to move the above paragraph to the intro?}
 
 Automatic simplification is a simple hill-climbing algorithm that tries to make an individual's program smaller without changing the program's behavior on the training cases. At each step, we first make small changes to the program to make it smaller. We then check whether the smaller program produces the same error vector as the original program. If so, we continue with the new program; otherwise, we reverts to the previous program. This process repeats for a set number of simplification steps, and then returns the resulting simplified program. The algorithm is presented in detail in Algorithm \ref{alg:simplification}.
 
@@ -64,9 +64,59 @@ Automatic simplification is a simple hill-climbing algorithm that tries to make 
 In this paper we explore five different variations of automatic simplification. Each variation follows the same general algorithm; they only differ in the particular steps taken to make programs smaller. %The five variations are listed in Table ???, along with a description of what they do at each simplification step.
 Below is a description of each variation:
 
+\textbf{Program} simplification, which has been used in Push since its inception \cite{Robinson:2001:GPtieus}, acts on an individual's Push program, as opposed to its linear Plush genome. At each simplification step, it has an 80\% chance of removing one or two random "code points" from the program, where a \textit{code point} is an instruction, a constant, or a parenthesized block of code. The other 20\% of the time it randomly removes one set of parentheses from a code block in the program, flattening the code inside the parentheses into the level that the code block occupied.
 
+The other four variants on simplification act on an individual's linear Plush genome prior to its translation into a Push program. There are three basic steps that are used across these genome variants: silencing random genes, unsilencing random genes, and nooping random genes. Silencing a gene activates its "silent" epigenetic marker, making that instruction not appear the resulting Push program, as well as not ending any open parenthesized code blocks. When picking a random gene to silence, we never select a gene that is already silent.
 
-Types of automatic simplification (EXPLAIN THESE): program, genome, genome-backtracking, genome-noop, genome-backtracking-noop.
+In some variants we silence some genes while unsilencing others, which makes it possible to backtrack by activating genes that were previously turned off. We hope that the backtracking enabled by unsilencing will allow simplification to escape some local program size minima that it might otherwise be impossible to escape, resulting in more reliable simplification to smaller programs. Similar to silencing, we never select an unsilenced gene to unsilence. Note that we silence genes instead of removing them entirely because it makes it possible to backtrack progress by unsilencing genes.
+
+Finally, some variants "noop" genes by replacing their instructions with instructions that have no effect when executed. Some Push programs require some instruction to be present in a location, but it does not matter what the instruction is as long as it doesn't manipulate certain stacks. We can replace these instructions with noops, potentially making the program more general without actually making it smaller. Genes that are already nooped cannot be selected by a noop step of simplification.
+
+\begin{table}[t]
+	\centering
+	\caption{Genome simplification variants. Each variant lists the possible single simplification steps it can take during simplification, and the probability of taking each step.}
+	\label{table:genome-variants}
+	\begin{tabu} to \textwidth {l l r}
+		\toprule
+		\textbf{Variant} & \textbf{Step} & \textbf{Prob.}  \\
+		\midrule
+		\textbf{Genome} & Silence 1 (gene) & 0.50 \\
+		       & Silence 2 & 0.30 \\
+		       & Silence 3 & 0.10 \\
+		       & Silence 4 & 0.10 \\
+		\midrule
+		\textbf{Genome-Backtracking}
+		       & Silence 1 & 0.40 \\
+		       & Silence 2 & 0.25 \\
+		       & Silence 3 & 0.10 \\
+		       & Silence 4 & 0.05 \\
+		       & Silence 1, Unsilence 1 & 0.05 \\
+		       & Silence 2, Unsilence 1 & 0.10 \\
+		       & Silence 3, Unsilence 1 & 0.05 \\
+		\midrule
+		\textbf{Genome-Noop}
+		       & Silence 1 & 0.40 \\
+		       & Silence 2 & 0.25 \\
+		       & Silence 3 & 0.10 \\
+		       & Silence 4 & 0.05 \\
+		       & Noop 1 & 0.10 \\
+		       & Noop 2 & 0.10 \\
+		\midrule
+		\textbf{Genome-Backtracking-}
+		       & Silence 1 & 0.30 \\
+		  \textbf{Noop} & Silence 2 & 0.20 \\
+		       & Silence 3 & 0.10 \\
+		       & Silence 1, Unsilence 1 & 0.05 \\
+		       & Silence 2, Unsilence 1 & 0.10 \\
+		       & Silence 3, Unsilence 1 & 0.05 \\
+		       & Noop 1 & 0.10 \\
+		       & Noop 2 & 0.10 \\
+		\bottomrule
+	\end{tabu}
+\end{table}
+
+The four genome variants of simplification are listed in Table \ref{table:genome-variants}. Each variant lists the types of steps that can be taken and the probability of each step being chosen. The most basic of the variants, \textbf{Genome} only allows for the silencing of 1 to 4 random genes in a single step. \textbf{Genome-Backtracking} and \textbf{Genome-Backtracking-Noop} occasionally unsilence a silent gene while silencing another, allowing the process to not follow a strict hill-climbing scheme.  \textbf{Genome-Noop} and Genome-Backtracking-Noop use nooping to turn intructions into noops without removing them entirely.
+
 
 
 \section{Experimental setup}
@@ -90,6 +140,8 @@ Types of automatic simplification (EXPLAIN THESE): program, genome, genome-backt
 
 \section{Related Work}
 \label{sec:related}
+
+\todo[inline]{Tom: I'm fine moving this section earlier if others prefer.}
 
 \todo[inline]{Below are things I've (Tom) come across in the past year potentially realted to this work. We'll have to go through and see what's worth citing.}
 
@@ -129,6 +181,17 @@ GECCO 2011 - Variance based Selection to Improve Test Set Performance in Genetic
 \item
 Controlling overfitting in symbolic regression based on a bias/variance error decomposition
 
+
+\end{itemize}
+
+\subsection{Other related papers}
+
+\begin{itemize}
+\item
+Tree-structured differencing: R. Al-Ekram, A. Adma, and O. Baysal. diffX: an algorithm to detect changes in multi-version XML documents. In Conference of the Centre for Advanced Studies on Collaborative research, pages 1–11. IBM Press, 2005.
+
+\item
+Delta debugging: A. Zeller. Yesterday, my program worked. Today, it does not. Why? In Foundations of Software Engineering, pages 253–267, 1999.
 
 \end{itemize}
 
