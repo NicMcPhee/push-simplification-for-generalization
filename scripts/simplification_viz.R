@@ -4,6 +4,7 @@ library(dplyr)
 library(tidyr)
 library(stringr)
 library(ggplot2)
+library(reshape2)
 
 # get filenames of all csvs
 all_csvs <- list.files(path = ".", pattern = "\\.csv")
@@ -94,12 +95,10 @@ all_runs %>%
   guides(colour = guide_legend(override.aes = list(alpha = 1)))
 
 
-#
-# Making Tables
-#
 
-# Program Size
+# Problem Vs Avgerage program Size by Method
 
+# Table 
 simp_runs <- all_runs %>%
   filter(type == "simplified") %>%
   group_by(method, problem) %>%
@@ -111,8 +110,223 @@ prog_size_table <- all_runs %>%
   group_by(problem) %>%
   summarise(none = round(mean(programSize), 3)) %>%
   inner_join(simp_runs, by = c("problem"))
-View(prog_size_table)
 
+# Plot
+melt(prog_size_table, 
+     id.vars = c("problem"), 
+     measure.vars = c("none", "Genome", "GenomeBacktracking", "GenomeBacktrackingNoop", "GenomeNoop", "Program"),
+     value.name = "Method") %>%
+  ggplot(aes(x = problem,
+             y = Method,
+             fill = variable)) + 
+  geom_bar(stat = "identity",
+           position = "dodge") +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 15, hjust = 1)) +
+  labs(x = "Problem",
+       y = "Program Size")
+ 
+#
+# Problem Vs Percent Generalized by Method
+#
 
+# Table 
+simp_runs <- all_runs %>%
+  filter(type == "simplified") %>%
+  mutate(generalized = ifelse(testError == 0, 1, 0)) %>%
+  group_by(method, problem) %>%
+  summarise(percentGeneralized = mean(generalized)) %>%
+  spread(method, percentGeneralized)
 
+perct_generalized_table <- all_runs %>%
+  filter(type == "unsimplified") %>%
+  mutate(generalized = ifelse(testError == 0, 1, 0)) %>%
+  group_by(problem) %>%
+  summarise(none = mean(generalized)) %>%
+  inner_join(simp_runs, by = c("problem"))
+write.csv(perct_generalized_table, "tables/perct_generalized_table.csv")
+
+# Plot
+melt(perct_generalized_table, 
+     id.vars = c("problem"), 
+     measure.vars = c("none", "Genome", "GenomeBacktracking", "GenomeBacktrackingNoop", "GenomeNoop", "Program"),
+     value.name = "Method") %>%
+  ggplot(aes(x = problem,
+             y = Method,
+             fill = variable)) + 
+  geom_bar(stat = "identity",
+           position = "dodge") +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 15, hjust = 1)) +
+  labs(x = "Problem",
+       y = "% Generalized")
+ 
+#
+# Simplifified Size vs Percent Generalized
+#
+
+# Plot a
+unsimplified_that_generalize <- all_runs %>%
+  filter(type == "unsimplified",
+         testError == 0) %>%
+  select(log, problem) %>%
+  distinct()
+
+all_runs %>%
+  inner_join(unsimplified_that_generalize, by = c("log", "problem")) %>%
+  filter(type == "simplified") %>%
+  mutate(generalized = ifelse(testError == 0, 1, 0)) %>%
+  group_by(programSize, problem) %>%
+  summarise(percentGeneralized = mean(generalized)) %>%
+  ggplot(aes(x = programSize,
+             y = percentGeneralized)) +
+  geom_point(size = 1,
+             alpha = 0.5) +
+  #facet_wrap(~ problem) +
+  theme_bw() + 
+  labs(title = "Unsimplified Programs that Generalized",
+       x = "Post Simplification Program Size",
+       y = "% Generalized")
+
+# Plot b
+unsimplified_that_dont_generalize <- all_runs %>%
+  filter(type == "unsimplified",
+         testError > 0) %>%
+  select(log, problem) %>%
+  distinct()
+
+all_runs %>%
+  inner_join(unsimplified_that_dont_generalize, by = c("log", "problem")) %>%
+  filter(type == "simplified") %>%
+  mutate(generalized = ifelse(testError == 0, 1, 0)) %>%
+  group_by(programSize, problem) %>%
+  summarise(percentGeneralized = mean(generalized)) %>%
+  ggplot(aes(x = programSize,
+             y = percentGeneralized)) +
+  geom_point(size = 1,
+             alpha = 0.5) +
+  #facet_wrap(~ problem) +
+  theme_bw() + 
+  labs(title = "Unsimplified Programs that Didn't Generalized",
+       x = "Post Simplification Program Size",
+       y = "% Generalized")
   
+#
+# Density of simplified size
+#
+
+# Not faceted
+all_runs %>%
+  filter(type == "simplified") %>%
+  mutate(generalized = testError == 0) %>%
+  ggplot(aes(x = programSize,
+             fill = generalized,
+             color = generalized)) + 
+  geom_density(alpha = 0.5) +
+  #facet_wrap(~ problem, scales = "free") +
+  theme_bw() + 
+  labs(x = "Post Simplification Program Size")
+
+# Facet where unsimplified program generalized
+all_runs %>%
+  inner_join(unsimplified_that_generalize, by = c("log", "problem")) %>%
+  filter(type == "simplified") %>%
+  mutate(generalized = testError == 0) %>%
+  ggplot(aes(x = programSize,
+             fill = generalized,
+             color = generalized)) + 
+  geom_density(alpha = 0.5) +
+  facet_wrap(~ problem, scales = "free") +
+  theme_bw() + 
+  labs(title = "Unsimplified Programs that Generalized",
+       x = "Post Simplification Program Size")
+
+# Facet where unsimplified program DIDN'T generalized
+all_runs %>%
+  inner_join(unsimplified_that_dont_generalize, by = c("log", "problem")) %>%
+  filter(type == "simplified") %>%
+  mutate(generalized = testError == 0) %>%
+  ggplot(aes(x = programSize,
+             fill = generalized,
+             color = generalized)) + 
+  geom_density(alpha = 0.5) +
+  facet_wrap(~ problem, scales = "free") +
+  theme_bw() + 
+  labs(title = "Unsimplified Programs that Didn't Generalized",
+       x = "Post Simplification Program Size")
+
+#
+# Desity (stat = "count") of simplified size
+#
+
+# Not faceted
+all_runs %>%
+  filter(type == "simplified") %>%
+  mutate(generalized = testError == 0) %>%
+  ggplot(aes(x = programSize,
+             fill = generalized,
+             color = generalized)) + 
+  geom_density(alpha = 0.5,
+               stat = "count") +
+  theme_bw() + 
+  labs(x = "Post Simplification Program Size") +
+  scale_y_log10()
+
+# Not faceted A
+all_runs %>%
+  inner_join(unsimplified_that_generalize, by = c("log", "problem")) %>%
+  filter(type == "simplified") %>%
+  mutate(generalized = testError == 0) %>%
+  ggplot(aes(x = programSize,
+             fill = generalized,
+             color = generalized)) + 
+  geom_density(alpha = 0.5,
+               stat = "count") +
+  theme_bw() + 
+  labs(title = "Unsimplified Programs that Generalized",
+       x = "Post Simplification Program Size")
+
+# Not faceted B
+all_runs %>%
+  inner_join(unsimplified_that_dont_generalize, by = c("log", "problem")) %>%
+  filter(type == "simplified") %>%
+  mutate(generalized = testError == 0) %>%
+  ggplot(aes(x = programSize,
+             fill = generalized,
+             color = generalized)) + 
+  geom_density(alpha = 0.5,
+               stat = "count") +
+  theme_bw() + 
+  labs(title = "Unsimplified Programs that Didn't Generalized",
+       x = "Post Simplification Program Size")
+
+# Facet where unsimplified program generalized
+all_runs %>%
+  inner_join(unsimplified_that_generalize, by = c("log", "problem")) %>%
+  filter(type == "simplified") %>%
+  mutate(generalized = testError == 0) %>%
+  ggplot(aes(x = programSize,
+             fill = generalized,
+             color = generalized)) + 
+  geom_density(alpha = 0.5,
+               stat = "count") +
+  facet_wrap(~ problem, scales = "free") +
+  theme_bw() + 
+  labs(title = "Unsimplified Programs that Generalized",
+       x = "Post Simplification Program Size")
+
+# Facet where unsimplified program DIDN'T generalized
+all_runs %>%
+  inner_join(unsimplified_that_dont_generalize, by = c("log", "problem")) %>%
+  filter(type == "simplified") %>%
+  mutate(generalized = testError == 0) %>%
+  ggplot(aes(x = programSize,
+             fill = generalized,
+             color = generalized)) + 
+  geom_density(alpha = 0.5,
+               stat = "count") +
+  facet_wrap(~ problem, scales = "free") +
+  theme_bw() + 
+  labs(title = "Unsimplified Programs that Didn't Generalized",
+       x = "Post Simplification Program Size")
+
