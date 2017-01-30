@@ -42,6 +42,7 @@
 \subtitle{Do we want a sub-title? I bet we can improve on this title.}
 
 \author{Thomas Helmuth}
+\orcid{0000-0002-2330-6809}
 \affiliation{%
   \institution{Washington and Lee University}
   \city{Lexington} 
@@ -84,10 +85,7 @@
 
 
 \begin{abstract}
-	Simplification of evolved PUSH programs appears to improve generalization.
-	Most of the time.
-	\todo[inline]{Abstracts are awesome. It would probably be good if 
-		we actually wrote one.}
+Just like many areas of machine learning, genetic programming can be prone to overfitting of the training data. As such, the ability to synthesize programs that generalize to unseen data remains an important open problem. We present evidence that smaller programs tend to generalize better, and explore methods of automatically simplifying evolved programs to make them smaller. Automatic simplification uses a simple hill-climbing procedure to remove pieces of a program while ensuring that the resulting program gives the same error vector on the training data as the original program. We show that automatic simplification, previously used for both post-run analysis and as a genetic operator, can be used on evolved programs to significantly improve their generalization rates. We present four new simplification variants and analyze their strengths and weaknesses. We conclude that while some simplification methods have slightly more power than others, all methods dramatically decrease program sizes and improve generalization.
 	\todo[inline]{We need to do the CCS Concepts thing.}
 	\todo[inline]{We need to do the keywords.}
 \end{abstract}
