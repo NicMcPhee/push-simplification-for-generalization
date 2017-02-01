@@ -10,6 +10,7 @@
 %\usepackage{algorithm}
 %\usepackage{algorithmic}
 
+\graphicspath{ {figures/} }
 
 % Copyright
 %\setcopyright{none}
@@ -37,14 +38,16 @@
 
 
 \begin{document}
-\title{PUSH simplification improves generalization}
-\subtitle{Do we want a sub-title? I bet we can improve on this title.}
+\title{Improving Generalization of Evolved Programs through Automatic Simplification}
+%\subtitle{Do we want a sub-title?}
 
 \author{Thomas Helmuth}
+\orcid{0000-0002-2330-6809}
 \affiliation{%
   \institution{Washington and Lee University}
   \city{Lexington} 
   \state{Virginia} 
+  \country{USA}
 }
 \email{helmutht@wlu.edu}
 
@@ -55,18 +58,18 @@
   % \streetaddress{600 E. 4th Street}
   \city{Morris} 
   \state{Minnesota} 
-  \postcode{56267}
+  \country{USA}
 }
 \email{mcphee@morris.umn.edu}
 
 \author{Edward Pantridge}
-\affiliation{%
-	\institution{???}
-	\city{???}
+\affiliation{
+	\institution{MassMutual Financial Group}
+	\city{Amherst}
 	\state{Massachusetts}
 	\country{USA}
 }
-\email{???}
+\email{epantridge@massmutal.com}
 
 \author{Lee Spector}
 \affiliation{%
@@ -82,10 +85,7 @@
 
 
 \begin{abstract}
-	Simplification of evolved PUSH programs appears to improve generalization.
-	Most of the time.
-	\todo[inline]{Abstracts are awesome. It would probably be good if 
-		we actually wrote one.}
+Just like many areas of machine learning, genetic programming can be prone to overfitting of the training data. As such, the ability to synthesize programs that generalize to unseen data remains an important open problem. We present evidence that smaller programs evolved using the PushGP system tend to generalize better over a broad range of software synthesis problems. Like in many genetic programming systems, programs evolved in PushGP usually have pieces that can be removed without changing the behavior of the program. We describe methods for automatically simplifying evolved programs to make them smaller, and hopefully, reduce overfitting. Automatic simplification uses a simple hill-climbing procedure to remove pieces of a program while ensuring that the resulting program gives the same errors on the training data as the original program. We show that automatic simplification, previously used for both post-run analysis and as a genetic operator, can be used on evolved programs to significantly improve their generalization rates. We present five simplification methods and analyze their strengths and weaknesses on a suite of general program synthesis benchmark problems. We conclude that while some simplification methods have slightly more power than others, all methods dramatically decrease program sizes and improve generalization.
 	\todo[inline]{We need to do the CCS Concepts thing.}
 	\todo[inline]{We need to do the keywords.}
 \end{abstract}

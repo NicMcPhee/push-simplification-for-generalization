@@ -61,21 +61,21 @@ Automatic simplification is a simple hill-climbing algorithm that tries to make 
 \Return \Ind
 \end{algorithm}
 
-In this paper we explore five different variations of automatic simplification. Each variation follows the same general algorithm; they only differ in the particular steps taken to make programs smaller. %The five variations are listed in Table ???, along with a description of what they do at each simplification step.
-Below is a description of each variation:
+In this paper we explore five different methods of automatic simplification. Each method follows the same general algorithm; they only differ in the particular steps taken to make programs smaller. %The five methods are listed in Table ???, along with a description of what they do at each simplification step.
+Below is a description of each method:
 
 \textbf{Program} simplification, which has been used in Push since its inception \cite{Robinson:2001:GPtieus}, acts on an individual's Push program, as opposed to its linear Plush genome. At each simplification step, it has an 80\% chance of removing one or two random "code points" from the program, where a \textit{code point} is an instruction, a constant, or a parenthesized block of code. The other 20\% of the time it randomly removes one set of parentheses from a code block in the program, flattening the code inside the parentheses into the level that the code block occupied.
 
-The other four variants on simplification act on an individual's linear Plush genome prior to its translation into a Push program. There are three basic steps that are used across these genome variants: silencing random genes, unsilencing random genes, and nooping random genes. Silencing a gene activates its "silent" epigenetic marker, making that instruction not appear the resulting Push program, as well as not ending any open parenthesized code blocks. When picking a random gene to silence, we never select a gene that is already silent.
+The other four simplification methods act on an individual's linear Plush genome prior to its translation into a Push program. There are three basic steps that are used across these genome methods: silencing random genes, unsilencing random genes, and nooping random genes. Silencing a gene activates its "silent" epigenetic marker, making that instruction not appear the resulting Push program, as well as not ending any open parenthesized code blocks. When picking a random gene to silence, we never select a gene that is already silent.
 
-In some variants we silence some genes while unsilencing others, which makes it possible to backtrack by activating genes that were previously turned off. We hope that the backtracking enabled by unsilencing will allow simplification to escape some local program size minima that it might otherwise be impossible to escape, resulting in more reliable simplification to smaller programs. Similar to silencing, we never select an unsilenced gene to unsilence. Note that we silence genes instead of removing them entirely because it makes it possible to backtrack progress by unsilencing genes.
+In some methods we silence some genes while unsilencing others, which makes it possible to backtrack by activating genes that were previously turned off. We hope that the backtracking enabled by unsilencing will allow simplification to escape some local program size minima that it might otherwise be impossible to escape, resulting in more reliable simplification to smaller programs. Similar to silencing, we never select an unsilenced gene to unsilence. Note that we silence genes instead of removing them entirely because it makes it possible to backtrack progress by unsilencing genes.
 
-Finally, some variants "noop" genes by replacing their instructions with instructions that have no effect when executed. Some Push programs require some instruction to be present in a location, but it does not matter what the instruction is as long as it doesn't manipulate certain stacks. We can replace these instructions with noops, potentially making the program more general without actually making it smaller. Genes that are already nooped cannot be selected by a noop step of simplification.
+Finally, some methods "noop" genes by replacing their instructions with instructions that have no effect when executed. Some Push programs require some instruction to be present in a location, but it does not matter what the instruction is as long as it doesn't manipulate certain stacks. We can replace these instructions with noops, potentially making the program more general without actually making it smaller. Genes that are already nooped cannot be selected by a noop step of simplification.
 
 \begin{table}[t]
 	\centering
-	\caption{Genome simplification variants. Each variant lists the possible single simplification steps it can take during simplification, and the probability of taking each step.}
-	\label{table:genome-variants}
+	\caption{Genome simplification methods. Each variant lists the possible single simplification steps it can take during simplification, and the probability of taking each step.}
+	\label{table:genome-methods}
 	\begin{tabu} to \textwidth {l l r}
 		\toprule
 		\textbf{Variant} & \textbf{Step} & \textbf{Prob.}  \\
@@ -115,7 +115,7 @@ Finally, some variants "noop" genes by replacing their instructions with instruc
 	\end{tabu}
 \end{table}
 
-The four genome variants of simplification are listed in Table \ref{table:genome-variants}. Each variant lists the types of steps that can be taken and the probability of each step being chosen. The most basic of the variants, \textbf{Genome} only allows for the silencing of 1 to 4 random genes in a single step. \textbf{Genome-Backtracking} and \textbf{Genome-Backtracking-Noop} occasionally unsilence a silent gene while silencing another, allowing the process to not follow a strict hill-climbing scheme.  \textbf{Genome-Noop} and Genome-Backtracking-Noop use nooping to turn intructions into noops without removing them entirely.
+The four genome methods of simplification are listed in Table \ref{table:genome-methods}. Each variant lists the types of steps that can be taken and the probability of each step being chosen. The most basic of the methods, \textbf{Genome} only allows for the silencing of 1 to 4 random genes in a single step. \textbf{Genome-Backtracking} and \textbf{Genome-Backtracking-Noop} occasionally unsilence a silent gene while silencing another, allowing the process to not follow a strict hill-climbing scheme.  \textbf{Genome-Noop} and Genome-Backtracking-Noop use nooping to turn intructions into noops without removing them entirely.
 
 
 
@@ -133,10 +133,131 @@ The four genome variants of simplification are listed in Table \ref{table:genome
 
 \todo[inline]{Describe the results.}
 
+Results!
+
+\begin{figure}[t] %[t] sets the image at the top of the page; t = top, b = bottom, h = here%
+\centering
+\includegraphics[width=\linewidth]{Size_density_by_generalized_count}
+\caption{Size counts of simplified programs. Includes all simplified programs, from both ones that did and did not generalize pre-simplification.}
+\label{fig:count:gen}
+\end{figure}
+
+\begin{figure}[t] %[t] sets the image at the top of the page; t = top, b = bottom, h = here%
+\centering
+\includegraphics[width=\linewidth]{Size_density_by_generalized_A_no_facet_count}
+\caption{Size counts of simplified programs where pre-simplified program did generalize.}
+\label{fig:count:pre-simp-gen-true}
+\end{figure}
+
+\begin{figure}[t] %[t] sets the image at the top of the page; t = top, b = bottom, h = here%
+\centering
+\includegraphics[width=\linewidth]{Size_density_by_generalized_B_no_facet_count}
+\caption{Size counts of simplified programs where pre-simplified program did \underline{not} generalize.}
+\label{fig:count:pre-simp-gen-true}
+\end{figure}
+
+These look at the same graphs, but faceted.
+
+\begin{figure}[t] %[t] sets the image at the top of the page; t = top, b = bottom, h = here%
+\centering
+\includegraphics[width=\linewidth]{Size_density_by_generalized_A_count}
+\caption{Size counts of simplified programs where pre-simplified program did generalize.}
+\label{fig:count:pre-simp-gen-true}
+\end{figure}
+
+\begin{figure}[t] %[t] sets the image at the top of the page; t = top, b = bottom, h = here%
+\centering
+\includegraphics[width=\linewidth]{Size_density_by_generalized_B_count}
+\caption{Size counts of simplified programs where pre-simplified program did \underline{not} generalize.}
+\label{fig:count:pre-simp-gen-true}
+\end{figure}
+
+MORE FIGURES!
+
+\begin{figure*}[t] %[t] sets the image at the top of the page; t = top, b = bottom, h = here%
+\centering
+\includegraphics[width=\textwidth]{Nic_Plot_2} % \linewidth
+\caption{[This figure is representative of 2 or 3 other similar figures that might fit these needs.] First row: pre- and post-simplification both didn't generalize. Second row: didn't generalize pre-simplification, then generalized post-simplification. Etc. The lines are linear fit lines. You can see that programs that generalized post-simplification have smaller slope on the trend lines!}
+\label{fig:nic-plot}
+\end{figure*}
+
+\begin{figure*}[t] %[t] sets the image at the top of the page; t = top, b = bottom, h = here%
+\centering
+\includegraphics[width=\textwidth]{Problem_by_Size_bar} % \linewidth
+\caption{For each method, the average program size of simplified programs.}
+\label{fig:bar:size}
+\end{figure*}
+
+Question: In this figure, how much of the time are the simplified programs significantly better at generalization than the unsimplified programs? How would we measure this? Do we need to?
+
+\begin{figure*}[t] %[t] sets the image at the top of the page; t = top, b = bottom, h = here%
+\centering
+\includegraphics[width=\textwidth]{Problem_by_PcntGen_bar} % \linewidth
+\caption{For each method, the percent of simplified programs that generalize to unseen data.}
+\label{fig:bar:percent_generalization}
+\end{figure*}
+
+\begin{table}[t]
+	\centering
+	\caption{The average rank in generalization percent for each simplification variant, where lower rank means better generalization. This also includes the pre-simplification programs.}
+	\label{table:generalization-ranks}
+	\begin{tabu} to \textwidth {l r}
+		\toprule
+		\textbf{Variant} & \textbf{Average Rank} \\
+		\midrule
+		\textbf{Genome-Backtracking-Noop} & 2.73 \\
+		\textbf{Genome-Backtracking} & 3.02 \\
+		\textbf{Genome-Noop} & 3.29 \\
+		\textbf{Genome} & 3.33 \\
+		\textbf{Program} & 3.67 \\
+		\textbf{Pre-Simplification} & 4.96 \\
+		\bottomrule
+	\end{tabu}
+\end{table}
+
+\begin{table}[ht]
+	\centering
+	\caption{The average rank in size for each simplification variant, where lower rank means smaller programs. This also includes the pre-simplification programs. Note the different order of methods from Table~\ref{table:generalization-ranks}.}
+	\label{table:size-ranks}
+	\begin{tabu} to \textwidth {l r}
+		\toprule
+		\textbf{Variant} & \textbf{Average Rank} \\
+		\midrule
+		\textbf{Program} & 1.87 \\
+		\textbf{Genome-Backtracking-Noop} & 2.12 \\
+		\textbf{Genome-Backtracking} & 2.79 \\
+		\textbf{Genome-Noop} & 3.60 \\
+		\textbf{Genome} & 4.60 \\
+		\textbf{Pre-Simplification} & 6.00 \\
+		\bottomrule
+	\end{tabu}
+\end{table}
+
 \section{Discussion}
 \label{sec:discussion}
 
 \todo[inline]{Talk about what the results mean}
+
+Here are some potentially interesting questions to explore with this data:
+
+    Which simplification method tends to result in the smallest programs on average? Is there any significant differences here?
+
+    Is getting smaller during simplification important for generalization? In other words, do smaller programs post-simplification tend to generalize better than larger ones?
+
+        Note: we could ask this question of all the simplified programs, but we could also concentrate only on runs that had some generalizing programs and some non-generalizing programs, which might give us a more detailed view. It would probably be worthwhile to look into both of these. I'm not sure exactly how we would investigate this. @mcphee made some cool graphs last year that start answering this question. I've included one at the bottom of this post that was made with limited data; a similar graph for the full data might be a good place to start.
+
+    It might be worthwhile to break this big plot into smaller plots, grouping together similar plots. For example, we might group plots based on how often unsimplified programs generalize -- groups of something like 0-50\%, 50-95\%, and 95-100\% generalization. Or, we could do it some other way. But, this could definitely help with spotting differences based on problem.
+
+    Would a multi-restart simplification get us to smaller programs more often than the other methods we've tried? This could potentially avoid unlucky local minima. The backtracking methods are also trying to avoid unlucky local minima, so this would be an interesting comparison. It seems like we could answer this question with the data we have.
+
+\subsection{Nic's Thoughts on Unused Push Instructions}
+Anyway, I wouldn't recommend using the word "bloat" because I also think that is generally associated with a tendency to get bigger and bigger and bigger in ways that aren't connected to improvements in fitness, and that doesn't seem to be a Clojush thing. (I'm personally not super clear on why that's not a thing in Clojush, etc., etc., but that's not today's problem.)
+
+Even more complicated is the fact that in Push programs we often find various categories of "unused" code. There are instructions that do nothing because their arguments aren't on the stack, or sometimes aren't on the stack. There are instructions that do something, but no one cares (they push a boolean that's never used). There are instructions that are there just to add content to a stack, but who's particular action doesn't matter. Etc., etc. These are not things "standard tree-based GP" people run into very often, and might not be obvious to them.
+
+Lastly, it can be really hard to tell what's being used and how in complex programs, and how that relates to the simplified versions. It's easy to implicitly assume that the simplified program is "the thing", and that everything that got removed didn't really matter in the original execution. (This is often an assumption in tree-based bloat discussions.) I'm pretty sure this is often very not true, however, in Push, and that's important to the generalization. It seems fairly common, for example, for Push programs (especially with the "standard" instruction set) to have a lot of unnecessary looping that frequently gets removed or reduced in simplification. Often that looping is actually executed in the original program, so it's part of how the training answers are formed. I have a suspicion that part of why simplification often improves generalization is that it removes these unnecessary loops that are sometimes fragile and do weird things on certain inputs.
+
+
 
 \section{Related Work}
 \label{sec:related}
