@@ -22,7 +22,9 @@ for (filename in all_csvs) {
   all_runs <<- bind_rows(all_runs, tmp_df)
 }
 
-cbbPalette <- c("#E69F00", "#56B4E9", "#000000", "#009E73", "#D55E00", "#CC79A7", "#F0E442", "#0072B2")
+# cbbPalette <- c("#E69F00", "#56B4E9", "#000000", "#009E73", "#D55E00", "#CC79A7", "#F0E442", "#0072B2")
+cbbPalette <- c("#E69F00", "#56B4E9", "#009E73", "#D55E00", "#CC79A7", "#F0E442", "#0072B2")
+
 
 ```
 
@@ -137,16 +139,25 @@ melt(prog_size_table,
              fill = variable)) + 
   geom_bar(stat = "identity",
            position = "dodge") +
+  geom_rect(data = horiz_lines_df,
+            aes(xmin = x1,
+                xmax = x2,
+                ymin = 0,
+                ymax = size),
+            fill = '#E5E5E5') +
   geom_segment(data = horiz_lines_df,
                aes(x = x1,
                    y = size,
                    xend = x2,
                    yend = size),
                size = 1.5) +
+  geom_bar(stat = "identity",
+           position = "dodge") +
   theme_bw() +
   theme(axis.text.x = element_text(angle = 15, hjust = 1)) +
   labs(x = "Problem",
-       y = "Program Size")
+       y = "Program Size") +
+  scale_fill_manual(values = cbbPalette)
 ```
 
 
@@ -190,6 +201,14 @@ melt(perct_generalized_table,
              fill = variable)) + 
   geom_bar(stat = "identity",
            position = "dodge") +
+  geom_rect(data = horiz_lines_df,
+            aes(xmin = x1,
+                xmax = x2,
+                ymin = 0,
+                ymax = pct_gener),
+            fill = '#E5E5E5') +
+  geom_bar(stat = "identity",
+           position = "dodge") +
   geom_segment(data = horiz_lines_df,
                aes(x = x1,
                    y = pct_gener,
@@ -199,7 +218,8 @@ melt(perct_generalized_table,
   theme_bw() +
   theme(axis.text.x = element_text(angle = 15, hjust = 1)) +
   labs(x = "Problem",
-       y = "% Generalized")
+       y = "% Generalized") +
+  scale_fill_manual(values = cbbPalette)
 ```
 
 # Simplifified Size vs Percent Generalized
