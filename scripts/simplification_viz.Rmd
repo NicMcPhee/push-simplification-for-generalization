@@ -23,7 +23,7 @@ for (filename in all_csvs) {
 }
 
 # cbbPalette <- c("#E69F00", "#56B4E9", "#000000", "#009E73", "#D55E00", "#CC79A7", "#F0E442", "#0072B2")
-cbbPalette <- c("#E69F00", "#56B4E9", "#009E73", "#D55E00", "#CC79A7", "#F0E442", "#0072B2")
+cbbPalette <- c("#009E73", "#E69F00", "#56B4E9", "#F0E442", "#000000", "#D55E00", "#0072B2")
 
 
 ```
@@ -154,10 +154,12 @@ melt(prog_size_table,
   geom_bar(stat = "identity",
            position = "dodge") +
   theme_bw() +
-  theme(axis.text.x = element_text(angle = 15, hjust = 1)) +
+  theme(axis.text.x = element_text(angle = 15, hjust = 1),
+        legend.position="top") +
   labs(x = "Problem",
        y = "Program Size") +
-  scale_fill_manual(values = cbbPalette)
+  scale_fill_manual(values = cbbPalette,
+                    name = 'Method')
 ```
 
 
@@ -216,10 +218,12 @@ melt(perct_generalized_table,
                    yend = pct_gener),
                size = 1.5) +
   theme_bw() +
-  theme(axis.text.x = element_text(angle = 15, hjust = 1)) +
+  theme(axis.text.x = element_text(angle = 15, hjust = 1),
+        legend.position="top") +
   labs(x = "Problem",
        y = "% Generalized") +
-  scale_fill_manual(values = cbbPalette)
+  scale_fill_manual(values = cbbPalette,
+                    name = 'Method')
 ```
 
 # Simplifified Size vs Percent Generalized
