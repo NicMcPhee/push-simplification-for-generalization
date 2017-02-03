@@ -128,7 +128,9 @@ In our experiments, we wanted to answer two primary questions. First, does autom
 
 \hl{Hypotheses here???}
 
-To examine these questions, we conducted simplification experiments using evolved solution programs from a suite of general program synthesis benchmark problems \cite{Helmuth:2015:GECCO}. This benchmark suite is composed of 29 general programming problems taken from introductory computer science course homework assignments.
+To examine these questions, we conducted simplification experiments using evolved solution programs from a suite of general program synthesis benchmark problems \cite{Helmuth:2015:GECCO}. This benchmark suite is composed of 29 general programming problems taken from introductory computer science course homework assignments. These problems require solution programs to utilize a wide range of programming constructs, such as multiple data types, control flow structures, and multiple inputs/outputs. \hl{maybe more here}
+
+We took our evolved solution programs from the original set of benchmarking runs on this suite \cite{Helmuth:2015:GECCO}. In those original runs, each problem was attempted 100 times per selection method; in this work, we only use the runs that used lexicase selection. On these problems, PushGP created generalizing solutions to 22 of them. In addition, we include one problem (Super Anagrams) for which 14 programs were evolved that passed the training set but did not pass the unseen test set. We also include the Checksum problem, which was not solved in the runs for the original publication, but was subsequently solved with some additions to the training set.
 
 \hl{
 OUTLINE
