@@ -26,6 +26,22 @@ for (filename in all_csvs) {
 cbbPalette <- c("#009E73", "#E69F00", "#56B4E9", "#F0E442", "#000000", "#D55E00", "#0072B2")
 
 
+unsimplified_that_dont_generalize <- all_runs %>%
+  filter(type == "unsimplified",
+         testError > 0) %>%
+  select(log, problem) %>%
+  distinct()
+
+unsimplified_that_generalize <- all_runs %>%
+  filter(type == "unsimplified",
+         testError == 0) %>%
+  select(log, problem) %>%
+  distinct()
+
+started_generalized_lookup <- bind_rows(mutate(unsimplified_that_generalize, started_generalized = 'Unsimplified Program Generalized'),
+                                        mutate(unsimplified_that_dont_generalize, started_generalized = "Unsimplified Program Didn't Generalized"))
+
+
 ```
 
 # Nics plot
@@ -230,11 +246,6 @@ melt(perct_generalized_table,
 
 ## Plot a
 ```{r}
-unsimplified_that_generalize <- all_runs %>%
-  filter(type == "unsimplified",
-         testError == 0) %>%
-  select(log, problem) %>%
-  distinct()
 
 all_runs %>%
   inner_join(unsimplified_that_generalize, by = c("log", "problem")) %>%
@@ -255,12 +266,6 @@ all_runs %>%
 
 ## Plot b
 ```{r}
-unsimplified_that_dont_generalize <- all_runs %>%
-  filter(type == "unsimplified",
-         testError > 0) %>%
-  select(log, problem) %>%
-  distinct()
-
 all_runs %>%
   inner_join(unsimplified_that_dont_generalize, by = c("log", "problem")) %>%
   filter(type == "simplified") %>%
@@ -410,3 +415,24 @@ all_runs %>%
        x = "Post Simplification Program Size")
 ```
 
+
+
+```{r, fig.width=6, fig.height=20}
+all_runs %>%
+  inner_join(started_generalized_lookup, by = c("log", "problem")) %>%
+  filter(type == "simplified") %>%
+  mutate(generalized = testError == 0) %>%
+  ggplot(aes(x = programSize,
+             fill = generalized,
+             color = generalized)) + 
+  geom_density(alpha = 0.5,
+               stat = "count") +
+  facet_grid(problem ~ started_generalized, scales = 'free_y') +
+  theme_bw() + 
+  theme(legend.position="bottom") +
+  scale_fill_manual(values = cbbPalette[c(6, 3)],
+                    name = 'Generalized Post-Simplification') +
+  scale_color_manual(values = cbbPalette[c(6, 3)],
+                     name = 'Generalized Post-Simplification') +
+  labs(x = "Post Simplification Program Size")
+```
