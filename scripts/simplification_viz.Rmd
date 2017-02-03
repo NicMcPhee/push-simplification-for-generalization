@@ -7,6 +7,7 @@ library(reshape2)
 
 # get filenames of all csvs
 path_to_csvs <- "~/Google_Drive/Simplification-for-generalization/simplification-data"
+path_to_plots <- "~/Google_Drive/Simplification-for-generalization/final-plots/"
 all_csvs <- list.files(path = path_to_csvs, pattern = "\\.csv")
 
 # load all csvs into a single dataframe
@@ -136,7 +137,7 @@ write.csv(prog_size_table, "prog_size_table.csv")
 ```
 
 ## Plot
-```{r}
+```{r, fig.width=7.5, fig.height=5}
 horiz_lines_df <- melt(prog_size_table, 
                        id.vars = c("problem"), 
                        measure.vars = c("none", "Genome", "GenomeBacktracking", "GenomeBacktrackingNoop", "GenomeNoop", "Program"),
@@ -170,12 +171,16 @@ melt(prog_size_table,
   geom_bar(stat = "identity",
            position = "dodge") +
   theme_bw() +
-  theme(axis.text.x = element_text(angle = 15, hjust = 1),
+  theme(axis.text.x = element_text(angle = 25, hjust = 1, size = 8),
         legend.position="top") +
   labs(x = "Problem",
        y = "Program Size") +
   scale_fill_manual(values = cbbPalette,
-                    name = 'Method')
+                    name = 'Method',
+                    labels=c("Genome", "GenomeBacktracking", "GenomeBacktrackingNoop", "GenomeNoop", "Unsimplified", "Program"))
+
+  ggsave(paste0(path_to_plots,'Problem_by_Size_bar.png'), 
+         units = c('in'), width = 7.5, height = 5)
 ```
 
 
@@ -200,7 +205,7 @@ write.csv(perct_generalized_table, "perct_generalized_table.csv")
 ```
 
 # Plot
-```{r}
+```{r, fig.width=7.5, fig.height=5}
 horiz_lines_df <- melt(perct_generalized_table, 
                        id.vars = c("problem"), 
                        measure.vars = c("none", "Genome", "GenomeBacktracking", "GenomeBacktrackingNoop", "GenomeNoop", "Program"),
@@ -234,12 +239,16 @@ melt(perct_generalized_table,
                    yend = pct_gener),
                size = 1.5) +
   theme_bw() +
-  theme(axis.text.x = element_text(angle = 15, hjust = 1),
+  theme(axis.text.x = element_text(angle = 25, hjust = 1, size = 8),
         legend.position="top") +
   labs(x = "Problem",
        y = "% Generalized") +
   scale_fill_manual(values = cbbPalette,
-                    name = 'Method')
+                    name = 'Method',
+                    labels=c("Genome", "GenomeBacktracking", "GenomeBacktrackingNoop", "GenomeNoop", "Unsimplified", "Program"))
+
+  ggsave(paste0(path_to_plots,'Problem_by_PcntGen_bar.png'), 
+         units = c('in'), width = 7.5, height = 5)
 ```
 
 # Simplifified Size vs Percent Generalized
