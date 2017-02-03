@@ -122,6 +122,24 @@ The four genome methods of simplification are listed in Table \ref{table:genome-
 \section{Experimental setup}
 \label{sec:setup}
 
+\todo[inline]{TMH: Note: we need to precisely describe what we mean by "generalization" and "pass the training set", either here or in the Intro or both. Likely both in various specifics.}
+
+In our experiments, we wanted to answer two primary questions. First, does automatic simplification effectively improve the generalization of evolved programs that pass every training case? Second, which of the simplication methods described in the previous section produces the smallest programs, which generalizes the best, and is there correlation between getting smaller and generalizing better?
+
+\hl{Hypotheses here???}
+
+To examine these questions, we conducted simplification experiments using evolved solution programs from a suite of general program synthesis benchmark problems \cite{Helmuth:2015:GECCO}. This benchmark suite is composed of 29 general programming problems taken from introductory computer science course homework assignments.
+
+\hl{
+OUTLINE
+
+- did 100 simplifications per solution per method
+
+- used the training / test set specific to that run, since many of the training/test cases are randomly generated
+
+
+}
+
 \todo[inline]{Describe the setup, problems, etc.}
 
 
