@@ -20,6 +20,8 @@ Things we need to do somewhere in this paper:
 
 Smaller solutions have other benefits as well: understandability, faster runtimes, etc. But, we won't concentrate on those in this paper.
 
+Automatic simplification was introduced to Push as a tool for making evolved programs easier to understand \cite{Robinson:2001:GPtieus, spector:2002:GPEM}. While it can be applied to any program, it has typically been used post-run to make solution programs easier to understand without changing their behavior \cite{Spector:2014:GECCOcomp}. It has also been used as a bloat-control genetic operator during genetic programming runs, with mixed success \cite{Zhan:2014:GECCOcomp}. \todo[inline]{Does this paragraph belong here in the intro or in the Simplification section?}
+
 \section{PUSH, PLUSH, etc.}
 \label{sec:push}
 
@@ -30,7 +32,7 @@ Smaller solutions have other benefits as well: understandability, faster runtime
 \section{Automatic Simplification in Push}
 \label{sec:simplification}
 
-Automatic simplification was introduced to Push as a tool for making evolved programs easier to understand \cite{Robinson:2001:GPtieus, spector:2002:GPEM}. While it can be applied to any program, it has typically been used post-run to make solution programs easier to understand without changing their behavior \cite{Spector:2014:GECCOcomp}. It has also been used as a bloat-control genetic operator during genetic programming runs, with mixed success \cite{Zhan:2014:GECCOcomp}. \todo[inline]{Might make more sense to move the above paragraph to the intro?}
+
 
 Automatic simplification is a simple hill-climbing algorithm that tries to make an individual's program smaller without changing the program's behavior on the training cases. At each step, we first make small changes to the program to make it smaller. We then check whether the smaller program produces the same error vector as the original program. If so, we continue with the new program; otherwise, we reverts to the previous program. This process repeats for a set number of simplification steps, and then returns the resulting simplified program. The algorithm is presented in detail in Algorithm \ref{alg:simplification}.
 
@@ -132,7 +134,7 @@ After the original publication of these benchmark problems \cite{Helmuth:2015:GE
 
 We took our evolved solution programs from the original set of benchmarking runs using the benchmark suite \cite{Helmuth:2015:GECCO}. In those original runs, each problem was attempted 100 times per selection method; in this work, we only use the runs that used lexicase selection. In these runs, PushGP created at least one generalizing solution to 22 of the problems. In addition, we include one problem (Super Anagrams) for which 14 programs were evolved that passed the training set but did not pass the unseen test set. We also include the Checksum problem, which was not solved in the runs for the original publication, but was subsequently solved with some additions to the training set.
 
-For each of our five simplification methods, we conducted 100 separate simplification trials of each solution program, recording the size and generalization of each simplified program. Some of the unsimplified programs also entirely passed the unseen test set (i.e. generalized), and some did not (i.e. did not generalize). When running GP on real-world problems, one will not know whether an evolved solution program generalizes or not before using simplification. Thus we are interested in not only what happens to evolved programs that do not generalize, but also to those that already generalize. For example, it would not be beneficial to improve generalization of some programs while reducing generalization of many more programs.
+In earlier work showing how post-run simplification can reduce the size of evolved solution programs, it was shown that simplifying the same program many times can result in a range of resulting program sizes \cite{Spector:2014:GECCOcomp}. To acount for this variance in the simplified programs, we performed multiple simplifications of each solution program. For each of our five simplification methods, we conducted 100 separate simplification trials of each solution program, recording the size and generalization of each simplified program. Some of the unsimplified programs also entirely passed the unseen test set (i.e. generalized), and some did not (i.e. did not generalize). When running GP on real-world problems, one will not know whether an evolved solution program generalizes or not before using simplification. Thus we are interested in not only what happens to evolved programs that do not generalize, but also to those that already generalize. For example, it would not be beneficial to improve generalization of some programs while reducing generalization of many more programs.
 
 For each simplification trial, we simplified the solution program using 10,000 steps of the simplification algorithm (see Algorithm~\ref{alg:simplification}). While this number of steps is likely more than necessary to effectively simplify most programs, the simplification process is not prohibitively expensive. Note that while every simplification step requires evaluating the new program, making 10,000 simplification steps moderately expensive, this is the equivalent number of evaluations to 10 generations of GP with a population of 1000. Since we are advocating for simplification at the end of a GP run, it only needs to happen once, and seems like a reasonable amount of required computation.
 
@@ -143,15 +145,14 @@ The benchmark suite we used prescribes using randomly generated training and tes
 \section{Results}
 \label{sec:results}
 
-We first consider the question of how much effect simplification has on the size of each solution program. Figure~\ref{fig:bar:size} presents the average program size of the unsimplified solution programs on each problem as a horizontal black line. It then gives the average simplified size of the simplified solution programs across 100 trials per solution for each of our five simplification methods. It is immediately clear that simplification has a large impact on the size of these programs, with most shrinking to half their original size or smaller.
-
-
 \begin{figure*}[t] %[t] sets the image at the top of the page; t = top, b = bottom, h = here%
 \centering
 \includegraphics[width=\textwidth]{Problem_by_Size_bar} % \linewidth
 \caption{For each method, the average program size of simplified programs.}
 \label{fig:bar:size}
 \end{figure*}
+
+We first consider the question of how much effect simplification has on the size of each solution program. Figure~\ref{fig:bar:size} presents the average program size of the unsimplified solution programs on each problem as a horizontal black line. It then gives the average simplified size of the simplified solution programs across 100 trials per solution for each of our five simplification methods. It is immediately clear that simplification has a large impact on the size of these programs, with most shrinking to half their original size or smaller.
 
 To examine aggregate performance of each simplification method, we calculate the average rank for size for each method across the 24 problems, with 1 having smallest average program size and 6 having largest. Note that we include the unsimplified programs, which is why we have 6 possible ranks. These are in Table~\ref{table:size-ranks}. \hl{Explain which has the best size numbers and Why.}
 
@@ -233,7 +234,6 @@ To see the effect of each simplification method on generalization, we found the 
 	\end{tabu}
 \end{table}
 
-
 %GenomeBacktrackingNoop - none               1.532704e-06
 %GenomeBacktracking - none                   8.164085e-05
 %GenomeNoop - none                           1.186298e-03
@@ -254,6 +254,16 @@ To see the effect of each simplification method on generalization, we found the 
 %Program - GenomeNoop                        9.505945e-01
 
 
+
+
+
+\begin{figure}[t] %[t] sets the image at the top of the page; t = top, b = bottom, h = here%
+\centering
+\includegraphics[width=\linewidth]{Size_density_by_generalized_B_no_facet_count}
+\caption{Size counts of simplified programs where pre-simplified program did \underline{not} generalize.}
+\label{fig:count:pre-simp-gen-false}
+\end{figure}
+
 \begin{figure}[t] %[t] sets the image at the top of the page; t = top, b = bottom, h = here%
 \centering
 \includegraphics[width=\linewidth]{Size_density_by_generalized_A_no_facet_count}
@@ -261,14 +271,21 @@ To see the effect of each simplification method on generalization, we found the 
 \label{fig:count:pre-simp-gen-true}
 \end{figure}
 
+Figures~\ref{fig:count:pre-simp-gen-false} and \ref{fig:count:pre-simp-gen-true} each plot the counts of the sizes of the simplified programs for different sets of programs, aggregated across all problems. Figure~\ref{fig:count:pre-simp-gen-false} only includes those simplifications that started with unchanged programs that did not generalize. This figure clearly shows that when the simplified program was relatively small (approximately of size less than 25), it was much more likely to change from ungeneralizing to generalizing (shown by the blue line). On the other hand, programs that remained larger after simplification were more likely to not have their generalization affected by simplification (shown by the red line). Thus, most of the improvements in generalization that we described previously come from simplified programs that achieve small sizes. This clearly shows that there is a correlation, if not causation, between post-simplification size and the probability of generalization.
+
+Figure~\ref{fig:count:pre-simp-gen-true} gives the same counts of sizes of the simplified programs, but only for those unchanged programs that did generalize. First, note that the scale of the $y$-axis is over 5 times as large as for Figure~\ref{fig:count:pre-simp-gen-false}; this tells us that many more of the unchanged programs did generalize (\hl{is this true???}). Here, we are interested in whether many of the unchanged programs that did generalize were broken by simplification to the point of not generalizing. We see that very few such instances occured compared to those that remained generalizing after simplification. Thus while simplification often makes a program go from ungeneralizing to generalizing, it does not often take a generalizing program and make it ungeneralizing.
+
+The correlation between post-simplification size and generalization can also be seen in Figure~\ref{fig:nic-plot}. Here, each point represents one simplified program; which plot it belongs to depends on whether it generalized before or after simplification. The $x$-axis gives pre-simplification size of the program, and the $y$-axis gives simplified program size; thus, every point must lie under the $y = x$ line. Points close to the $y = x$ line did not reduce much during simplification; those further below the $y = x$ line correspond to those that shrank more.
+
 \begin{figure}[t] %[t] sets the image at the top of the page; t = top, b = bottom, h = here%
 \centering
-\includegraphics[width=\linewidth]{Size_density_by_generalized_B_no_facet_count}
-\caption{Size counts of simplified programs where pre-simplified program did \underline{not} generalize.}
-\label{fig:count:pre-simp-gen-true}
+\includegraphics[width=\linewidth]{Nic_Plot_2} % \linewidth
+\caption{[This figure is representative of 2 or 3 other similar figures that might fit these needs.] First row: pre- and post-simplification both didn't generalize. Second row: didn't generalize pre-simplification, then generalized post-simplification. Etc. The lines are linear fit lines. You can see that programs that generalized post-simplification have smaller slope on the trend lines!}
+\label{fig:nic-plot}
 \end{figure}
 
-\hl{Results!}
+In each plot we draw a linear fit line showing the relationship of unchanged size and simplified size. In the plots where \hl{things don't generalize after simplification (TOP ROW?)}, the slope is considerably higher than in the plots where \hl{things do generalize after simplification}. This indicates that \hl{more simplification is happening with more generalization}, and non-generalizers don't simplify as much. \hl{This paragraph is bad and should be rewritten.}
+
 
 %\begin{figure}[t] %[t] sets the image at the top of the page; t = top, b = bottom, h = here%
 %\centering
@@ -292,16 +309,6 @@ To see the effect of each simplification method on generalization, we found the 
 %\caption{Size counts of simplified programs where pre-simplified program did \underline{not} generalize.}
 %\label{fig:count:pre-simp-gen-true}
 %\end{figure}
-
-MORE FIGURES!
-
-\begin{figure*}[t] %[t] sets the image at the top of the page; t = top, b = bottom, h = here%
-\centering
-\includegraphics[width=\textwidth]{Nic_Plot_2} % \linewidth
-\caption{[This figure is representative of 2 or 3 other similar figures that might fit these needs.] First row: pre- and post-simplification both didn't generalize. Second row: didn't generalize pre-simplification, then generalized post-simplification. Etc. The lines are linear fit lines. You can see that programs that generalized post-simplification have smaller slope on the trend lines!}
-\label{fig:nic-plot}
-\end{figure*}
-
 
 
 \section{Discussion}
