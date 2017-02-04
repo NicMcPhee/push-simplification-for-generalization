@@ -147,9 +147,11 @@ The benchmark suite we used prescribes using randomly generated training and tes
 \begin{figure*}[t] %[t] sets the image at the top of the page; t = top, b = bottom, h = here%
 \centering
 \includegraphics[width=\textwidth]{Problem_by_Size_bar} % \linewidth
-\caption{For each problem, we plot the average program size of programs produced by different simplification methods, as well as the average program sizes of the unchanged programs as black horizontal bars. Remember that each simplification method does repeated trials using the same set of unchanged programs, and therefore has the same opportunities for simplification as the other methods.}
+\caption{For each problem, we plot the average program size of programs produced by different simplification methods, as well as the average program sizes of the unchanged programs as black horizontal bars. Remember that each simplification method does repeated trials using the same set of unchanged programs, and therefore has the same opportunities for simplification as the other methods. }
 \label{fig:bar:size}
 \end{figure*}
+
+\hl{Question: Should we somehow indicate the number of data points that go into each problem? Some problems have a lot of unchanged solutions ($>$ 90), and some have very few ($<$ 10), with the latter group potentially being small sample size, and the former group having more effect on the aggregate plots across problems.}
 
 We first consider the question of how much effect simplification has on the size of each solution program. Figure~\ref{fig:bar:size} presents the average program size of the unchanged solution programs on each problem as a horizontal black line. It then gives the average simplified size of the simplified solution programs, with 100 trials per solution, for each of our five simplification methods. It is immediately clear that every simplification method has a large impact on the size of the solution programs, with most shrinking to half their original size or smaller. In fact, the differences in size between the simplification methods all appear small compared to the difference with the unchanged programs' sizes.
 
@@ -206,11 +208,11 @@ Next, we consider the effect of simplification on the generalization of programs
 
 Every simplification method either improves generalization or has no effect on every problem besides Double Letters\footnote{The Double Letters problem has one of the smaller sample sizes of our data set, with only six solution programs as starting points. All six solutions generalize before simplification. Five of the six generalize most of the time after simplification, but one solution program has many simplifications that don't generalize.}. Some of the increases in generalization appear substantial, as much as 25\% in the case of the Median problem.
 
-TMH: Stopped here.
+Also note that the five problems with the worst generalization in Figure~\ref{fig:bar:percent_generalization} are among the problems for which program sizes were largest in Figure~\ref{fig:bar:size}. For whatever reason, programs that solve these problems tend to be large and unable to shrink, and do not generalize well. We hypothesize, but have no data to support, that large programs such as these contain many ad-hoc components that overfit to individual test cases without really ``learning'' the underlying program structure, and therefore do not generalize to unseen data.
 
-\hl{Discuss: note correlation between problems that had largest program sizes after simplification are those with worst generalization.}
+%This supports our hypothesis that programs that are smaller but behaviorally identical on the training set tend to generalize better.
 
-To see the effect of each simplification method on generalization, we found the average rank of each method across all problems. Here, rank 1 signifies the best (highest) generalization, and rank 6 represents the worst generalization. These average ranks are presented in Table~\ref{table:generalization-ranks}.
+As with average program sizes, there do not appear to be large differences between the simplification methods in terms of generalization. To see if the small differences do affect rank, we calculated the average rank of each method across all problems. Here, rank 1 signifies the best (highest) generalization, and rank 6 represents the worst generalization. These average ranks are presented in Table~\ref{table:generalization-ranks}.
 
 \begin{table}[ht]
 	\centering
@@ -229,6 +231,8 @@ To see the effect of each simplification method on generalization, we found the 
 		\bottomrule
 	\end{tabu}
 \end{table}
+
+For generalization, the differences in rank for the simplification methods are not as pronounced as with simplified sizes. Note that Program simplification, while producing the smallest programs, has the worst generalization of the simplification methods; all of the Genome-based methods remain in the same order. The Friedman test on the data in Table~\ref{table:generalization-ranks} gives a \textit{p}-value $< 0.001$, indicating that at least one method performs significantly differently from the others. We then use a post-hoc Wilcoxon-Nemenyi-McDonald-Thompson test \cite{hollander1999nonparametric} to give the significance in the differences in ranking between each pair of methods at the $0.05$ significance level. Here, every simplification method significantly outranks Unchanged. But, there is not a significant difference in generalization rank between any of the simplification methods. Thus the average rank of each method is approximately the same, which is unsurprising considering their similarities in Figure~\ref{fig:bar:percent_generalization}.
 
 %GenomeBacktrackingNoop - none               1.532704e-06
 %GenomeBacktracking - none                   8.164085e-05
@@ -251,8 +255,6 @@ To see the effect of each simplification method on generalization, we found the 
 
 
 
-
-
 \begin{figure}[t] %[t] sets the image at the top of the page; t = top, b = bottom, h = here%
 \centering
 \includegraphics[width=\linewidth]{Size_density_by_generalized_B_no_facet_count}
@@ -267,11 +269,11 @@ To see the effect of each simplification method on generalization, we found the 
 \label{fig:count:pre-simp-gen-true}
 \end{figure}
 
-Figures~\ref{fig:count:pre-simp-gen-false} and \ref{fig:count:pre-simp-gen-true} each plot the counts of the sizes of the simplified programs for different sets of programs, aggregated across all problems. Figure~\ref{fig:count:pre-simp-gen-false} only includes those simplifications that started with unchanged programs that did not generalize. This figure clearly shows that when the simplified program was relatively small (approximately of size less than 25), it was much more likely to change from ungeneralizing to generalizing (shown by the blue line). On the other hand, programs that remained larger after simplification were more likely to not have their generalization affected by simplification (shown by the red line). Thus, most of the improvements in generalization that we described previously come from simplified programs that achieve small sizes. This clearly shows that there is a correlation, if not causation, between post-simplification size and the probability of generalization.
+We next want to explore how size after simplification corresponds to the generalization of simplified programs. Figures~\ref{fig:count:pre-simp-gen-false} and \ref{fig:count:pre-simp-gen-true} each plot the counts of the sizes of the simplified programs for different sets of programs, aggregated across all problems. Figure~\ref{fig:count:pre-simp-gen-false} only includes those simplifications that started with unchanged programs that did not generalize. This figure clearly shows that when the resulting simplified program was relatively small (with size less than about 25), it was much more likely to change from ungeneralizing to generalizing (shown by the blue line). On the other hand, programs that remained larger after simplification were more likely to not have their generalization affected by simplification (shown by the red line). Thus, most of the improvements in generalization that we described previously come from simplified programs that achieve small sizes. This clearly shows that there is a correlation, if not causation, between post-simplification size and the probability of generalization.
 
-Figure~\ref{fig:count:pre-simp-gen-true} gives the same counts of sizes of the simplified programs, but only for those unchanged programs that did generalize. First, note that the scale of the $y$-axis is over 5 times as large as for Figure~\ref{fig:count:pre-simp-gen-false}; this tells us that many more of the unchanged programs did generalize (\hl{is this true???}). Here, we are interested in whether many of the unchanged programs that did generalize were broken by simplification to the point of not generalizing. We see that very few such instances occured compared to those that remained generalizing after simplification. Thus while simplification often makes a program go from ungeneralizing to generalizing, it does not often take a generalizing program and make it ungeneralizing.
+Figure~\ref{fig:count:pre-simp-gen-true} gives the same counts of sizes of the simplified programs, but this time for those unchanged programs that did generalize. First, note that the scale of the $y$-axis is over 5 times as large as for Figure~\ref{fig:count:pre-simp-gen-false}; this tells us that many more of the unchanged programs did generalize (\hl{is this true???}). Here, we are interested in whether many of the unchanged programs that did generalize were broken by simplification to the point of not generalizing. We see that very few such instances occured compared to those that remained generalizing after simplification. Thus while simplification often makes a program go from ungeneralizing to generalizing, it does not often take a generalizing program and make it ungeneralizing.
 
-The correlation between post-simplification size and generalization can also be seen in Figure~\ref{fig:nic-plot}. Here, each point represents one simplified program; which plot it belongs to depends on whether it generalized before or after simplification. The $x$-axis gives pre-simplification size of the program, and the $y$-axis gives simplified program size; thus, every point must lie under the $y = x$ line. Points close to the $y = x$ line did not reduce much during simplification; those further below the $y = x$ line correspond to those that shrank more.
+\hl{Note: this isn't the final 2x2 plot we'll be using, but the text assumes it will be.} The correlation between post-simplification size and generalization can also be seen in Figure~\ref{fig:nic-plot}. Here, each point represents one simplified program; which plot it belongs to depends on whether it generalized before or after simplification. The $x$-axis gives pre-simplification size of the program, and the $y$-axis gives simplified program size; thus, every point must lie under the $y = x$ line. Points close to the $y = x$ line did not reduce much during simplification; those further below the $y = x$ line correspond to those that shrank more.
 
 \begin{figure}[t] %[t] sets the image at the top of the page; t = top, b = bottom, h = here%
 \centering
@@ -280,7 +282,7 @@ The correlation between post-simplification size and generalization can also be 
 \label{fig:nic-plot}
 \end{figure}
 
-In each plot we draw a linear fit line showing the relationship of unchanged size and simplified size. In the plots where \hl{things don't generalize after simplification (TOP ROW?)}, the slope is considerably higher than in the plots where \hl{things do generalize after simplification}. This indicates that \hl{more simplification is happening with more generalization}, and non-generalizers don't simplify as much. \hl{This paragraph is bad and should be rewritten.}
+In each plot we draw a linear fit line showing the relationship of unchanged size and simplified size. In the plots in the left column, in which simplified programs did not generalize, the slope is considerably higher than in the right column plots where the simplified programs do generalize. \hl{What does it mean???} \hl{This paragraph is bad and needs to be extended and edited after we see the final plot.}
 
 
 %\begin{figure}[t] %[t] sets the image at the top of the page; t = top, b = bottom, h = here%
