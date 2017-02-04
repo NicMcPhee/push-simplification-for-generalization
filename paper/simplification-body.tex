@@ -32,8 +32,6 @@ Automatic simplification was introduced to Push as a tool for making evolved pro
 \section{Automatic Simplification in Push}
 \label{sec:simplification}
 
-
-
 Automatic simplification is a simple hill-climbing algorithm that tries to make an individual's program smaller without changing the program's behavior on the training cases. At each step, we first make small changes to the program to make it smaller. We then check whether the smaller program produces the same error vector as the original program. If so, we continue with the new program; otherwise, we reverts to the previous program. This process repeats for a set number of simplification steps, and then returns the resulting simplified program. The algorithm is presented in detail in Algorithm \ref{alg:simplification}.
 
 \begin{algorithm}[ht]
@@ -121,6 +119,7 @@ Finally, some methods "noop" genes by replacing their instructions with instruct
 
 The four genome methods of simplification are listed in Table \ref{table:genome-methods}. Each variant lists the types of steps that can be taken and the probability of each step being chosen. The most basic of the methods, \textbf{Genome} only allows for the silencing of 1 to 4 random genes in a single step. \textbf{Genome-Backtracking} and \textbf{Genome-Backtracking-Noop} occasionally unsilence a silent gene while silencing another, allowing the process to not follow a strict hill-climbing scheme.  \textbf{Genome-Noop} and Genome-Backtracking-Noop use nooping to turn intructions into noops without removing them entirely.
 
+Note that while the Program simplification method can remove unnecessary parentheses from a program, none of the genome methods have this ability. Since the genome methods change the genomes themselves, which have no parentheses, they cannot remove the parentheses that appear in the resulting translated program.
 
 
 \section{Experimental setup}
@@ -152,11 +151,9 @@ The benchmark suite we used prescribes using randomly generated training and tes
 \label{fig:bar:size}
 \end{figure*}
 
-We first consider the question of how much effect simplification has on the size of each solution program. Figure~\ref{fig:bar:size} presents the average program size of the unsimplified solution programs on each problem as a horizontal black line. It then gives the average simplified size of the simplified solution programs across 100 trials per solution for each of our five simplification methods. It is immediately clear that simplification has a large impact on the size of these programs, with most shrinking to half their original size or smaller.
+We first consider the question of how much effect simplification has on the size of each solution program. Figure~\ref{fig:bar:size} presents the average program size of the unchanged solution programs on each problem as a horizontal black line. It then gives the average simplified size of the simplified solution programs, with 100 trials per solution, for each of our five simplification methods. It is immediately clear that every simplification method has a large impact on the size of the solution programs, with most shrinking to half their original size or smaller. In fact, the differences in size between the simplification methods all appear small compared to the difference with the unchanged programs' sizes.
 
-Note that all simplification methods produce very similar reductions in program size, yet all are smaller than the unchanged programs they come from.
-
-To examine aggregate performance of each simplification method, we calculate the average rank for size for each method across the 24 problems, with 1 having smallest average program size and 6 having largest. Note that we include the unsimplified programs, which is why we have 6 possible ranks. These are in Table~\ref{table:size-ranks}. \hl{Explain which method has the best size numbers and Why.}
+To examine aggregate performance of each simplification method, in Table~\ref{table:size-ranks} we calculate the average rank for size for each method across the 24 problems, with rank 1 indicating the smallest average program size and rank 6 having largest. Note that we include the unchanged programs as one ``method'', which is why we have 6 possible ranks. Program simplification achieves the smallest programs on average, with both of the Genome backtracking methods coming soon after. The genome methods without backtracking have worse average ranks, with the unchanged programs always having worst rank. Since parentheses are counted as part of the size of a program, and since the Genome methods cannot remove extraneous parentheses as mentioned in Section~\ref{sec:simplification}, we hypothesize that Program simplification is able to achieve smaller sizes largely based on removing such parentheses.
 
 \begin{table}[ht]
 	\centering
@@ -176,15 +173,7 @@ To examine aggregate performance of each simplification method, we calculate the
 	\end{tabu}
 \end{table}
 
-
-\hl{Lexicase achieves the lowest average rank, as it has the most or tied for the most successes on every problem except for one. The Friedman test on this data gives us a \textit{p}-value $< 0.001$, indicating that at least one method} performs significantly differently from the others. A post-hoc Wilcoxon-Nemenyi-McDonald-Thompson test \cite{hollander1999nonparametric} can give the significance in the differences in ranking between each pair of methods at the $0.05$ significance level. Here, we see that:
-\begin{itemize}
-\item Program outranks Genome-Noop, Genome, and Pre-Simplification
-\item Genome-Backtracking-Noop outranks Genome and Pre-Simplification
-\item Genome-Backtracking outranks Genome and Pre-Simplification
-\item Genome-Noop outranks Pre-Simplification
-\end{itemize}
-These results show that all simplification methods besides Genome have significantly better rank than if we do not use simplification. \hl{What else to say here?}
+The Friedman test on the data in Table~\ref{table:size-ranks} gives a \textit{p}-value $< 0.001$, indicating that at least one method performs significantly differently from the others. We then use a post-hoc Wilcoxon-Nemenyi-McDonald-Thompson test \cite{hollander1999nonparametric} to give the significance in the differences in ranking between each pair of methods at the $0.05$ significance level. Every simplification method besides Genome outranks the Unchanged programs. Additionally of note, Program outranks Genome-Noop and Genome; and both Genome backtracking methods outrank Genome. Note that even though these results show significant differences in rank among the methods, most of the actual differences in average size are relatively small compared to the sizes of the unchanged programs.
 
 %Program - none                              3.685940e-14
 %GenomeBacktrackingNoop - none               6.733392e-12
@@ -215,9 +204,11 @@ Next, we consider the effect of simplification on the generalization of programs
 \label{fig:bar:percent_generalization}
 \end{figure*}
 
-Discuss: simplification either helps generalization or has no effect on every problem besides Double Letters. Double Letters has one of the smaller sample sizes, with only 6 solution programs as starting points. All generalize before simplification.  5 of the 6 generalize most of the time after simplification, but one program has many simplifications that don't generalize. Mostly seems like an outlier here.
+Every simplification method either improves generalization or has no effect on every problem besides Double Letters\footnote{The Double Letters problem has one of the smaller sample sizes of our data set, with only six solution programs as starting points. All six solutions generalize before simplification. Five of the six generalize most of the time after simplification, but one solution program has many simplifications that don't generalize.}. Some of the increases in generalization appear substantial, as much as 25\% in the case of the Median problem.
 
-Discuss: note correlation between problems that had largest program sizes after simplification are those with worst generalization.
+TMH: Stopped here.
+
+\hl{Discuss: note correlation between problems that had largest program sizes after simplification are those with worst generalization.}
 
 To see the effect of each simplification method on generalization, we found the average rank of each method across all problems. Here, rank 1 signifies the best (highest) generalization, and rank 6 represents the worst generalization. These average ranks are presented in Table~\ref{table:generalization-ranks}.
 
