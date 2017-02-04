@@ -25,6 +25,8 @@ Smaller solutions have other benefits as well: understandability, faster runtime
 
 \todo[inline]{Explain necessary aspects of PUSH, PLUSH, and the like. Include talk of silencing genes, and how a silenced gene does not affect the resulting program, including instructions and closing parentheses.}
 
+\todo[inline]{We should briefly define what the ``size'' of a push program is, since we discuss size a lot later.}
+
 \section{Automatic Simplification in Push}
 \label{sec:simplification}
 
@@ -141,55 +143,8 @@ The benchmark suite we used prescribes using randomly generated training and tes
 \section{Results}
 \label{sec:results}
 
-\todo[inline]{Describe the results.}
+We first consider the question of how much effect simplification has on the size of each solution program. Figure~\ref{fig:bar:size} presents the average program size of the unsimplified solution programs on each problem as a horizontal black line. It then gives the average simplified size of the simplified solution programs across 100 trials per solution for each of our five simplification methods. It is immediately clear that simplification has a large impact on the size of these programs, with most shrinking to half their original size or smaller.
 
-Results!
-
-%\begin{figure}[t] %[t] sets the image at the top of the page; t = top, b = bottom, h = here%
-%\centering
-%\includegraphics[width=\linewidth]{Size_density_by_generalized_count}
-%\caption{Size counts of simplified programs. Includes all simplified programs, from both ones that did and did not generalize pre-simplification.}
-%\label{fig:count:gen}
-%\end{figure}
-
-\begin{figure}[t] %[t] sets the image at the top of the page; t = top, b = bottom, h = here%
-\centering
-\includegraphics[width=\linewidth]{Size_density_by_generalized_A_no_facet_count}
-\caption{Size counts of simplified programs where pre-simplified program did generalize.}
-\label{fig:count:pre-simp-gen-true}
-\end{figure}
-
-\begin{figure}[t] %[t] sets the image at the top of the page; t = top, b = bottom, h = here%
-\centering
-\includegraphics[width=\linewidth]{Size_density_by_generalized_B_no_facet_count}
-\caption{Size counts of simplified programs where pre-simplified program did \underline{not} generalize.}
-\label{fig:count:pre-simp-gen-true}
-\end{figure}
-
-These look at the same graphs, but faceted.
-
-\begin{figure}[t] %[t] sets the image at the top of the page; t = top, b = bottom, h = here%
-\centering
-\includegraphics[width=\linewidth]{Size_density_by_generalized_A_count}
-\caption{Size counts of simplified programs where pre-simplified program did generalize.}
-\label{fig:count:pre-simp-gen-true}
-\end{figure}
-
-\begin{figure}[t] %[t] sets the image at the top of the page; t = top, b = bottom, h = here%
-\centering
-\includegraphics[width=\linewidth]{Size_density_by_generalized_B_count}
-\caption{Size counts of simplified programs where pre-simplified program did \underline{not} generalize.}
-\label{fig:count:pre-simp-gen-true}
-\end{figure}
-
-MORE FIGURES!
-
-\begin{figure*}[t] %[t] sets the image at the top of the page; t = top, b = bottom, h = here%
-\centering
-\includegraphics[width=\textwidth]{Nic_Plot_2} % \linewidth
-\caption{[This figure is representative of 2 or 3 other similar figures that might fit these needs.] First row: pre- and post-simplification both didn't generalize. Second row: didn't generalize pre-simplification, then generalized post-simplification. Etc. The lines are linear fit lines. You can see that programs that generalized post-simplification have smaller slope on the trend lines!}
-\label{fig:nic-plot}
-\end{figure*}
 
 \begin{figure*}[t] %[t] sets the image at the top of the page; t = top, b = bottom, h = here%
 \centering
@@ -242,6 +197,58 @@ Question: In this figure, how much of the time are the simplified programs signi
 		\bottomrule
 	\end{tabu}
 \end{table}
+
+
+
+\begin{figure}[t] %[t] sets the image at the top of the page; t = top, b = bottom, h = here%
+\centering
+\includegraphics[width=\linewidth]{Size_density_by_generalized_A_no_facet_count}
+\caption{Size counts of simplified programs where pre-simplified program did generalize.}
+\label{fig:count:pre-simp-gen-true}
+\end{figure}
+
+\begin{figure}[t] %[t] sets the image at the top of the page; t = top, b = bottom, h = here%
+\centering
+\includegraphics[width=\linewidth]{Size_density_by_generalized_B_no_facet_count}
+\caption{Size counts of simplified programs where pre-simplified program did \underline{not} generalize.}
+\label{fig:count:pre-simp-gen-true}
+\end{figure}
+
+\hl{Results!}
+
+%\begin{figure}[t] %[t] sets the image at the top of the page; t = top, b = bottom, h = here%
+%\centering
+%\includegraphics[width=\linewidth]{Size_density_by_generalized_count}
+%\caption{Size counts of simplified programs. Includes all simplified programs, from both ones that did and did not generalize pre-simplification.}
+%\label{fig:count:gen}
+%\end{figure}
+
+%These look at the same graphs, but faceted.
+%
+%\begin{figure}[t] %[t] sets the image at the top of the page; t = top, b = bottom, h = here%
+%\centering
+%\includegraphics[width=\linewidth]{Size_density_by_generalized_A_count}
+%\caption{Size counts of simplified programs where pre-simplified program did generalize.}
+%\label{fig:count:pre-simp-gen-true}
+%\end{figure}
+%
+%\begin{figure}[t] %[t] sets the image at the top of the page; t = top, b = bottom, h = here%
+%\centering
+%\includegraphics[width=\linewidth]{Size_density_by_generalized_B_count}
+%\caption{Size counts of simplified programs where pre-simplified program did \underline{not} generalize.}
+%\label{fig:count:pre-simp-gen-true}
+%\end{figure}
+
+MORE FIGURES!
+
+\begin{figure*}[t] %[t] sets the image at the top of the page; t = top, b = bottom, h = here%
+\centering
+\includegraphics[width=\textwidth]{Nic_Plot_2} % \linewidth
+\caption{[This figure is representative of 2 or 3 other similar figures that might fit these needs.] First row: pre- and post-simplification both didn't generalize. Second row: didn't generalize pre-simplification, then generalized post-simplification. Etc. The lines are linear fit lines. You can see that programs that generalized post-simplification have smaller slope on the trend lines!}
+\label{fig:nic-plot}
+\end{figure*}
+
+
 
 \section{Discussion}
 \label{sec:discussion}
