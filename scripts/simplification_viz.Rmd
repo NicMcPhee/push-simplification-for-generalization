@@ -39,8 +39,8 @@ unsimplified_that_generalize <- all_runs %>%
   select(log, problem) %>%
   distinct()
 
-started_generalized_lookup <- bind_rows(mutate(unsimplified_that_generalize, started_generalized = 'Unsimplified Program Generalized'),
-                                        mutate(unsimplified_that_dont_generalize, started_generalized = "Unsimplified Program Didn't Generalized"))
+started_generalized_lookup <- bind_rows(mutate(unsimplified_that_generalize, started_generalized = 'Generalized Pre-Simplification'),
+                                        mutate(unsimplified_that_dont_generalize, started_generalized = "Didn't Generalize Pre-Simplification"))
 
 
 ```
@@ -173,7 +173,7 @@ melt(prog_size_table,
   theme_bw() +
   theme(axis.text.x = element_text(angle = 25, hjust = 1, size = 8),
         legend.position="top") +
-  labs(x = "Problem",
+  labs(x = "",
        y = "Program Size") +
   scale_fill_manual(values = cbbPalette,
                     name = 'Method',
@@ -241,7 +241,7 @@ melt(perct_generalized_table,
   theme_bw() +
   theme(axis.text.x = element_text(angle = 25, hjust = 1, size = 8),
         legend.position="top") +
-  labs(x = "Problem",
+  labs(x = "",
        y = "% Generalized") +
   scale_fill_manual(values = cbbPalette,
                     name = 'Method',
@@ -388,6 +388,30 @@ all_runs %>%
   theme_bw() + 
   labs(title = "Unsimplified Programs that Didn't Generalized",
        x = "Post Simplification Program Size")
+```
+
+## 2x2 Density Plot
+
+```{r, fig.width=7.5, fig.height=4.5}
+all_runs %>%
+  filter(type == "simplified") %>%
+  inner_join(started_generalized_lookup, by = c("log", "problem")) %>%
+  mutate(generalized = ifelse(testError == 0, "Generalized Post-Simplification", "Didn't Generalize Post-Simplification")) %>%
+  ggplot(aes(x = programSize)) +
+  geom_density(stat = 'count',
+               fill = cbbPalette[6],
+               color = cbbPalette[6]) +
+  facet_grid(started_generalized ~ generalized) +
+  # facet_grid( generalized ~ started_generalized) +
+  theme_bw() + 
+  theme(axis.text = element_text(size = 18),
+        axis.title = element_text(size = 18),
+        strip.text = element_text(size = 16)) +
+  labs(x = "Post Simplification Program Size",
+       y = "Count")
+
+ggsave(paste0(path_to_plots,'Quad_Density.png'), 
+       units = c('in'), width = 7.5, height = 4.5)
 ```
 
 ## Facet where unsimplified program generalized
