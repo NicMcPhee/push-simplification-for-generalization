@@ -8,7 +8,7 @@ Things we need to do somewhere in this paper:
 	\item Convince everyone that this is awesome. It would be particularly cool if we can somehow make the case that these ideas are relevant even if people aren't doing stack based work. Can we do that, though? Most (i.e., tree-based)
 	GP systems don't allow for things like silencing of nodes or replacing nodes
 	with NOOPs because it typically wouldn't be clear how to interpret such a tree.
-	\item Cover relevant work. This might require some digging? I bet we cite~\cite{Helmuth:2015:dissertation}, though.
+	\item Cover relevant work. This might require some digging?
 	\item Cover relevant background. This is going to (at least) require explaining PLUSH genomes, the conversion from PLUSH to PUSH, the evaluation of PUSH programs (so we can understand what NOOPs do), and silent genes.
 	\item Describe the 5 simplification methods
 	\item Experimental setup
@@ -122,29 +122,19 @@ The four genome methods of simplification are listed in Table \ref{table:genome-
 \section{Experimental setup}
 \label{sec:setup}
 
-\todo[inline]{TMH: Note: we need to precisely describe what we mean by "generalization" and "pass the training set", either here or in the Intro or both. Likely both in various specifics.}
-
 In our experiments, we wanted to answer two primary questions. First, does automatic simplification effectively improve the generalization of evolved programs that pass every training case? Second, which of the simplication methods described in the previous section produces the smallest programs, which generalizes the best, and is there correlation between getting smaller and generalizing better?
 
-\hl{Hypotheses here???}
+To examine these questions, we conducted simplification experiments using evolved solution programs from a suite of general program synthesis benchmark problems \cite{Helmuth:2015:GECCO}. This benchmark suite is composed of 29 general programming problems taken from introductory computer science course homework assignments. These problems require solution programs to utilize a wide range of programming constructs, such as multiple data types, control flow structures, and multiple inputs/outputs. For these problems, we are primarily interested in whether we can find a program that passes every training case and unseen test case, since programs that do not achieve such perfection do not represent true solutions to the problems \cite{Helmuth:2015:GECCO}. We will call a program that passes all of the training set a ``solution'', and a program that additionally passes all of the unseen test set a ``generalizing solution.''
 
-To examine these questions, we conducted simplification experiments using evolved solution programs from a suite of general program synthesis benchmark problems \cite{Helmuth:2015:GECCO}. This benchmark suite is composed of 29 general programming problems taken from introductory computer science course homework assignments. These problems require solution programs to utilize a wide range of programming constructs, such as multiple data types, control flow structures, and multiple inputs/outputs. \hl{maybe more here}
+After the original publication of these benchmark problems \cite{Helmuth:2015:GECCO}, they have seen use in a range of studies using PushGP (eg. \cite{Helmuth:2016:GECCO, McPhee:2016:GPTP, Helmuth:2015:GPTP, Helmuth:2015:dissertation}). Additionally, they were used in work considering a general program synthesis grammar for grammar guided genetic programming \cite{Forstenlechner:2017:eurogp}.
 
-We took our evolved solution programs from the original set of benchmarking runs on this suite \cite{Helmuth:2015:GECCO}. In those original runs, each problem was attempted 100 times per selection method; in this work, we only use the runs that used lexicase selection. On these problems, PushGP created generalizing solutions to 22 of them. In addition, we include one problem (Super Anagrams) for which 14 programs were evolved that passed the training set but did not pass the unseen test set. We also include the Checksum problem, which was not solved in the runs for the original publication, but was subsequently solved with some additions to the training set.
+We took our evolved solution programs from the original set of benchmarking runs using the benchmark suite \cite{Helmuth:2015:GECCO}. In those original runs, each problem was attempted 100 times per selection method; in this work, we only use the runs that used lexicase selection. In these runs, PushGP created at least one generalizing solution to 22 of the problems. In addition, we include one problem (Super Anagrams) for which 14 programs were evolved that passed the training set but did not pass the unseen test set. We also include the Checksum problem, which was not solved in the runs for the original publication, but was subsequently solved with some additions to the training set.
 
-\hl{
-OUTLINE
+For each of our five simplification methods, we conducted 100 separate simplification trials of each solution program, recording the size and generalization of each simplified program. Some of the unsimplified programs also entirely passed the unseen test set (i.e. generalized), and some did not (i.e. did not generalize). When running GP on real-world problems, one will not know whether an evolved solution program generalizes or not before using simplification. Thus we are interested in not only what happens to evolved programs that do not generalize, but also to those that already generalize. For example, it would not be beneficial to improve generalization of some programs while reducing generalization of many more programs.
 
-- did 100 simplifications per solution per method
+For each simplification trial, we simplified the solution program using 10,000 steps of the simplification algorithm (see Algorithm~\ref{alg:simplification}). While this number of steps is likely more than necessary to effectively simplify most programs, the simplification process is not prohibitively expensive. Note that while every simplification step requires evaluating the new program, making 10,000 simplification steps moderately expensive, this is the equivalent number of evaluations to 10 generations of GP with a population of 1000. Since we are advocating for simplification at the end of a GP run, it only needs to happen once, and seems like a reasonable amount of required computation.
 
-- used the training / test set specific to that run, since many of the training/test cases are randomly generated
-
-
-}
-
-\todo[inline]{Describe the setup, problems, etc.}
-
-
+The benchmark suite we used prescribes using randomly generated training and test cases for most of the input and output data. Since automatic simplification requires use of training data, we use the training and test sets that were used for the original run for every simplification of the solution program from that run.
 
 
 
@@ -155,12 +145,12 @@ OUTLINE
 
 Results!
 
-\begin{figure}[t] %[t] sets the image at the top of the page; t = top, b = bottom, h = here%
-\centering
-\includegraphics[width=\linewidth]{Size_density_by_generalized_count}
-\caption{Size counts of simplified programs. Includes all simplified programs, from both ones that did and did not generalize pre-simplification.}
-\label{fig:count:gen}
-\end{figure}
+%\begin{figure}[t] %[t] sets the image at the top of the page; t = top, b = bottom, h = here%
+%\centering
+%\includegraphics[width=\linewidth]{Size_density_by_generalized_count}
+%\caption{Size counts of simplified programs. Includes all simplified programs, from both ones that did and did not generalize pre-simplification.}
+%\label{fig:count:gen}
+%\end{figure}
 
 \begin{figure}[t] %[t] sets the image at the top of the page; t = top, b = bottom, h = here%
 \centering
@@ -244,7 +234,7 @@ Question: In this figure, how much of the time are the simplified programs signi
 		\textbf{Variant} & \textbf{Average Rank} \\
 		\midrule
 		\textbf{Program} & 1.87 \\
-		\textbf{Genome-Backtracking-Noop} & 2.12 \\
+		\textbf{Genome-Backtracking-Noop} & 2.13 \\
 		\textbf{Genome-Backtracking} & 2.79 \\
 		\textbf{Genome-Noop} & 3.60 \\
 		\textbf{Genome} & 4.60 \\
