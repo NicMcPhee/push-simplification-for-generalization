@@ -153,32 +153,7 @@ We first consider the question of how much effect simplification has on the size
 \label{fig:bar:size}
 \end{figure*}
 
-Question: In this figure, how much of the time are the simplified programs significantly better at generalization than the unsimplified programs? How would we measure this? Do we need to?
-
-\begin{figure*}[t] %[t] sets the image at the top of the page; t = top, b = bottom, h = here%
-\centering
-\includegraphics[width=\textwidth]{Problem_by_PcntGen_bar} % \linewidth
-\caption{For each method, the percent of simplified programs that generalize to unseen data.}
-\label{fig:bar:percent_generalization}
-\end{figure*}
-
-\begin{table}[t]
-	\centering
-	\caption{The average rank in generalization percent for each simplification variant, where lower rank means better generalization. This also includes the pre-simplification programs.}
-	\label{table:generalization-ranks}
-	\begin{tabu} to \textwidth {l r}
-		\toprule
-		\textbf{Variant} & \textbf{Average Rank} \\
-		\midrule
-		\textbf{Genome-Backtracking-Noop} & 2.73 \\
-		\textbf{Genome-Backtracking} & 3.02 \\
-		\textbf{Genome-Noop} & 3.29 \\
-		\textbf{Genome} & 3.33 \\
-		\textbf{Program} & 3.67 \\
-		\textbf{Pre-Simplification} & 4.96 \\
-		\bottomrule
-	\end{tabu}
-\end{table}
+To examine aggregate performance of each simplification method, we calculate the average rank for size for each method across the 24 problems, with 1 having smallest average program size and 6 having largest. Note that we include the unsimplified programs, which is why we have 6 possible ranks. These are in Table~\ref{table:size-ranks}. \hl{Explain which has the best size numbers and Why.}
 
 \begin{table}[ht]
 	\centering
@@ -198,6 +173,85 @@ Question: In this figure, how much of the time are the simplified programs signi
 	\end{tabu}
 \end{table}
 
+
+\hl{Lexicase achieves the lowest average rank, as it has the most or tied for the most successes on every problem except for one. The Friedman test on this data gives us a \textit{p}-value $< 0.001$, indicating that at least one method} performs significantly differently from the others. A post-hoc Wilcoxon-Nemenyi-McDonald-Thompson test \cite{hollander1999nonparametric} can give the significance in the differences in ranking between each pair of methods at the $0.05$ significance level. Here, we see that:
+\begin{itemize}
+\item Program outranks Genome-Noop, Genome, and Pre-Simplification
+\item Genome-Backtracking-Noop outranks Genome and Pre-Simplification
+\item Genome-Backtracking outranks Genome and Pre-Simplification
+\item Genome-Noop outranks Pre-Simplification
+\end{itemize}
+These results show that all simplification methods besides Genome have significantly better rank than if we do not use simplification. \hl{What else to say here?}
+
+%Program - none                              3.685940e-14
+%GenomeBacktrackingNoop - none               6.733392e-12
+%GenomeBacktracking - none                   1.343098e-08
+%Program - Genome                            4.483262e-06
+%GenomeBacktrackingNoop - Genome             4.216509e-05
+%GenomeNoop - none                           9.320840e-05
+%GenomeBacktracking - Genome                 8.811779e-03
+%Program - GenomeNoop                        1.506233e-02
+%---------------------------------------------------------
+%  Cutoff for p-value of 0.05 or less (above)
+%---------------------------------------------------------
+%GenomeNoop - GenomeBacktrackingNoop         6.179964e-02
+%Genome - none                               9.284012e-02
+%GenomeNoop - Genome                         4.175994e-01
+%Program - GenomeBacktracking                5.190458e-01
+%GenomeNoop - GenomeBacktracking             6.489706e-01
+%GenomeBacktrackingNoop - GenomeBacktracking 8.119145e-01
+%Program - GenomeBacktrackingNoop            9.971909e-01
+
+Next, we consider the effect of simplification on the generalization of programs to unseen test data. In Figure~\ref{fig:bar:percent_generalization}, we plot the percent of programs that generalize for each simplification method, as well as a horizontal bar representing the percent of unsimplified programs that generalize.
+
+\begin{figure*}[t] %[t] sets the image at the top of the page; t = top, b = bottom, h = here%
+\centering
+\includegraphics[width=\textwidth]{Problem_by_PcntGen_bar} % \linewidth
+\caption{For each method, the percent of simplified programs that generalize to unseen data. \hl{Question: In this figure, how much of the time are the simplified programs significantly better at generalization than the unsimplified programs? How would we measure this? Do we need to?}}
+\label{fig:bar:percent_generalization}
+\end{figure*}
+
+Discuss: simplification either helps generalization or has no effect on every problem besides Double Letters. Double Letters has one of the smaller sample sizes, with only 6 solution programs as starting points. All generalize before simplification.  5 of the 6 generalize most of the time after simplification, but one program has many simplifications that don't generalize. Mostly seems like an outlier here.
+
+To see the effect of each simplification method on generalization, we found the average rank of each method across all problems. Here, rank 1 signifies the best (highest) generalization, and rank 6 represents the worst generalization. These average ranks are presented in Table~\ref{table:generalization-ranks}.
+
+\begin{table}[ht]
+	\centering
+	\caption{The average rank in generalization percent for each simplification variant, where lower rank means better generalization. This also includes the pre-simplification programs.}
+	\label{table:generalization-ranks}
+	\begin{tabu} to \textwidth {l r}
+		\toprule
+		\textbf{Variant} & \textbf{Average Rank} \\
+		\midrule
+		\textbf{Genome-Backtracking-Noop} & 2.73 \\
+		\textbf{Genome-Backtracking} & 3.02 \\
+		\textbf{Genome-Noop} & 3.29 \\
+		\textbf{Genome} & 3.33 \\
+		\textbf{Program} & 3.67 \\
+		\textbf{Pre-Simplification} & 4.96 \\
+		\bottomrule
+	\end{tabu}
+\end{table}
+
+
+%GenomeBacktrackingNoop - none               1.532704e-06
+%GenomeBacktracking - none                   8.164085e-05
+%GenomeNoop - none                           1.186298e-03
+%Genome - none                               1.892900e-03
+%Program - none                              2.829973e-02
+%%---------------------------------------------------------
+%%  Cutoff for p-value of 0.05 or less (above)
+%%---------------------------------------------------------
+%Program - GenomeBacktrackingNoop            2.338544e-01
+%Program - GenomeBacktracking                6.504160e-01
+%GenomeNoop - GenomeBacktrackingNoop         7.712306e-01
+%GenomeBacktrackingNoop - Genome             7.129661e-01
+%GenomeBacktracking - Genome                 9.774709e-01
+%GenomeNoop - Genome                         9.999987e-01
+%Program - Genome                            9.701077e-01
+%GenomeBacktrackingNoop - GenomeBacktracking 9.834383e-01
+%GenomeNoop - GenomeBacktracking             9.881573e-01
+%Program - GenomeNoop                        9.505945e-01
 
 
 \begin{figure}[t] %[t] sets the image at the top of the page; t = top, b = bottom, h = here%
