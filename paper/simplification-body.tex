@@ -73,11 +73,8 @@ Below is a description of each method:
 
 \textbf{Program} simplification, which has been used in Push since its inception \cite{Robinson:2001:GPtieus}, acts on an individual's Push program, as opposed to its linear Plush genome. At each simplification step, it has an 80\% chance of removing one or two random ``code points'' from the program, where a \textit{code point} is an instruction, a constant, or a parenthesized block of code. The other 20\% of the time it randomly removes one set of parentheses from a code block in the program, flattening the code inside the parentheses into the level that the code block occupied.
 
-The other four simplification methods act on an individual's linear Plush genome prior to its translation into a Push program. There are three basic steps that are used across these genome methods: silencing random genes, unsilencing random genes, and NOOPing random genes. Silencing a gene activates its ``silent" epigenetic marker, making that instruction not appear the resulting Push program, 
-as well as not opening any new parenthesized code blocks or ending any open parenthesized code blocks.
-\todo{I may have lied in this sentence. Can 
-	silencing a gene like an \texttt{exec-if} prevent it from opening new blocks?}
-When picking a random gene to silence, we never select a gene that is already silent.
+The other four simplification methods act on an individual's linear Plush genome prior to its translation into a Push program. There are three basic steps that are used across these genome methods: silencing random genes, unsilencing random genes, and NOOPing random genes. Silencing a gene activates its ``silent'' epigenetic marker, making that instruction not appear the resulting Push program, 
+as well as not opening any new parenthesized code blocks or ending any open parenthesized code blocks. When picking a random gene to silence, we never select a gene that is already silent.
 
 Note that by silencing genes instead of removing them entirely, it 
 becomes possible to backtrack by unsilencing previously silenced genes. 
@@ -85,7 +82,7 @@ Thus, in several methods
 we silence some genes while unsilencing others, making it possible to 
 backtrack by activating genes that were previously turned off. We hope that the backtracking enabled by unsilencing will allow simplification to escape some local program size minima that it might otherwise be impossible to escape, resulting in more reliable simplification to smaller programs. Similar to silencing, we never select an unsilenced gene to unsilence. 
 
-Finally, some methods ``NOOP" genes by replacing their instructions with 
+Finally, some methods ``NOOP'' genes by replacing their instructions with 
 NOOP instructions that have no effect when executed. 
 Some Push programs require an instruction to be present in a location, 
 with no particular concern for that instruction's details. It is not
@@ -100,11 +97,11 @@ simplification.
 
 \begin{table}[t]
 	\centering
-	\caption{Genome simplification methods. Each variant lists the possible single simplification steps it can take during simplification, and the probability of taking each step.}
+	\caption{Genome simplification methods. Each method lists the possible single simplification steps it can take during simplification, and the probability of taking each step.}
 	\label{table:genome-methods}
 	\begin{tabu} to \textwidth {l l r}
 		\toprule
-		\textbf{Variant} & \textbf{Step} & \textbf{Prob.}  \\
+		\textbf{Method} & \textbf{Step} & \textbf{Prob.}  \\
 		\midrule
 		\textbf{Genome} & Silence 1 (gene) & 0.50 \\
 		       & Silence 2 & 0.30 \\
@@ -141,14 +138,11 @@ simplification.
 	\end{tabu}
 \end{table}
 
-The four genome methods of simplification are listed in Table \ref{table:genome-methods}. Each variant lists the types of steps that can be taken and the probability of each step being chosen. The most basic of the methods, 
+The four genome methods of simplification are listed in Table \ref{table:genome-methods}. Each method lists the types of steps that can be taken and the probability of each step being chosen. The most basic of the methods, 
 \textbf{Genome} simplification only allows for the silencing 
 of 1 to 4 random genes in a single step. \textbf{Genome-Backtracking} and \textbf{Genome-Backtracking-Noop} occasionally unsilence a silent gene while silencing another, allowing the process to not follow a strict hill-climbing scheme.  \textbf{Genome-Noop} and Genome-Backtracking-Noop use NOOPing to turn intructions into NOOPs without removing them entirely.
 
-Note that while the Program simplification method can remove unnecessary parentheses from a program, none of the genome methods have this ability. Since the genome methods change the genomes themselves, which have no parentheses, they cannot remove the parentheses that appear in the resulting translated program.
-
-\todo[inline]{But doesn't silencing, e.g., something like \texttt{exec-if}
-change the parens downstream?}
+Note that while the Program simplification method can remove unnecessary parentheses from a program, none of the genome methods have this ability. Since the genome methods change the genomes themselves, which have no parentheses, they cannot remove the parentheses that appear in the resulting translated program. They can silence an entire gene, which will omit its instruction and any open parentheses it requires, but they cannot simply remove a pair of extraneous parentheses.
 
 \section{Experimental setup}
 \label{sec:setup}
@@ -159,7 +153,7 @@ Further, which of the simplication methods described in the previous section
 produces the smallest programs, which generalizes the best, and is there correlation between getting smaller and generalizing better?
 
 To examine these questions, we conducted simplification experiments using evolved solution programs from a suite of general program synthesis benchmark problems \cite{Helmuth:2015:GECCO}. This benchmark suite is composed of 29 general programming problems taken from introductory computer science course homework assignments. These problems require solution programs to utilize a wide range of programming constructs, such as multiple data types, control flow structures, and multiple inputs/outputs.
-After the original publication of these benchmark problems \cite{Helmuth:2015:GECCO}, they have seen use in a range of studies using PushGP (eg. \cite{Helmuth:2016:GECCO, McPhee:2016:GPTP, Helmuth:2015:GPTP, Helmuth:2015:dissertation}), 
+After the original publication of these benchmark problems \cite{Helmuth:2015:GECCO}, they have seen use in a range of studies using PushGP (eg. \cite{Helmuth:2016:GECCO, McPhee:2016:GPTP, Helmuth:2015:GPTP, Helmuth:2015:dissertation}),  % TMH: could potentially remove 1 or 2 of these if we need the space
 as well as recent work considering a general program synthesis grammar for 
 grammar guided genetic programming \cite{Forstenlechner:2017:eurogp}.
 
@@ -168,7 +162,7 @@ For these problems, we are primarily interested in whether we can find a program
 We took our evolved solution programs from the original set of benchmarking runs using the benchmark suite \cite{Helmuth:2015:GECCO}. In those original
 runs, each problem was attempted 100 times each for several selection methods;
 in this work, we only use the 100 runs that used lexicase selection, as it
-consistently had the highest success rates. 
+consistently had the highest success rates and provided solutions to the most problems. 
 In these runs, PushGP created at least one generalizing solution to 22 of the problems. In addition, we include one problem (Super Anagrams) for which 14 programs were evolved that passed the training set but did not pass the unseen test set. We also include the Checksum problem, which was not solved in the runs for the original publication, but was subsequently solved with some additions to the training set.
 
 In earlier work, it was shown that simplifying the same program many times can result in a range of resulting program sizes \cite{Spector:2014:GECCOcomp}. To acount for this variance in the simplified programs, we performed multiple simplifications of each solution program. For each of our five simplification methods, we conducted 100 separate simplification trials of each solution program, recording the size and generalization of each simplified program. 
@@ -189,7 +183,7 @@ The benchmark suite we used prescribes using randomly generated training and tes
 
 \begin{figure*}[t] %[t] sets the image at the top of the page; t = top, b = bottom, h = here%
 \centering
-\includegraphics[width=0.9\textwidth]{Problem_by_Size_bar} % \linewidth
+\includegraphics[width=0.95\textwidth]{Problem_by_Size_bar} % \linewidth
 \caption{The average program size of programs produced by our five 
 	simplification methods for each problem set; the average program 
 	sizes of the unchanged programs are represented with black 
@@ -199,12 +193,12 @@ The benchmark suite we used prescribes using randomly generated training and tes
 \label{fig:bar:size}
 \end{figure*}
 
-\hl{Question: Should we somehow indicate the number of data points that go into each problem? Some problems have a lot of unchanged solutions ($>$ 90), and some have very few ($<$ 10), with the latter group potentially being small sample size, and the former group having more effect on the aggregate plots across problems.}
-\todo[inline]{It took me a while to figure out the question, but the 
-	later comment about DL only having 6 solutions to work with caused the 
-	light bulb to go off. I suspect we should indicate this somewhere. A table 
-	would be big. Maybe putting the number of initial successes in parens after 
-	the problem name in the axis labels? -- Nic}
+%\hl{Question: Should we somehow indicate the number of data points that go into each problem? Some problems have a lot of unchanged solutions ($>$ 90), and some have very few ($<$ 10), with the latter group potentially being small sample size, and the former group having more effect on the aggregate plots across problems.}
+%\todo[inline]{It took me a while to figure out the question, but the 
+%	later comment about DL only having 6 solutions to work with caused the 
+%	light bulb to go off. I suspect we should indicate this somewhere. A table 
+%	would be big. Maybe putting the number of initial successes in parens after 
+%	the problem name in the axis labels? -- Nic}
 
 We first consider the question of how much effect simplification has on the size of each solution program. Figure~\ref{fig:bar:size} presents the average program size of the unchanged solution programs on each problem as a horizontal black line. It then gives the average simplified size of the simplified solution programs, with 100 trials per solution, for each of our five simplification methods. It is immediately clear that every simplification method has a large impact on the average size of the solution programs, with most shrinking to half their original size or smaller. 
 In fact, the size
@@ -257,7 +251,7 @@ Next, we consider the effect of simplification on the generalization of programs
 
 \begin{figure*}[t] %[t] sets the image at the top of the page; t = top, b = bottom, h = here%
 \centering
-\includegraphics[width=0.9\textwidth]{Problem_by_PcntGen_bar} % \linewidth
+\includegraphics[width=0.95\textwidth]{Problem_by_PcntGen_bar} % \linewidth
 \caption{The proportion of simplified programs that generalize to unseen data
 	for each problem, with the proportion of unchanged programs that generalize 
 	indicated with black horizontal bars.
@@ -521,11 +515,11 @@ programs generalizing better. The Silva GPEM paper~\cite{silva2012operator}
 would probably be a good place to do some digging.}
 
 \subsection{Nic's Thoughts on Unused Push Instructions}
-\hl{Anyway, I wouldn't recommend using the word ``bloat" because I also think that is generally associated with a tendency to get bigger and bigger and bigger in ways that aren't connected to improvements in fitness, and that doesn't seem to be a Clojush thing. (I'm personally not super clear on why that's not a thing in Clojush, etc., etc., but that's not today's problem.)
+\hl{Anyway, I wouldn't recommend using the word ``bloat'' because I also think that is generally associated with a tendency to get bigger and bigger and bigger in ways that aren't connected to improvements in fitness, and that doesn't seem to be a Clojush thing. (I'm personally not super clear on why that's not a thing in Clojush, etc., etc., but that's not today's problem.)
 
-Even more complicated is the fact that in Push programs we often find various categories of ``unused'' code. There are instructions that do nothing because their arguments aren't on the stack, or sometimes aren't on the stack. There are instructions that do something, but no one cares (they push a boolean that's never used). There are instructions that are there just to add content to a stack, but who's particular action doesn't matter. Etc., etc. These are not things ``standard tree-based GP" people run into very often, and might not be obvious to them.
+Even more complicated is the fact that in Push programs we often find various categories of ``unused'' code. There are instructions that do nothing because their arguments aren't on the stack, or sometimes aren't on the stack. There are instructions that do something, but no one cares (they push a boolean that's never used). There are instructions that are there just to add content to a stack, but who's particular action doesn't matter. Etc., etc. These are not things ``standard tree-based GP'' people run into very often, and might not be obvious to them.
 
-Lastly, it can be really hard to tell what's being used and how in complex programs, and how that relates to the simplified versions. It's easy to implicitly assume that the simplified program is ``the thing'', and that everything that got removed didn't really matter in the original execution. (This is often an assumption in tree-based bloat discussions.) I'm pretty sure this is often very not true, however, in Push, and that's important to the generalization. It seems fairly common, for example, for Push programs (especially with the ``standard" instruction set) to have a lot of unnecessary looping that frequently gets removed or reduced in simplification. Often that looping is actually executed in the original program, so it's part of how the training answers are formed. I have a suspicion that part of why simplification often improves generalization is that it removes these unnecessary loops that are sometimes fragile and do weird things on certain inputs.}
+Lastly, it can be really hard to tell what's being used and how in complex programs, and how that relates to the simplified versions. It's easy to implicitly assume that the simplified program is ``the thing'', and that everything that got removed didn't really matter in the original execution. (This is often an assumption in tree-based bloat discussions.) I'm pretty sure this is often very not true, however, in Push, and that's important to the generalization. It seems fairly common, for example, for Push programs (especially with the ``standard'' instruction set) to have a lot of unnecessary looping that frequently gets removed or reduced in simplification. Often that looping is actually executed in the original program, so it's part of how the training answers are formed. I have a suspicion that part of why simplification often improves generalization is that it removes these unnecessary loops that are sometimes fragile and do weird things on certain inputs.}
 
 
 
