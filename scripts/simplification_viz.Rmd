@@ -119,10 +119,10 @@ all_runs %>%
 
 # Quad Scatter Plot (Nic's Plot)
 
-```{r}
+```{r, fig.width=7.5, fig.height=5}
 unsimplified_info <- all_runs %>%
   filter(type == "unsimplified") %>%
-  mutate(started_generalized = testError == 0) %>%
+  mutate(started_generalized = ifelse(testError == 0, "Generalized Pre-Simplification", "Didn't Generalize Pre-Simplification")) %>%
   mutate(originalSize = programSize) %>%
   select(problem, log, method, originalSize, started_generalized)
 
@@ -150,16 +150,28 @@ all_runs %>%
   facet_grid(started_generalized ~ post_simp_generalized,
              scales = "free") +
   theme_bw() +
-  theme(axis.text = element_text(size = 12),
-        axis.title = element_text(size = 12),
-        strip.text = element_text(size = 12),
+  theme(axis.text = element_text(size = 8),
+        axis.title = element_text(size = 8),
+        strip.text = element_text(size = 8),
         legend.position="none") +
   guides(colour = guide_legend(override.aes = list(alpha = 1))) +
   labs(x = "Pre-Simplification Size",
        y = "Post-Simplification Size")
 
 ggsave(paste0(path_to_plots,'Quad_Scatter.pdf'), 
-       units = c('in'), width = 7.5, height = 4.5)
+       units = c('in'), width = 7.5, height = 5)
+```
+
+```{r}
+all_runs %>%
+  filter(type == "simplified") %>%
+  mutate(genPost = testError == 0,
+         simplifiedSize = programSize) %>%
+  inner_join(unsimplified_info, by = c("problem", "log", "method")) %>%
+  mutate(post_simp_generalized = ifelse(testError == 0, "Generalized Post-Simplification", "Didn't Generalize Post-Simplification")) %>%
+  select(problem, originalSize, simplifiedSize, started_generalized, post_simp_generalized) %>%
+  group_by(started_generalized, post_simp_generalized) %>%
+  summarise(count = n())
 ```
 
 # Problem Vs Avgerage program Size by Method
