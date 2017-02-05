@@ -261,7 +261,9 @@ Next, we consider the effect of simplification on the generalization of programs
 \label{fig:bar:percent_generalization}
 \end{figure*}
 
-Every simplification method either improves generalization or has no effect on every problem besides Double Letters.\footnote{The Double Letters problem has one of the smaller sample sizes of our data set, with only six solution programs as starting points. All six solutions generalize before simplification. Five of the six generalize most of the time after simplification, but one solution program has many simplifications that don't generalize.} Some of the increases in generalization appear substantial, 
+Every simplification method either improves generalization or has no effect on every problem besides Double Letters.
+%\footnote{The Double Letters problem has one of the smaller sample sizes of our data set, with only six solution programs as starting points. All six solutions generalize before simplification. Five of the six generalize most of the time after simplification, but one solution program has many simplifications that don't generalize.}
+ Some of the increases in generalization appear substantial, 
 improving as much as 25\% in the case of the Median problem.
 
 Also note that the five problems with the worst generalization in Figure~\ref{fig:bar:percent_generalization} are among the problems for which program sizes were largest in Figure~\ref{fig:bar:size}. For whatever reason, programs that solve these problems tend to be large and unable to shrink, and do not generalize well. We hypothesize, but have no data to support, that large programs such as these contain many ad-hoc components that overfit to individual test cases without really ``learning'' the underlying program structure, and therefore do not generalize to unseen data.
@@ -398,8 +400,6 @@ In each plot we draw a linear fit line showing the relationship of unchanged siz
 \section{Discussion}
 \label{sec:discussion}
 
-\todo[inline]{Talk about what the results mean}
-
 %Here are some potentially interesting questions to explore with this data:
 %
 %    Which simplification method tends to result in the smallest programs on average? Is there any significant differences here?
@@ -411,11 +411,11 @@ In each plot we draw a linear fit line showing the relationship of unchanged siz
 %    It might be worthwhile to break this big plot into smaller plots, grouping together similar plots. For example, we might group plots based on how often unsimplified programs generalize -- groups of something like 0-50\%, 50-95\%, and 95-100\% generalization. Or, we could do it some other way. But, this could definitely help with spotting differences based on problem.
 %
 
-\hl{    Would a multi-restart simplification get us to smaller programs more often than the other methods we've tried? This could potentially avoid unlucky local minima. The backtracking methods are also trying to avoid unlucky local minima, so this would be an interesting comparison. It seems like we could answer this question with the data we have.}
-
-\todo[inline]{I don't really see how we could answer that question with
-this data? It's definitely a cool question, but seems more future work
-than this paper. -- Nic}
+%\hl{    Would a multi-restart simplification get us to smaller programs more often than the other methods we've tried? This could potentially avoid unlucky local minima. The backtracking methods are also trying to avoid unlucky local minima, so this would be an interesting comparison. It seems like we could answer this question with the data we have.}
+%
+%\todo[inline]{I don't really see how we could answer that question with
+%this data? It's definitely a cool question, but seems more future work
+%than this paper. -- Nic}
 
 As noted earlier, all five simplification methods lead to substantial
 reductions in program size across all 24 test problems, as shown in
@@ -425,25 +425,25 @@ well under half the original sizes, and sometimes much smaller than that.
 Further, all the simplification methods improved generalization rates for
 all but a few problems (see Figure~\ref{fig:bar:percent_generalization}),
 but again with little difference among the simplification methods.
-In some cases, e.g., count-odds, all the unsimplified programs already
+In some cases, e.g., Count Odds, all the unsimplified programs already
 generalized, so the best simplification could do is to not make things
 worse. In other cases, such as
-checksum, double-letters, and vectors-summed, there were very few 
+Checksum, Double Letters, and Vectors Summed, there were very few 
 solution programs generated in the initial 100 PushGP runs (5, 6, and 1,
 respectively). With so few data points to work with it's not surprising
-that in some cases (e.g., checksum and vectors-summed) there was no change
+that in some cases (e.g., Checksum and Vectors Summed) there was no change
 in generalization. In the case of double-letters, five of the six initial
 solutions were consistently simplified without affecting generalization.
-The sixth solution, however, frequently let to simplifications that no 
+The sixth solution, however, frequently led to simplifications that no 
 longer generalized. Only 37 of the 100 Program simplification results, 
 for example, generalized, while only 45 of the 100 Genome simplifications
 generalized.
 
-\todo[inline]{All the the failures I've looked at (and I looked at quite a
-	few) have a total error of 6, with errors of 2 on the same three test
-	cases. They all share a weird sequence of 20 `!' characters in a row
-	early in their simplified programs, which smells really fragile to me,
-	but I haven't dug into the programs enough to know if that's the issue.}
+%\todo[inline]{All the the failures I've looked at (and I looked at quite a
+%	few) have a total error of 6, with errors of 2 on the same three test
+%	cases. They all share a weird sequence of 20 `!' characters in a row
+%	early in their simplified programs, which smells really fragile to me,
+%	but I haven't dug into the programs enough to know if that's the issue.}
 
 It's also clear from Figures~\ref{fig:count:quad} and~\ref{fig:nic-plot} that
 smaller post-simplification sizes were strongly correlated with the
@@ -455,6 +455,10 @@ that smaller programs will be more likely to generalize~\cite{thing1, thing2}.
 While there have been contrary results that show that program size and
 generalization are not always correlated~\cite{silva2012operator}, the
 correlation seems extremely strong in our data. 
+
+\todo[inline]{We should grab an empirical citation or two about small
+programs generalizing better. The Silva GPEM paper~\cite{silva2012operator}
+would probably be a good place to do some digging.}
 
 The relationship between
 program size and generalization is almost certainly driven at least in part
@@ -476,19 +480,19 @@ understood~\cite{poli08:fieldguide}, since in PushGP we don't see a
 general tendency towards increasing program size over time. 
 
 There is obviously ``unnecessary'' code in these evolved Push programs, 
-however, but Understanding the source and role of this removable Push 
+however, but understanding the source and role of this removable Push 
 code is complex, in part because there are potentially many categories 
 of ``unused'' or ``unnecessary'' code
 in Push. Examples include:
 \begin{itemize}
 	\item Instructions that do nothing because they require arguments 
-	that aren't on the appropriate stacks when they're executed. 
+	that are not on the appropriate stacks when they are executed. 
 	\item Instructions that do \emph{something}, but not something that has an 
 	impact on the final result because, e.g., they act on values on stacks 
 	that play no role in the key computation. 
 	\item Instructions whose \emph{presence} is important (e.g., as a marker 
 	or to make sure the \texttt{exec} stack has the right size), but 
-	whose details or \emph{behavior} isn't.
+	whose details or \emph{behavior} is not.
 \end{itemize}
 Note also that the ``activity'' of many of these instructions is highly
 dependent on context. An instruction that does nothing in a parent because
@@ -514,18 +518,6 @@ execution limits to stop them and force the return of an answer. This sort
 of approach is likely to be quite brittle, and eliminating these unnecessary
 loops might be a source of improved generalization. All of which is rather
 deeply intertwined with key details of PushGP.
-
-\todo[inline]{We should grab an empirical citation or two about small
-programs generalizing better. The Silva GPEM paper~\cite{silva2012operator}
-would probably be a good place to do some digging.}
-
-\subsection{Nic's Thoughts on Unused Push Instructions}
-\hl{Anyway, I wouldn't recommend using the word ``bloat'' because I also think that is generally associated with a tendency to get bigger and bigger and bigger in ways that aren't connected to improvements in fitness, and that doesn't seem to be a Clojush thing. (I'm personally not super clear on why that's not a thing in Clojush, etc., etc., but that's not today's problem.)
-
-Even more complicated is the fact that in Push programs we often find various categories of ``unused'' code. There are instructions that do nothing because their arguments aren't on the stack, or sometimes aren't on the stack. There are instructions that do something, but no one cares (they push a boolean that's never used). There are instructions that are there just to add content to a stack, but who's particular action doesn't matter. Etc., etc. These are not things ``standard tree-based GP'' people run into very often, and might not be obvious to them.
-
-Lastly, it can be really hard to tell what's being used and how in complex programs, and how that relates to the simplified versions. It's easy to implicitly assume that the simplified program is ``the thing'', and that everything that got removed didn't really matter in the original execution. (This is often an assumption in tree-based bloat discussions.) I'm pretty sure this is often very not true, however, in Push, and that's important to the generalization. It seems fairly common, for example, for Push programs (especially with the ``standard'' instruction set) to have a lot of unnecessary looping that frequently gets removed or reduced in simplification. Often that looping is actually executed in the original program, so it's part of how the training answers are formed. I have a suspicion that part of why simplification often improves generalization is that it removes these unnecessary loops that are sometimes fragile and do weird things on certain inputs.}
-
 
 
 \section{Related Work}
@@ -595,6 +587,8 @@ FUTURE WORK BELOW HERE
 Testing automatic simplification on other types of problems. Would it work on symbolic regression? Classification? My (TMH) guess is that it would work better on classification than symbolic regression.
 
 How could simplification be adapted for tree-based GP? How about other GP, such as Cartesian or grammar-based? Grammatical evolution could potentially remove numbers from the genome, or could replace trees in the resulting program. Other linear GPs seem like good targets.
+
+Would a multi-restart simplification get us to smaller programs more often than the other methods we've tried? This could potentially avoid unlucky local minima. The backtracking methods are also trying to avoid unlucky local minima, so this would be an interesting comparison.
 
 \begin{acks}
   
