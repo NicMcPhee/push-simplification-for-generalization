@@ -1,8 +1,22 @@
 \section{Introduction}
 \label{sec:intro}
 
-\todo[inline]{Motivation and overview.}
+Supervised machine learning algorithms are often trained on data for which correct answers (e.g. classes, predictions) are known in advance, but with the goal of producing a system that will subsequently also give the correct answers for new, unseen data. In the context of genetic programming \cite{koza:book}, this usually means that we seek to evolve a program that will produce correct outputs when run on any reasonable inputs, including inputs not encountered during the evolutionary process. That is, we seek programs that {\it generalize}. While the challenges of evolving generalizing programs have long been recognized, studied, and approached in a variety of ways (e.g. \cite{1144159,DBLP:conf/gecco/VanneschiG09,Castelli:2010:cec,Goncalves:2015:EuroGP}), the challenges in this area have not yet been fully met, and significant  problems remain open.
 
+Another set of long-standing, open research questions in genetic programming concerns the growth of programs over evolutionary time, and the presence of unnecessary code in evolved programs (CITE A BUNCH OF SIZE/BLOAT STUFF HERE). Such code growth can consume computational resources, slow down the GP search process, and produce programs that are difficult for users to understand or apply to application problems. 
+
+In this paper we aim to tackle neither the generalization problem nor the code growth problem in any sort of a comprehensive way. Rather, we report on work stemming from steps taken to deal with code growth, which then unexpectedly provided substantial and robust benefits with respect to generalization. Specifically, several years ago we had developed methods for automatically simplifying evolved programs, largely to aid in the analysis and application of evolved programs. In some of our experiments we noted anecdotal instances in which programs that did not generalize prior to simplification {\it did} generalize {\it after} generalization (CITE HELMUTH DISSERTATION). Intrigued, we decided to study the connections between automatic simplification and generalization more systematically. This paper presents the results of that systematic study.
+
+The study presented here was conducted entirely on evolved Push programs, evolved with the PushGP genetic programming system (CITE PUSH GPEM). The reason for this choice is that Push has an unusually permissive syntax, in which any tokens of the language may appear in any order, and all possible programs produce interpretable results. This means that it is particularly easy to automatically simplify Push programs, since one can remove random tokens from programs or replace them with non-functional tokens, re-interpret the programs, and compare program behavior before and after such modifications. All of the automatic simplification methods discussed in this paper work this way. In many other genetic programming systems, such as traditional tree-based genetic programming \cite{koza:book}, programs that are modified in this way would often fail to compile or to produce results at all. However, if there are other systems for which automatic simplification methods can easily be developed, then the study presented here could be applied to them as well and it would be interesting to see if similar results obtain.
+
+Automatic simplification was introduced to Push as a tool for making evolved programs easier to understand \cite{Robinson:2001:GPtieus, spector:2002:GPEM}. Smaller solutions have other benefits as well: understandability, faster runtimes, etc. While it can be applied to any program, it has typically been used only on solution programs after the completion of genetic programming runs, to make solution programs easier to understand without changing their behavior \cite{Spector:2014:GECCOcomp}. It has also been used as a growth-control genetic operator during genetic programming runs, with mixed success \cite{Zhan:2014:GECCOcomp}. Here we consider only post-run simplification, and we focus only on its effects on code size and generalization.
+
+In the following section we first briefly describe related work on automatic simplification and generalization in genetic programming. We then briefly describe relevant aspects of the Push programming language, the Plush genome representation for Push programs, and the automatic simplification methods considered in this study. This is followed by sections on our experimental setup and results, and then a discussion of our conclusions and directions for future research.
+
+
+\todo[inline]{I'd say here in the intro. -- Nic}
+
+\todo[inline]{Motivation and overview.}
 Things we need to do somewhere in this paper:
 \begin{itemize}
 	\item Convince everyone that this is awesome. It would be particularly cool if we can somehow make the case that these ideas are relevant even if people aren't doing stack based work. Can we do that, though? Most (i.e., tree-based)
@@ -18,10 +32,9 @@ Things we need to do somewhere in this paper:
 	\item Conclude
 \end{itemize}
 
-Smaller solutions have other benefits as well: understandability, faster runtimes, etc. But, we won't concentrate on those in this paper.
 
-Automatic simplification was introduced to Push as a tool for making evolved programs easier to understand \cite{Robinson:2001:GPtieus, spector:2002:GPEM}. While it can be applied to any program, it has typically been used post-run to make solution programs easier to understand without changing their behavior \cite{Spector:2014:GECCOcomp}. It has also been used as a bloat-control genetic operator during genetic programming runs, with mixed success \cite{Zhan:2014:GECCOcomp}. \todo[inline]{Does this paragraph belong here in the intro or in the Simplification section?}
-\todo[inline]{I'd say here in the intro. -- Nic}
+
+
 
 \section{PUSH, PLUSH, etc.}
 \label{sec:push}
