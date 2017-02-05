@@ -21,6 +21,7 @@ Things we need to do somewhere in this paper:
 Smaller solutions have other benefits as well: understandability, faster runtimes, etc. But, we won't concentrate on those in this paper.
 
 Automatic simplification was introduced to Push as a tool for making evolved programs easier to understand \cite{Robinson:2001:GPtieus, spector:2002:GPEM}. While it can be applied to any program, it has typically been used post-run to make solution programs easier to understand without changing their behavior \cite{Spector:2014:GECCOcomp}. It has also been used as a bloat-control genetic operator during genetic programming runs, with mixed success \cite{Zhan:2014:GECCOcomp}. \todo[inline]{Does this paragraph belong here in the intro or in the Simplification section?}
+\todo[inline]{I'd say here in the intro. -- Nic}
 
 \section{PUSH, PLUSH, etc.}
 \label{sec:push}
@@ -29,12 +30,16 @@ Automatic simplification was introduced to Push as a tool for making evolved pro
 
 \todo[inline]{We should briefly define what the ``size'' of a push program is, since we discuss size a lot later.}
 
+\todo[inline]{Need to define error vector somewhere.}
+
 \section{Automatic Simplification in Push}
 \label{sec:simplification}
 
-Automatic simplification is a simple hill-climbing algorithm that tries to make an individual's program smaller without changing the program's behavior on the training cases. At each step, we first make small changes to the program to make it smaller. We then check whether the smaller program produces the same error vector as the original program. If so, we continue with the new program; otherwise, we reverts to the previous program. This process repeats for a set number of simplification steps, and then returns the resulting simplified program. The algorithm is presented in detail in Algorithm \ref{alg:simplification}.
+Automatic simplification is a simple hill-climbing algorithm that tries to make an individual's program smaller without changing the program's behavior on the training cases. At each step, we first make small changes to the program to make it smaller. We then check whether the smaller program produces the same error vector as the original program. If so, we continue with the new program; 
+otherwise, we revert to the previous program. This process repeats for a set 
+number of simplification steps, and then returns the resulting simplified program. The algorithm is presented in detail in Algorithm \ref{alg:simplification}.
 
-\begin{algorithm}[ht]
+\begin{algorithm}[t]
 \caption{Automatic Simplification}
 \label{alg:simplification}
 
@@ -66,13 +71,32 @@ Automatic simplification is a simple hill-climbing algorithm that tries to make 
 In this paper we explore five different methods of automatic simplification. Each method follows the same general algorithm; they only differ in the particular steps taken to make programs smaller. %The five methods are listed in Table ???, along with a description of what they do at each simplification step.
 Below is a description of each method:
 
-\textbf{Program} simplification, which has been used in Push since its inception \cite{Robinson:2001:GPtieus}, acts on an individual's Push program, as opposed to its linear Plush genome. At each simplification step, it has an 80\% chance of removing one or two random "code points" from the program, where a \textit{code point} is an instruction, a constant, or a parenthesized block of code. The other 20\% of the time it randomly removes one set of parentheses from a code block in the program, flattening the code inside the parentheses into the level that the code block occupied.
+\textbf{Program} simplification, which has been used in Push since its inception \cite{Robinson:2001:GPtieus}, acts on an individual's Push program, as opposed to its linear Plush genome. At each simplification step, it has an 80\% chance of removing one or two random ``code points" from the program, where a \textit{code point} is an instruction, a constant, or a parenthesized block of code. The other 20\% of the time it randomly removes one set of parentheses from a code block in the program, flattening the code inside the parentheses into the level that the code block occupied.
 
-The other four simplification methods act on an individual's linear Plush genome prior to its translation into a Push program. There are three basic steps that are used across these genome methods: silencing random genes, unsilencing random genes, and nooping random genes. Silencing a gene activates its "silent" epigenetic marker, making that instruction not appear the resulting Push program, as well as not ending any open parenthesized code blocks. When picking a random gene to silence, we never select a gene that is already silent.
+The other four simplification methods act on an individual's linear Plush genome prior to its translation into a Push program. There are three basic steps that are used across these genome methods: silencing random genes, unsilencing random genes, and NOOPing random genes. Silencing a gene activates its ``silent" epigenetic marker, making that instruction not appear the resulting Push program, 
+as well as not opening any new parenthesized code blocks or ending any open parenthesized code blocks.
+\todo{I may have lied in this sentence. Can 
+	silencing a gene like an \texttt{exec-if} prevent it from opening new blocks?}
+When picking a random gene to silence, we never select a gene that is already silent.
 
-In some methods we silence some genes while unsilencing others, which makes it possible to backtrack by activating genes that were previously turned off. We hope that the backtracking enabled by unsilencing will allow simplification to escape some local program size minima that it might otherwise be impossible to escape, resulting in more reliable simplification to smaller programs. Similar to silencing, we never select an unsilenced gene to unsilence. Note that we silence genes instead of removing them entirely because it makes it possible to backtrack progress by unsilencing genes.
+Note that by silencing genes instead of removing them entirely, it 
+becomes possible to backtrack by unsilencing previously silenced genes. 
+Thus, in several methods 
+we silence some genes while unsilencing others, making it possible to 
+backtrack by activating genes that were previously turned off. We hope that the backtracking enabled by unsilencing will allow simplification to escape some local program size minima that it might otherwise be impossible to escape, resulting in more reliable simplification to smaller programs. Similar to silencing, we never select an unsilenced gene to unsilence. 
 
-Finally, some methods "noop" genes by replacing their instructions with instructions that have no effect when executed. Some Push programs require some instruction to be present in a location, but it does not matter what the instruction is as long as it doesn't manipulate certain stacks. We can replace these instructions with noops, potentially making the program more general without actually making it smaller. Genes that are already nooped cannot be selected by a noop step of simplification.
+Finally, some methods ``NOOP" genes by replacing their instructions with 
+NOOP instructions that have no effect when executed. 
+Some Push programs require an instruction to be present in a location, 
+with no particular concern for that instruction's details. It is not
+uncommon, for example, for programs to use the number of instructions on
+the \texttt{exec} stack as a counter or a numeric constant, but without ever
+actually executing those instructions. 
+We can replace these instructions with NOOPs without affecting the semantics
+of the program, potentially making the program more general without actually 
+making it smaller, or possibly enabling further simplifications. 
+Genes that are already NOOPed cannot be selected by a NOOP step of 
+simplification.
 
 \begin{table}[t]
 	\centering
@@ -117,25 +141,44 @@ Finally, some methods "noop" genes by replacing their instructions with instruct
 	\end{tabu}
 \end{table}
 
-The four genome methods of simplification are listed in Table \ref{table:genome-methods}. Each variant lists the types of steps that can be taken and the probability of each step being chosen. The most basic of the methods, \textbf{Genome} only allows for the silencing of 1 to 4 random genes in a single step. \textbf{Genome-Backtracking} and \textbf{Genome-Backtracking-Noop} occasionally unsilence a silent gene while silencing another, allowing the process to not follow a strict hill-climbing scheme.  \textbf{Genome-Noop} and Genome-Backtracking-Noop use nooping to turn intructions into noops without removing them entirely.
+The four genome methods of simplification are listed in Table \ref{table:genome-methods}. Each variant lists the types of steps that can be taken and the probability of each step being chosen. The most basic of the methods, 
+\textbf{Genome} simplification only allows for the silencing 
+of 1 to 4 random genes in a single step. \textbf{Genome-Backtracking} and \textbf{Genome-Backtracking-Noop} occasionally unsilence a silent gene while silencing another, allowing the process to not follow a strict hill-climbing scheme.  \textbf{Genome-Noop} and Genome-Backtracking-Noop use NOOPing to turn intructions into NOOPs without removing them entirely.
 
 Note that while the Program simplification method can remove unnecessary parentheses from a program, none of the genome methods have this ability. Since the genome methods change the genomes themselves, which have no parentheses, they cannot remove the parentheses that appear in the resulting translated program.
 
+\todo[inline]{But doesn't silencing, e.g., something like \texttt{exec-if}
+change the parens downstream?}
 
 \section{Experimental setup}
 \label{sec:setup}
 
-In our experiments, we wanted to answer two primary questions. First, does automatic simplification effectively improve the generalization of evolved programs that pass every training case? Second, which of the simplication methods described in the previous section produces the smallest programs, which generalizes the best, and is there correlation between getting smaller and generalizing better?
+In our experiments, we wanted to answer several key questions. 
+First, does automatic simplification effectively improve the generalization of evolved programs that pass every training case? 
+Further, which of the simplication methods described in the previous section 
+produces the smallest programs, which generalizes the best, and is there correlation between getting smaller and generalizing better?
 
-To examine these questions, we conducted simplification experiments using evolved solution programs from a suite of general program synthesis benchmark problems \cite{Helmuth:2015:GECCO}. This benchmark suite is composed of 29 general programming problems taken from introductory computer science course homework assignments. These problems require solution programs to utilize a wide range of programming constructs, such as multiple data types, control flow structures, and multiple inputs/outputs. For these problems, we are primarily interested in whether we can find a program that passes every training case and unseen test case, since programs that do not achieve such perfection do not represent true solutions to the problems \cite{Helmuth:2015:GECCO}. We will call a program that passes all of the training set a ``solution'', and a program that additionally passes all of the unseen test set a ``generalizing solution.''
+To examine these questions, we conducted simplification experiments using evolved solution programs from a suite of general program synthesis benchmark problems \cite{Helmuth:2015:GECCO}. This benchmark suite is composed of 29 general programming problems taken from introductory computer science course homework assignments. These problems require solution programs to utilize a wide range of programming constructs, such as multiple data types, control flow structures, and multiple inputs/outputs.
+After the original publication of these benchmark problems \cite{Helmuth:2015:GECCO}, they have seen use in a range of studies using PushGP (eg. \cite{Helmuth:2016:GECCO, McPhee:2016:GPTP, Helmuth:2015:GPTP, Helmuth:2015:dissertation}), 
+as well as recent work considering a general program synthesis grammar for 
+grammar guided genetic programming \cite{Forstenlechner:2017:eurogp}.
 
-After the original publication of these benchmark problems \cite{Helmuth:2015:GECCO}, they have seen use in a range of studies using PushGP (eg. \cite{Helmuth:2016:GECCO, McPhee:2016:GPTP, Helmuth:2015:GPTP, Helmuth:2015:dissertation}). Additionally, they were used in work considering a general program synthesis grammar for grammar guided genetic programming \cite{Forstenlechner:2017:eurogp}.
+For these problems, we are primarily interested in whether we can find a program that passes every training case and unseen test case, since programs that do not achieve such perfection do not represent true solutions to the problems \cite{Helmuth:2015:GECCO}. We will call a program that passes all of the training set a ``solution'', and a program that additionally passes all of the unseen test set a ``generalizing solution''.
 
-We took our evolved solution programs from the original set of benchmarking runs using the benchmark suite \cite{Helmuth:2015:GECCO}. In those original runs, each problem was attempted 100 times per selection method; in this work, we only use the runs that used lexicase selection. In these runs, PushGP created at least one generalizing solution to 22 of the problems. In addition, we include one problem (Super Anagrams) for which 14 programs were evolved that passed the training set but did not pass the unseen test set. We also include the Checksum problem, which was not solved in the runs for the original publication, but was subsequently solved with some additions to the training set.
+We took our evolved solution programs from the original set of benchmarking runs using the benchmark suite \cite{Helmuth:2015:GECCO}. In those original
+runs, each problem was attempted 100 times each for several selection methods;
+in this work, we only use the 100 runs that used lexicase selection, as it
+consistently had the highest success rates. 
+In these runs, PushGP created at least one generalizing solution to 22 of the problems. In addition, we include one problem (Super Anagrams) for which 14 programs were evolved that passed the training set but did not pass the unseen test set. We also include the Checksum problem, which was not solved in the runs for the original publication, but was subsequently solved with some additions to the training set.
 
-In earlier work showing how post-run simplification can reduce the size of evolved solution programs, it was shown that simplifying the same program many times can result in a range of resulting program sizes \cite{Spector:2014:GECCOcomp}. To acount for this variance in the simplified programs, we performed multiple simplifications of each solution program. For each of our five simplification methods, we conducted 100 separate simplification trials of each solution program, recording the size and generalization of each simplified program. Some of the unsimplified programs also entirely passed the unseen test set (i.e. generalized), and some did not (i.e. did not generalize). When running GP on real-world problems, one will not know whether an evolved solution program generalizes or not before using simplification. Thus we are interested in not only what happens to evolved programs that do not generalize, but also to those that already generalize. For example, it would not be beneficial to improve generalization of some programs while reducing generalization of many more programs.
+In earlier work, it was shown that simplifying the same program many times can result in a range of resulting program sizes \cite{Spector:2014:GECCOcomp}. To acount for this variance in the simplified programs, we performed multiple simplifications of each solution program. For each of our five simplification methods, we conducted 100 separate simplification trials of each solution program, recording the size and generalization of each simplified program. 
+Some of the original, unsimplified programs also entirely passed the 
+unseen test set (i.e. generalized), and some did not (i.e. did not generalize). When running GP on real-world problems, one will not know whether an evolved solution program generalizes or not before using simplification. Thus we are interested in not only what happens to evolved programs that do not generalize, but also to those that already generalize. For example, it would not be beneficial to improve generalization of some programs while reducing generalization of many more programs.
 
-For each simplification trial, we simplified the solution program using 10,000 steps of the simplification algorithm (see Algorithm~\ref{alg:simplification}). While this number of steps is likely more than necessary to effectively simplify most programs, the simplification process is not prohibitively expensive. Note that while every simplification step requires evaluating the new program, making 10,000 simplification steps moderately expensive, this is the equivalent number of evaluations to 10 generations of GP with a population of 1000. Since we are advocating for simplification at the end of a GP run, it only needs to happen once, and seems like a reasonable amount of required computation.
+For each simplification trial, we simplified the solution program using 10,000 steps of the simplification algorithm (see Algorithm~\ref{alg:simplification}). 
+While this number of steps is often more than necessary to effectively 
+simplify most programs, the simplification process is not prohibitively expensive. Note that while every simplification step requires evaluating the new program, making 10,000 simplification steps moderately expensive, this is the equivalent number of evaluations to 10 generations of GP with a population of 1000. Since we are advocating for simplification at the end of a GP run, it only needs to happen once, 
+so expending this much computational effort seems reasonable.
 
 The benchmark suite we used prescribes using randomly generated training and test cases for most of the input and output data. Since automatic simplification requires use of training data, we use the training and test sets that were used for the original run for every simplification of the solution program from that run.
 
@@ -146,18 +189,30 @@ The benchmark suite we used prescribes using randomly generated training and tes
 
 \begin{figure*}[t] %[t] sets the image at the top of the page; t = top, b = bottom, h = here%
 \centering
-\includegraphics[width=\textwidth]{Problem_by_Size_bar} % \linewidth
-\caption{For each problem, we plot the average program size of programs produced by different simplification methods, as well as the average program sizes of the unchanged programs as black horizontal bars. Remember that each simplification method does repeated trials using the same set of unchanged programs, and therefore has the same opportunities for simplification as the other methods. }
+\includegraphics[width=0.9\textwidth]{Problem_by_Size_bar} % \linewidth
+\caption{The average program size of programs produced by our five 
+	simplification methods for each problem set; the average program 
+	sizes of the unchanged programs are represented with black 
+	horizontal bars. Each simplification method performs repeated trials 
+	using the same set of unchanged programs, and therefore has 
+	the same opportunities for simplification as the other methods. }
 \label{fig:bar:size}
 \end{figure*}
 
 \hl{Question: Should we somehow indicate the number of data points that go into each problem? Some problems have a lot of unchanged solutions ($>$ 90), and some have very few ($<$ 10), with the latter group potentially being small sample size, and the former group having more effect on the aggregate plots across problems.}
+\todo[inline]{It took me a while to figure out the question, but the 
+	later comment about DL only having 6 solutions to work with caused the 
+	light bulb to go off. I suspect we should indicate this somewhere. A table 
+	would be big. Maybe putting the number of initial successes in parens after 
+	the problem name in the axis labels? -- Nic}
 
-We first consider the question of how much effect simplification has on the size of each solution program. Figure~\ref{fig:bar:size} presents the average program size of the unchanged solution programs on each problem as a horizontal black line. It then gives the average simplified size of the simplified solution programs, with 100 trials per solution, for each of our five simplification methods. It is immediately clear that every simplification method has a large impact on the size of the solution programs, with most shrinking to half their original size or smaller. In fact, the differences in size between the simplification methods all appear small compared to the difference with the unchanged programs' sizes.
+We first consider the question of how much effect simplification has on the size of each solution program. Figure~\ref{fig:bar:size} presents the average program size of the unchanged solution programs on each problem as a horizontal black line. It then gives the average simplified size of the simplified solution programs, with 100 trials per solution, for each of our five simplification methods. It is immediately clear that every simplification method has a large impact on the average size of the solution programs, with most shrinking to half their original size or smaller. 
+In fact, the size
+differences resulting from the various simplification methods are all 
+quite small when compared to the difference between the simplified sizes
+and the unchanged programs' sizes.
 
-To examine aggregate performance of each simplification method, in Table~\ref{table:size-ranks} we calculate the average rank for size for each method across the 24 problems, with rank 1 indicating the smallest average program size and rank 6 having largest. Note that we include the unchanged programs as one ``method'', which is why we have 6 possible ranks. Program simplification achieves the smallest programs on average, with both of the Genome backtracking methods coming soon after. The genome methods without backtracking have worse average ranks, with the unchanged programs always having worst rank. Since parentheses are counted as part of the size of a program, and since the Genome methods cannot remove extraneous parentheses as mentioned in Section~\ref{sec:simplification}, we hypothesize that Program simplification is able to achieve smaller sizes largely based on removing such parentheses.
-
-\begin{table}[ht]
+\begin{table}[tb]
 	\centering
 	\caption{The average rank in size for each simplification method across the data in Figure~\ref{fig:bar:size}, where lower rank means smaller programs. ``Unchanged'' is the rank of the evolved programs without any simplification. Methods are sorted by average rank.}
 	\label{table:size-ranks}
@@ -175,7 +230,9 @@ To examine aggregate performance of each simplification method, in Table~\ref{ta
 	\end{tabu}
 \end{table}
 
-The Friedman test on the data in Table~\ref{table:size-ranks} gives a \textit{p}-value $< 0.001$, indicating that at least one method performs significantly differently from the others. We then use a post-hoc Wilcoxon-Nemenyi-McDonald-Thompson test \cite{hollander1999nonparametric} to give the significance in the differences in ranking between each pair of methods at the $0.05$ significance level. Every simplification method besides Genome outranks the Unchanged programs. Additionally of note, Program outranks Genome-Noop and Genome; and both Genome backtracking methods outrank Genome. Note that even though these results show significant differences in rank among the methods, most of the actual differences in average size are relatively small compared to the sizes of the unchanged programs.
+To examine aggregate performance of each simplification method, in Table~\ref{table:size-ranks} we calculate the average rank for size for each method across the 24 problems, with rank 1 indicating the smallest average program size and rank 6 having largest. Note that we include the unchanged programs as one ``method'', which is why we have 6 possible ranks. Program simplification achieves the smallest programs on average, with both of the Genome backtracking methods coming soon after. The genome methods without backtracking have worse average ranks, with the unchanged programs always having worst rank. Since parentheses are counted as part of the size of a program, and since the Genome methods cannot remove extraneous parentheses as mentioned in Section~\ref{sec:simplification}, we hypothesize that Program simplification is able to achieve smaller sizes largely based on removing such parentheses.
+
+The Friedman test on the data in Table~\ref{table:size-ranks} gives a \textit{p}-value $< 0.001$, indicating that at least one method performs significantly differently from the others. We then use a post-hoc Wilcoxon-Nemenyi-McDonald-Thompson test \cite{hollander1999nonparametric} to give the significance in the differences in ranking between each pair of methods at the $0.05$ significance level. Every simplification method besides Genome outranks the Unchanged programs. Program also outranks Genome-Noop and Genome; and both Genome backtracking methods outrank Genome. Note that even though these results show significant differences in rank among the methods, most of the actual differences in average size are relatively small compared to the sizes of the unchanged programs.
 
 %Program - none                              3.685940e-14
 %GenomeBacktrackingNoop - none               6.733392e-12
@@ -200,13 +257,18 @@ Next, we consider the effect of simplification on the generalization of programs
 
 \begin{figure*}[t] %[t] sets the image at the top of the page; t = top, b = bottom, h = here%
 \centering
-\includegraphics[width=\textwidth]{Problem_by_PcntGen_bar} % \linewidth
-\caption{For each problem, we plot the percent of simplified programs that generalize to unseen data, as well as the percent of unchanged programs that generalize as black horizontal bars.
+\includegraphics[width=0.9\textwidth]{Problem_by_PcntGen_bar} % \linewidth
+\caption{The proportion of simplified programs that generalize to unseen data
+	for each problem, with the proportion of unchanged programs that generalize 
+	indicated with black horizontal bars.
  \hl{Question: In this figure, how much of the time are the simplified programs significantly better at generalization than the unsimplified programs? How would we measure this? Do we need to?}}
+ \hl{Is this just a bunch of \texttt{prop.test} in R, or am I not understanding
+ 	the question?}
 \label{fig:bar:percent_generalization}
 \end{figure*}
 
-Every simplification method either improves generalization or has no effect on every problem besides Double Letters\footnote{The Double Letters problem has one of the smaller sample sizes of our data set, with only six solution programs as starting points. All six solutions generalize before simplification. Five of the six generalize most of the time after simplification, but one solution program has many simplifications that don't generalize.}. Some of the increases in generalization appear substantial, as much as 25\% in the case of the Median problem.
+Every simplification method either improves generalization or has no effect on every problem besides Double Letters.\footnote{The Double Letters problem has one of the smaller sample sizes of our data set, with only six solution programs as starting points. All six solutions generalize before simplification. Five of the six generalize most of the time after simplification, but one solution program has many simplifications that don't generalize.} Some of the increases in generalization appear substantial, 
+improving as much as 25\% in the case of the Median problem.
 
 Also note that the five problems with the worst generalization in Figure~\ref{fig:bar:percent_generalization} are among the problems for which program sizes were largest in Figure~\ref{fig:bar:size}. For whatever reason, programs that solve these problems tend to be large and unable to shrink, and do not generalize well. We hypothesize, but have no data to support, that large programs such as these contain many ad-hoc components that overfit to individual test cases without really ``learning'' the underlying program structure, and therefore do not generalize to unseen data.
 
@@ -353,11 +415,11 @@ In each plot we draw a linear fit line showing the relationship of unchanged siz
 \hl{    Would a multi-restart simplification get us to smaller programs more often than the other methods we've tried? This could potentially avoid unlucky local minima. The backtracking methods are also trying to avoid unlucky local minima, so this would be an interesting comparison. It seems like we could answer this question with the data we have.}
 
 \subsection{Nic's Thoughts on Unused Push Instructions}
-Anyway, I wouldn't recommend using the word "bloat" because I also think that is generally associated with a tendency to get bigger and bigger and bigger in ways that aren't connected to improvements in fitness, and that doesn't seem to be a Clojush thing. (I'm personally not super clear on why that's not a thing in Clojush, etc., etc., but that's not today's problem.)
+Anyway, I wouldn't recommend using the word ``bloat" because I also think that is generally associated with a tendency to get bigger and bigger and bigger in ways that aren't connected to improvements in fitness, and that doesn't seem to be a Clojush thing. (I'm personally not super clear on why that's not a thing in Clojush, etc., etc., but that's not today's problem.)
 
-Even more complicated is the fact that in Push programs we often find various categories of "unused" code. There are instructions that do nothing because their arguments aren't on the stack, or sometimes aren't on the stack. There are instructions that do something, but no one cares (they push a boolean that's never used). There are instructions that are there just to add content to a stack, but who's particular action doesn't matter. Etc., etc. These are not things "standard tree-based GP" people run into very often, and might not be obvious to them.
+Even more complicated is the fact that in Push programs we often find various categories of ``unused" code. There are instructions that do nothing because their arguments aren't on the stack, or sometimes aren't on the stack. There are instructions that do something, but no one cares (they push a boolean that's never used). There are instructions that are there just to add content to a stack, but who's particular action doesn't matter. Etc., etc. These are not things ``standard tree-based GP" people run into very often, and might not be obvious to them.
 
-Lastly, it can be really hard to tell what's being used and how in complex programs, and how that relates to the simplified versions. It's easy to implicitly assume that the simplified program is "the thing", and that everything that got removed didn't really matter in the original execution. (This is often an assumption in tree-based bloat discussions.) I'm pretty sure this is often very not true, however, in Push, and that's important to the generalization. It seems fairly common, for example, for Push programs (especially with the "standard" instruction set) to have a lot of unnecessary looping that frequently gets removed or reduced in simplification. Often that looping is actually executed in the original program, so it's part of how the training answers are formed. I have a suspicion that part of why simplification often improves generalization is that it removes these unnecessary loops that are sometimes fragile and do weird things on certain inputs.
+Lastly, it can be really hard to tell what's being used and how in complex programs, and how that relates to the simplified versions. It's easy to implicitly assume that the simplified program is ``the thing", and that everything that got removed didn't really matter in the original execution. (This is often an assumption in tree-based bloat discussions.) I'm pretty sure this is often very not true, however, in Push, and that's important to the generalization. It seems fairly common, for example, for Push programs (especially with the ``standard" instruction set) to have a lot of unnecessary looping that frequently gets removed or reduced in simplification. Often that looping is actually executed in the original program, so it's part of how the training answers are formed. I have a suspicion that part of why simplification often improves generalization is that it removes these unnecessary loops that are sometimes fragile and do weird things on certain inputs.
 
 
 
