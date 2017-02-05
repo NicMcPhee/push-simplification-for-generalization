@@ -117,6 +117,50 @@ all_runs %>%
   guides(colour = guide_legend(override.aes = list(alpha = 1)))
 ```
 
+# Quad Scatter Plot (Nic's Plot)
+
+```{r}
+unsimplified_info <- all_runs %>%
+  filter(type == "unsimplified") %>%
+  mutate(started_generalized = testError == 0) %>%
+  mutate(originalSize = programSize) %>%
+  select(problem, log, method, originalSize, started_generalized)
+
+all_runs %>%
+  filter(type == "simplified") %>%
+  mutate(genPost = testError == 0,
+         simplifiedSize = programSize) %>%
+  inner_join(unsimplified_info, by = c("problem", "log", "method")) %>%
+  mutate(post_simp_generalized = ifelse(testError == 0, "Generalized Post-Simplification", "Didn't Generalize Post-Simplification")) %>%
+  select(problem, originalSize, simplifiedSize, started_generalized, post_simp_generalized) %>%
+  ggplot(aes(x = originalSize,
+             y = simplifiedSize)) +
+  geom_point(aes(color = problem),
+             alpha = 0.3,
+             size = 0.5, 
+             shape = 4) +
+  geom_abline(slope = 1, 
+              intercept = 0,
+              color = 'grey') +
+  geom_smooth(method = "lm",
+              se = FALSE,
+              color = 'black',
+              linetype = 2,
+              size = 0.5) +
+  facet_grid(started_generalized ~ post_simp_generalized,
+             scales = "free") +
+  theme_bw() +
+  theme(axis.text = element_text(size = 12),
+        axis.title = element_text(size = 12),
+        strip.text = element_text(size = 12),
+        legend.position="none") +
+  guides(colour = guide_legend(override.aes = list(alpha = 1))) +
+  labs(x = "Pre-Simplification Size",
+       y = "Post-Simplification Size")
+
+ggsave(paste0(path_to_plots,'Quad_Scatter.pdf'), 
+       units = c('in'), width = 7.5, height = 4.5)
+```
 
 # Problem Vs Avgerage program Size by Method
 
@@ -179,7 +223,7 @@ melt(prog_size_table,
                     name = 'Method',
                     labels=c("Genome", "GenomeBacktracking", "GenomeBacktrackingNoop", "GenomeNoop", "Unsimplified", "Program"))
 
-  ggsave(paste0(path_to_plots,'Problem_by_Size_bar.png'), 
+  ggsave(paste0(path_to_plots,'Problem_by_Size_bar.pdf'), 
          units = c('in'), width = 7.5, height = 5)
 ```
 
@@ -247,7 +291,7 @@ melt(perct_generalized_table,
                     name = 'Method',
                     labels=c("Genome", "GenomeBacktracking", "GenomeBacktrackingNoop", "GenomeNoop", "Unsimplified", "Program"))
 
-  ggsave(paste0(path_to_plots,'Problem_by_PcntGen_bar.png'), 
+  ggsave(paste0(path_to_plots,'Problem_by_PcntGen_bar.pdf'), 
          units = c('in'), width = 7.5, height = 5)
 ```
 
@@ -401,7 +445,7 @@ all_runs %>%
   geom_density(stat = 'count',
                fill = cbbPalette[6],
                color = cbbPalette[6]) +
-  facet_grid(started_generalized ~ generalized) +
+  facet_grid(started_generalized ~ generalized, scales = 'free_y') +
   # facet_grid( generalized ~ started_generalized) +
   theme_bw() + 
   theme(axis.text = element_text(size = 18),
@@ -410,8 +454,17 @@ all_runs %>%
   labs(x = "Post Simplification Program Size",
        y = "Count")
 
-ggsave(paste0(path_to_plots,'Quad_Density.png'), 
+ggsave(paste0(path_to_plots,'Quad_Density.pdf'), 
        units = c('in'), width = 7.5, height = 4.5)
+```
+
+```{r}
+all_runs %>%
+  filter(type == "simplified") %>%
+  inner_join(started_generalized_lookup, by = c("log", "problem")) %>%
+  mutate(post_simp_generalized = ifelse(testError == 0, "Generalized Post-Simplification", "Didn't Generalize Post-Simplification")) %>%
+  group_by(started_generalized, post_simp_generalized) %>%
+  summarise(count = n())
 ```
 
 ## Facet where unsimplified program generalized
