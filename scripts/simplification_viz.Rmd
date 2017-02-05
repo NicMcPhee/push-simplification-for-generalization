@@ -147,8 +147,7 @@ all_runs %>%
               color = 'black',
               linetype = 2,
               size = 0.5) +
-  facet_grid(started_generalized ~ post_simp_generalized,
-             scales = "free") +
+  facet_grid(started_generalized ~ post_simp_generalized) +
   theme_bw() +
   theme(axis.text = element_text(size = 8),
         axis.title = element_text(size = 8),
