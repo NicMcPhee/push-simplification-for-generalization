@@ -254,6 +254,23 @@ For generalization, the differences in rank for the simplification methods are n
 %Program - GenomeNoop                        9.505945e-01
 
 
+\begin{table}[t]
+	\centering
+	\caption{This table records every single simplified program across all problems. The top row corresponds to unchanged programs that did not generalize, where the bottom row is those that did generalize. The left column contains all simplified programs that did not generalize, and the right column has those that did. For example, we see that there are 53787 simplified programs that generalize coming from original programs that did not generalize.}
+	\label{table:total-counts}
+	\begin{tabu} to \textwidth {l r r}
+		\toprule
+		& \multicolumn{2}{p{2.8cm}}{\textbf{Generalizes \newline Post-Simplification}} \\
+		& \textbf{No} & \textbf{Yes} \\
+		\midrule
+		\textbf{Generalizes Pre: No} & 102617 & 53787 \\
+		\textbf{Generalizes Pre: Yes} & 3735  & 289265 \\
+		\bottomrule
+	\end{tabu}
+\end{table}
+
+Table~\ref{table:total-counts} presents the total count of each combination of programs that did/did not generalize pre-simplification with did/did not generalize post-simplification. Considering the first row, we see that of the evolved programs that did not generalize, over one third generalized after simplification. This is a large increase in generalization. On the other hand, out of the starting programs that did generalize before simplification (the second row), only about 1.2\% of the simplifications broke them so that they did not generalize. This gives strong evidence that simplification can be used to make evolved programs more likely to generalize, without a large risk of breaking programs that already generalize.
+
 
 \begin{figure}[t] %[t] sets the image at the top of the page; t = top, b = bottom, h = here%
 \centering
@@ -268,6 +285,8 @@ For generalization, the differences in rank for the simplification methods are n
 \caption{Size counts of simplified programs where pre-simplified program did generalize.}
 \label{fig:count:pre-simp-gen-true}
 \end{figure}
+
+
 
 We next want to explore how size after simplification corresponds to the generalization of simplified programs. Figures~\ref{fig:count:pre-simp-gen-false} and \ref{fig:count:pre-simp-gen-true} each plot the counts of the sizes of the simplified programs for different sets of programs, aggregated across all problems. Figure~\ref{fig:count:pre-simp-gen-false} only includes those simplifications that started with unchanged programs that did not generalize. This figure clearly shows that when the resulting simplified program was relatively small (with size less than about 25), it was much more likely to change from ungeneralizing to generalizing (shown by the blue line). On the other hand, programs that remained larger after simplification were more likely to not have their generalization affected by simplification (shown by the red line). Thus, most of the improvements in generalization that we described previously come from simplified programs that achieve small sizes. This clearly shows that there is a correlation, if not causation, between post-simplification size and the probability of generalization.
 
