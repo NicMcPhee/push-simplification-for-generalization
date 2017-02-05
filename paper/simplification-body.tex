@@ -352,14 +352,111 @@ In each plot we draw a linear fit line showing the relationship of unchanged siz
 
 \hl{    Would a multi-restart simplification get us to smaller programs more often than the other methods we've tried? This could potentially avoid unlucky local minima. The backtracking methods are also trying to avoid unlucky local minima, so this would be an interesting comparison. It seems like we could answer this question with the data we have.}
 
-\subsection{Nic's Thoughts on Unused Push Instructions}
-Anyway, I wouldn't recommend using the word "bloat" because I also think that is generally associated with a tendency to get bigger and bigger and bigger in ways that aren't connected to improvements in fitness, and that doesn't seem to be a Clojush thing. (I'm personally not super clear on why that's not a thing in Clojush, etc., etc., but that's not today's problem.)
+\todo[inline]{I don't really see how we could answer that question with
+this data? It's definitely a cool question, but seems more future work
+than this paper. -- Nic}
 
-Even more complicated is the fact that in Push programs we often find various categories of "unused" code. There are instructions that do nothing because their arguments aren't on the stack, or sometimes aren't on the stack. There are instructions that do something, but no one cares (they push a boolean that's never used). There are instructions that are there just to add content to a stack, but who's particular action doesn't matter. Etc., etc. These are not things "standard tree-based GP" people run into very often, and might not be obvious to them.
+As noted earlier, all five simplification methods lead to substantial
+reductions in program size across all 24 test problems, as shown in
+Figure~\ref{fig:bar:size}, with the average simplified sizes often 
+well under half the original sizes, and sometimes much smaller than that.
 
-Lastly, it can be really hard to tell what's being used and how in complex programs, and how that relates to the simplified versions. It's easy to implicitly assume that the simplified program is "the thing", and that everything that got removed didn't really matter in the original execution. (This is often an assumption in tree-based bloat discussions.) I'm pretty sure this is often very not true, however, in Push, and that's important to the generalization. It seems fairly common, for example, for Push programs (especially with the "standard" instruction set) to have a lot of unnecessary looping that frequently gets removed or reduced in simplification. Often that looping is actually executed in the original program, so it's part of how the training answers are formed. I have a suspicion that part of why simplification often improves generalization is that it removes these unnecessary loops that are sometimes fragile and do weird things on certain inputs.
+Further, all the simplification methods improved generalization rates for
+all but a few problems (see Figure~\ref{fig:bar:percent_generalization}),
+but again with little difference among the simplification methods.
+In some cases, e.g., count-odds, all the unsimplified programs already
+generalized, so the best simplification could do is to not make things
+worse. In other cases, such as
+checksum, double-letters, and vectors-summed, there were very few 
+solution programs generated in the initial 100 PushGP runs (5, 6, and 1,
+respectively). With so few data points to work with it's not surprising
+that in some cases (e.g., checksum and vectors-summed) there was no change
+in generalization. In the case of double-letters, five of the six initial
+solutions were consistently simplified without affecting generalization.
+The sixth solution, however, frequently let to simplifications that no 
+longer generalized. Only 37 of the 100 Program simplification results, 
+for example, generalized, while only 45 of the 100 Genome simplifications
+generalized.
 
+\todo[inline]{All the the failures I've looked at (and I looked at quite a
+	few) have a total error of 6, with errors of 2 on the same three test
+	cases. They all share a weird sequence of 20 `!' characters in a row
+	early in their simplified programs, which smells really fragile to me,
+	but I haven't dug into the programs enough to know if that's the issue.}
 
+It's also clear from Figures~\ref{fig:count:quad} and~\ref{fig:nic-plot} that
+smaller post-simplification sizes were strongly correlated with the
+ability to generalize after simplification. This is consistent with 
+a broad range of work that either argues theoretically (e.g., the minimum
+description length principle~\cite{iba1994genetic, zhang1995balancing}) 
+and/or empirically
+that smaller programs will be more likely to generalize~\cite{thing1, thing2}.
+While there have been contrary results that show that program size and
+generalization are not always correlated~\cite{silva2012operator}, the
+correlation seems extremely strong in our data. 
+
+The relationship between
+program size and generalization is almost certainly driven at least in part
+by both the problem being solved, and the representation being used for
+solutions. It's possible, therefore, that the strong correlation we see
+is in some way related to the kinds of software synthesis problems we're using
+as benchmarks, which clearly behave differently from the commonly used
+symbolic regression and classification benchmarks. 
+
+It's also possible,
+however, that the design decisions in PushGP play a crucial role here. Any
+attempt to control or reduce program size in GP is premised on the idea that
+there must be some parts of the program that aren't playing an important role
+and can thus be removed; such code has been called many things over the years,
+such as ``introns'' or ``bloat''. The fact that the evolved PushGP solutions
+were bigger than strictly necessary (often by a substantial margin) is arguably
+not attributable to ``bloat'' as it's typically been 
+understood~\cite{poli08:fieldguide}, since in PushGP we don't see a 
+general tendency towards increasing program size over time. 
+
+There is obviously ``unnecessary'' code in these evolved Push programs, 
+however, but Understanding the source and role of this removable Push 
+code is complex, in part because there are potentially many categories 
+of ``unused'' or ``unnecessary'' code
+in Push. Examples include:
+\begin{itemize}
+	\item Instructions that do nothing because they require arguments 
+	that aren't on the appropriate stacks when they're executed. 
+	\item Instructions that do \emph{something}, but not something that has an 
+	impact on the final result because, e.g., they act on values on stacks 
+	that play no role in the key computation. 
+	\item Instructions whose \emph{presence} is important (e.g., as a marker 
+	or to make sure the \texttt{exec} stack has the right size), but 
+	whose details or \emph{behavior} isn't.
+\end{itemize}
+Note also that the ``activity'' of many of these instructions is highly
+dependent on context. An instruction that does nothing in a parent because
+the arguments it needs aren't available, might play a prominent role in a
+child if a change ``upstream'' causes those arguments to now be available.
+
+These dynamics are very different from many tree-based GP systems, where
+changes in argument subtrees will change the \emph{value} computed at a 
+node, but won't typically change the \emph{semantics} of the operator at that
+node. A plus node in a tree will always do addition, even if changes in its
+arguments lead to different sums; the plus node will (in most tree-based
+systems) never simply fail to act because an argument is missing.
+
+So in the same way that the design of our simplification methods was
+tightly coupled to the details of Push and Plush, it would not be surprising
+if at least some of the results (e.g., the relationship between size and
+generalization) were also tied to the specifics of PushGP. One common
+anecdotal observation is that unsimplified evolved Push programs often
+contain large numbers of looping and recursion constructs that are removed
+in the simplification process. It's possible that in many cases these loops
+are performing ``unnecessary'' computation and counting on the PushGP
+execution limits to stop them and force the return of an answer. This sort
+of approach is likely to be quite brittle, and eliminating these unnecessary
+loops might be a source of improved generalization. All of which is rather
+deeply intertwined with key details of PushGP.
+
+\todo[inline]{We should grab an empirical citation or two about small
+programs generalizing better. The Silva GPEM paper~\cite{silva2012operator}
+would probably be a good place to do some digging.}
 
 \section{Related Work}
 \label{sec:related}
