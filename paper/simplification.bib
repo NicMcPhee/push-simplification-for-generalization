@@ -386,6 +386,52 @@
 	Expt(2,n). Sorting a list.",
 }
 
+@InProceedings{spector2:2001:gecco,
+  title =	"Autoconstructive Evolution: Push, Push{GP}, and
+		 Pushpop",
+  author =	"Lee Spector",
+  pages =	"137--146",
+  year = 	"2001",
+  publisher =	"Morgan Kaufmann",
+  booktitle =	"Proceedings of the Genetic and Evolutionary
+		 Computation Conference (GECCO-2001)",
+  NOeditor =	"Lee Spector and Erik D. Goodman and Annie Wu and W. B.
+		 Langdon and Hans-Michael Voigt and Mitsuo Gen and
+		 Sandip Sen and Marco Dorigo and Shahram Pezeshk and Max
+		 H. Garzon and Edmund Burke",
+  address =	"San Francisco, California, USA",
+  publisher_address = "San Francisco, CA 94104, USA",
+  month =	"7-11 " # jul,
+  keywords =	"genetic algorithms, genetic programming,
+		 self-replication, stack-based genetic programming,
+		 ontogenetic programming, adaptive evolutionary
+		 computation, recursion, modularity",
+  ISBN = 	"1-55860-774-9",
+  URL =  	"http://hampshire.edu/lspector/pubs/ace.pdf",
+  URL =  	"http://citeseer.ist.psu.edu/445431.html",
+  URL =  	"http://www.cs.bham.ac.uk/~wbl/biblio/gecco2001/d01.pdf",
+  abstract =	"This paper is a preliminary report on autoconstructive
+		 evolution, a framework for evolutionary computation in
+		 which the machinery of reproduction and diversification
+		 (and thereby the machinery of evolution) evolves within
+		 the individuals of an evolving population of problem
+		 solvers. Autoconstructive evolution is illustrated with
+		 Pushpop, an evolving population of programs expressed
+		 in the Push programming language. The Push programming
+		 language can also be used in a more traditional genetic
+		 programming framework and may have unique benefits when
+		 so employed; the PushGP system, which uses traditional
+		 genetic programming techniques to evolve Push programs,
+		 is also described.",
+  notes =	"GECCO-2001 A joint meeting of the tenth International
+		 Conference on Genetic Algorithms (ICGA-2001) and the
+		 sixth Annual Genetic Programming Conference (GP-2001)
+		 Part of \cite{spector:2001:GECCO} Slides at the 2001
+		 Genetic and Evolutionary Computation Conference
+		 (GECCO-2001).
+		 http://hampshire.edu/lspector/ACE-GECCO.pdf",
+}
+
 %% Simplification in Push
 
 @MastersThesis{Robinson:2001:GPtieus,
@@ -585,7 +631,7 @@
 		 Diversity Analysis",
   booktitle =	"Genetic Programming Theory and Practice XIII",
   year = 	"2015",
-  editor =	"Rick Riolo and William P. Worzel and M. Kotanchek and
+  NOeditor =	"Rick Riolo and William P. Worzel and M. Kotanchek and
 		 A. Kordon",
   series =	"Genetic and Evolutionary Computation",
   address =	"Ann Arbor, USA",
@@ -635,7 +681,7 @@
   year = 	"2016",
   editor =	"Tobias Friedrich",
   pages =	"717--724",
-  note = 	"Nominated for best paper",
+  notes = 	"Nominated for best paper",
   keywords =	"genetic algorithms, genetic programming",
   month =	"20-24 " # jul,
   organisation = "SIGEVO",
@@ -685,13 +731,25 @@
   size = {16 pages}
 }
 
+@inproceedings{Helmuth:2016:GPTP,
+  author = {Thomas Helmuth and Lee Spector and Nicholas Freitag McPhee and Saul Shanabrook},
+  title = {Linear Genomes for Structured Programs},
+  booktitle = {Genetic Programming Theory and Practice XIV},
+  year = {2016},
+  series = {Genetic and Evolutionary Computation},
+  address = {Ann Arbor, USA},
+  month = may,
+  publisher = {Springer},
+  size = {16 pages}
+}
+
 @book{hollander1999nonparametric,
   title={Nonparametric Statistical Methods},
   author={Hollander, M. and Wolfe, D.A.},
   isbn={9780471190455},
   lccn={98003314},
   series={Wiley Series in Probability and Statistics},
-  url={http://books.google.com/books?id=RJAQAQAAIAAJ},
+  NOurl={http://books.google.com/books?id=RJAQAQAAIAAJ},
   year={1999},
   publisher={Wiley}
 }
@@ -822,7 +880,7 @@
 		 Genetic Programming",
   booktitle =	"18th European Conference on Genetic Programming",
   year = 	"2015",
-  editor =	"Penousal Machado and Malcolm I. Heywood and James
+  NOeditor =	"Penousal Machado and Malcolm I. Heywood and James
 		 McDermott and Mauro Castelli and Pablo Garcia-Sanchez
 		 and Paolo Burelli and Sebastian Risi and Kevin Sim",
   series =	"LNCS",
@@ -880,7 +938,7 @@
   booktitle =	"GECCO '09: Proceedings of the 11th Annual conference
 		 on Genetic and evolutionary computation",
   year = 	"2009",
-  editor =	"Guenther Raidl and Franz Rothlauf and Giovanni
+  NOeditor =	"Guenther Raidl and Franz Rothlauf and Giovanni
 		 Squillero and Rolf Drechsler and Thomas Stuetzle and
 		 Mauro Birattari and Clare Bates Congdon and Martin
 		 Middendorf and Christian Blum and Carlos Cotta and
@@ -941,7 +999,7 @@
   booktitle =	"{GECCO 2006:} Proceedings of the 8th annual conference
 		 on Genetic and evolutionary computation",
   year = 	"2006",
-  editor =	"Maarten Keijzer and Mike Cattolico and Dirk Arnold and
+  NOeditor =	"Maarten Keijzer and Mike Cattolico and Dirk Arnold and
 		 Vladan Babovic and Christian Blum and Peter Bosman and
 		 Martin V. Butz and Carlos {Coello Coello} and Dipankar
 		 Dasgupta and Sevan G. Ficici and James Foster and
@@ -967,21 +1025,13 @@
   doi-url =	"http://dx.doi.org/10.1145/1143997.1144159",
 }
 
-@PhdThesis{helmuth:dissertation,
-  author =       "T. M. Helmuth",
-  title =        "General Program Synthesis from Examples Using Genetic Programming with Parent Selection Based on Random Lexicographic Orderings of Test Cases",
-  school =       "College of Information and Computer Sciences, University of
-                 Massachusetts, Amherst",
-  year =         "2015",
-  URL =          "https://web.cs.umass.edu/publication/docs/2015/UM-CS-PhD-2015-005.pdf",
-}
 
 @InProceedings{LaCava:2014:GPTP,
   author =	"William {La Cava} and Lee Spector",
   title =	"Inheritable Epigenetics in Genetic Programming",
   booktitle =	"Genetic Programming Theory and Practice XII",
   year = 	"2014",
-  editor =	"Rick Riolo and William P. Worzel and Mark Kotanchek",
+  NOeditor =	"Rick Riolo and William P. Worzel and Mark Kotanchek",
   series =	"Genetic and Evolutionary Computation",
   pages =	"37--51",
   address =	"Ann Arbor, USA",
@@ -1023,4 +1073,38 @@
 		 \cite{Riolo:2014:GPTP} published after the workshop in
 		 2015",
   doi-url =	"http://dx.doi.org/10.1007/978-3-319-16030-6_3",
+}
+
+@InProceedings{rosca:1996:gVsGP,
+  author =	"Justinian Rosca",
+  title =	"Generality Versus Size in Genetic Programming",
+  booktitle =	"Genetic Programming 1996: Proceedings of the First
+		 Annual Conference",
+  NOeditor =	"John R. Koza and David E. Goldberg and David B. Fogel
+		 and Rick L. Riolo",
+  year = 	"1996",
+  month =	"28--31 " # jul,
+  keywords =	"genetic algorithms, genetic programming",
+  pages =	"381--387",
+  address =	"Stanford University, CA, USA",
+  publisher =	"MIT Press",
+  URL =  	"ftp://ftp.cs.rochester.edu/pub/u/rosca/gp/96.gp.ps.gz",
+  size = 	"6 pages",
+  abstract =	"Genetic Programming (GP) uses variable size
+		 representations as programs. Size becomes an important
+		 and interesting emergent property of the structures
+		 evolved by GP. The size of programs can be both a
+		 controlling and a controlled factor in GP search. Size
+		 influences the efficiency of the search process and is
+		 related to the generality of solutions. This paper
+		 analyzes the size and generality issues in standard GP
+		 and GP using subroutines and addresses the question
+		 whether such an analysis can help control the search
+		 process. We relate the size, generalization and
+		 modularity issues for programs evolved to control an
+		 agent in a dynamic and non-deterministic environment,
+		 as exemplified by the Pac-Man game.",
+  URL =  	"http://cognet.mit.edu/sites/default/files/books/9780262315876/pdfs/9780262315876_chap52.pdf",
+  URL =  	"http://cognet.mit.edu/library/books/view?isbn=0262611279",
+  notes =	"GP-96",
 }
