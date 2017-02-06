@@ -439,7 +439,7 @@ The correlation between post-simplification size and generalization can also be 
 \begin{figure}[t] %[t] sets the image at the top of the page; t = top, b = bottom, h = here%
 \centering
 \includegraphics[width=\linewidth]{Quad_Scatter} % \linewidth
-\caption{In each of the subgraphs, a simplified program is plotted at each point, with its pre-simplified size on the $x$-axis and its post-simplified size on the $y$-axis. Vertical striping is the result of simplifying each unchanged program 100 times for each of the 5 simplification methods. The top two plots contain programs that did not generalze pre-simplification, and the bottom two plots contain programs that did generalize pre-simplification. The left two plots are simplified programs that do not generalize; the right plots do generalize. For each type, we also give a linear trend line.}
+\caption{In each of the subgraphs, a simplified program is plotted at each point, with its pre-simplified size on the $x$-axis and its post-simplified size on the $y$-axis. Vertical striping is the result of simplifying each unchanged program 100 times for each of the 5 simplification methods. The top two plots contain programs that did not generalze pre-simplification, and the bottom two plots contain programs that did generalize pre-simplification. The left two plots are simplified programs that do not generalize; the right plots do generalize. For each plot, we also give a linear trend line.}
 \label{fig:nic-plot}
 \end{figure}
 
@@ -524,14 +524,10 @@ ability to generalize after simplification. This is consistent with
 a broad range of work that either argues theoretically (e.g., the minimum
 description length principle~\cite{iba1994genetic, zhang1995balancing}) 
 and/or empirically
-that smaller programs will be more likely to generalize~\cite{thing1, thing2}.
+that smaller programs will be more likely to generalize~\cite{rosca:1996:gVsGP}.
 While there have been contrary results that show that program size and
 generalization are not always correlated~\cite{silva2012operator}, the
 correlation seems extremely strong in our data. 
-
-\todo[inline]{We should grab an empirical citation or two about small
-programs generalizing better. The Silva GPEM paper~\cite{silva2012operator}
-would probably be a good place to do some digging.}
 
 The relationship between
 program size and generalization is almost certainly driven at least in part
