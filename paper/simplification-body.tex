@@ -323,9 +323,10 @@ Next, we consider the effect of simplification on the generalization of programs
 \caption{The proportion of simplified programs that generalize to unseen data
 	for each problem, with the proportion of unchanged programs that generalize 
 	indicated with black horizontal bars.
- \hl{Question: In this figure, how much of the time are the simplified programs significantly better at generalization than the unsimplified programs? How would we measure this? Do we need to?}}
- \hl{Is this just a bunch of \texttt{prop.test} in R, or am I not understanding
- 	the question?}
+% \hl{Question: In this figure, how much of the time are the simplified programs significantly better at generalization than the unsimplified programs? How would we measure this? Do we need to?}}
+% \hl{Is this just a bunch of \texttt{prop.test} in R, or am I not understanding
+% 	the question?
+}
 \label{fig:bar:percent_generalization}
 \end{figure*}
 
@@ -399,8 +400,8 @@ For generalization, the differences in rank for the simplification methods are n
 
 \begin{figure}[t] %[t] sets the image at the top of the page; t = top, b = bottom, h = here%
 \centering
-\includegraphics[width=\linewidth]{quad_density_new_bad}
-\caption{We plot and record every single simplified program across all problems. The top row corresponds to programs that did not generalize pre-simplification, and the bottom row is those that did generalize. The left column contains all simplified programs that did not generalize, and the right column has those that did. The numbers in each plot give the total number of programs in that subplot. For example, we see that there are 53787 simplified programs that generalize coming from original programs that did not generalize. The lines count the number of simplified programs at each simplified program size. Note the different $y$-axis scales of the top and bottom rows. \hl{replace with high-quality image later}}
+\includegraphics[width=\linewidth]{Quad_Density_labeled3} %{quad_density_new_bad}
+\caption{We plot and record every single simplified program across all problems. The top row corresponds to programs that did not generalize pre-simplification, and the bottom row is those that did generalize. The left column contains all simplified programs that did not generalize, and the right column has those that did. The numbers in each plot give the total number of programs in that subplot. For example, we see that there are 53787 simplified programs that generalize coming from original programs that did not generalize. The lines count the number of simplified programs at each simplified program size. Note the different $y$-axis scales of the top and bottom rows.}
 \label{fig:count:quad}
 \end{figure}
 
