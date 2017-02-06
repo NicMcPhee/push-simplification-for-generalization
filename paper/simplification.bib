@@ -1142,3 +1142,67 @@
 		 conference (GP-2006). ACM Order Number 910060",
   doi-url =	"http://dx.doi.org/10.1145/1143997.1144156",
 }
+
+@Article{Brameier:2001:TEC,
+  author =	"Markus Brameier and Wolfgang Banzhaf",
+  title =	"A Comparison of Linear Genetic Programming and Neural
+		 Networks in Medical Data Mining",
+  journal =	"IEEE Transactions on Evolutionary Computation",
+  year = 	"2001",
+  volume =	"5",
+  number =	"1",
+  pages =	"17--26",
+  month =	feb,
+  keywords =	"genetic algorithms, genetic programming, Data mining,
+		 evolutionary computation, neural networks",
+  URL =  	"http://web.cs.mun.ca/~banzhaf/papers/ieee_taec.pdf",
+  size = 	"10 pages",
+  abstract =	"We apply linear genetic programming to several
+		 diagnosis problems in medicine. An efficient algorithm
+		 is presented that eliminates intron code in linear
+		 genetic programs. This results in a significant speedup
+		 which is especially interesting when operating with
+		 complex datasets as they are occuring in real-world
+		 applications like medicine. We compare our results to
+		 those obtained with neural networks and argue that
+		 genetic programming is able to show similar performance
+		 in classification and generalization even within a
+		 relatively small number of generations.",
+  notes =	"proben1/UCI LGP variable length string of C
+		 instruction. Branching. steady state tournament
+		 selection. two-point string crossover {"}high mutation
+		 rates have been experienced to produced better
+		 results{"} p19. Size<=256 {"}it is much easier for the
+		 GP system to implement structural introns [than
+		 semantic ones]{"} p20 {"}for all problems discussed,
+		 the performance of GP in generalization comes close to
+		 or even better then the results documented for NNs{"}
+		 (MLP, RPROP) p21 Ten demes of 500 connected in one
+		 direction circle. 5% mutation rate. {"}On average, the
+		 number of effective generations is reduced by a factor
+		 of three when using demes. Tests with and without
+		 conditionals. Runtime comparison. Intron removal (dead
+		 code) at run time.",
+}
+
+@InProceedings{hooper:1996:iarGPes,
+  author =	"Dale Hooper and Nicholas S. Flann",
+  title =	"Improving the Accuracy and Robustness of Genetic
+		 Programming through Expression Simplification",
+  booktitle =	"Genetic Programming 1996: Proceedings of the First
+		 Annual Conference",
+  NOeditor =	"John R. Koza and David E. Goldberg and David B. Fogel
+		 and Rick L. Riolo",
+  year = 	"1996",
+  month =	"28--31 " # jul,
+  keywords =	"genetic algorithms, genetic programming",
+  pages =	"428",
+  address =	"Stanford University, CA, USA",
+  publisher =	"MIT Press",
+  ISBN = 	"0-262-61127-9",
+  URL =  	"http://digital.cs.usu.edu/~flann/gp.pdf",
+  URL =  	"http://cognet.mit.edu/sites/default/files/books/9780262315876/pdfs/9780262315876_chap67.pdf",
+  URL =  	"http://cognet.mit.edu/library/books/view?isbn=0262611279",
+  size = 	"1 page",
+  notes =	"GP-96. Occam's razor, bloat, introns, 200 edit rules",
+}

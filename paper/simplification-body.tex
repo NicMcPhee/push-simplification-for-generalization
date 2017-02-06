@@ -19,7 +19,7 @@ In the following section we first briefly describe related work on automatic sim
 
 \subsection{Papers about automatic simplification}
 
-Simplification of evolved programs has been used for various reasons in GP, though as far as we know, never explicitly to improve generalization. Some of the primary uses include making evolved programs more understandable \cite{} and controlling bloat during a run~\cite{1144156}. Additionally, algebraic simplification has been used to combat exponential code growth in semantic (crossover?/genetic programming?) \cite{}.
+Simplification of evolved programs has been used for various reasons in GP, though as far as we know, never explicitly to improve generalization of an evolved solution. Some of the primary uses include making evolved programs more understandable~\cite{} and controlling bloat during a run~\cite{1144156, Kinzett:2010:cec, Brameier:2001:TEC}. Of particular interest is work that used numerical simplification during a run to reduce overfitting~\cite{Kinzett:2010:cec}. Additionally, algebraic simplification has been used to combat exponential code growth in semantic (crossover?/genetic programming?) \cite{}. Unlike our work, many of these methods (including algebraic simplification) cannot change the semantics of a program, and therefore cannot affect the generalization to unseen data.
 
 Are these methods hill climbing? Algebraic?
 
@@ -31,20 +31,13 @@ Genprog minimization after run (see 7/24/16)
 \item
 Field Guide to Genetic Programming: p 64 top: Bahnzaf paper might be precursor to automatic simplification
 
-\item
-This paper in neural networks might be related: GECCO 2016 - Identifying Core Functional Networks and Functional Modules within Artificial Neural Networks via Subsets Regression
 
-\item
-Differentiate between our work and algebraic simplification (as used in semantic GP), since this CAN change the semantics on inputs not in the training set, where algebraic methods cannot. Also, algebraic methods wouldn't work on general programs that we're evolving
 
 \item
 DONE: Algebraic Simplification of GP Programs During Evolution \cite{1144156}
 
 \item
-Investigation of simplification threshold and noise level of input data in numerical simplification of genetic programs \cite{Kinzett:2010:cec}
-
-\item
-Smaller networks in neural nets: https://push-language.hampshire.edu/t/gecco-2017-simplification-for-generalization/660/21?u=thelmuth
+DONE: Investigation of simplification threshold and noise level of input data in numerical simplification of genetic programs \cite{Kinzett:2010:cec}
 
 \end{itemize}
 
@@ -71,7 +64,12 @@ Delta debugging: A. Zeller. Yesterday, my program worked. Today, it does not. Wh
 
 \end{itemize}
 
+\subsection{Neural Nets}
 
+Our findings here may provide additional perspectives on discussions about the relations between model simplicity and generality, or the lack thereof, in the neural network and data mining research communities (cite either the Domingos paper or book).
+
+
+This paper in neural networks might be related: GECCO 2016 - Identifying Core Functional Networks and Functional Modules within Artificial Neural Networks via Subsets Regression
 
 
 \section{Push, Plush, and PushGP}
