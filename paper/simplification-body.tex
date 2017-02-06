@@ -599,24 +599,15 @@ deeply intertwined with key details of PushGP.
 
 The results of our experiments show, across a range of software synthesis benchmark problems, that smaller programs evolved byPushGP tend to generalize better than larger programs. The results also show that evolved programs can be automatically simplified using a variety of simple hill-climbing procedures, and that simplified programs tend to generalize better than unsimplified programs. Furthermore, programs that can be successfully simplified (that is, that the simplification procedure can make much smaller) are more likely to be improved by simplification in terms of generalization. The differences between our simplification methods were not significant, but significant improvements were produced when any of them was used.
 
-The recommendation, therefore, for users of PushGP, is this: "Always perform automatic simplification on the results of evolution, using any of the methods described here. There is a reasonable chance that doing so will improve the generalization of your evolved programs, and a much smaller chance that it will hurt it. If a program is substantially smaller after automatic simplification, then it will have an even better chance of generalizing."
+The recommendation, therefore, for users of PushGP, is to always perform automatic simplification on the results of evolution, using any of the methods described here. There is a reasonable chance that doing so will improve the generalization of your evolved programs, and a much smaller chance that it will hurt it. If a program is substantially smaller after automatic simplification, then it will have an even better chance of generalizing.
 
 Would the same advice apply to users of other types of genetic programming systems? For some systems, such as tree-based GP with non-numeric functions, automatic simplification may itself be non-trival. Methods like those used here might be applied more easily to other forms of GP, including grammatical evolution, Cartesian GP, and linear GP systems. It would be interesting to replicate our experiments in these systems.
 
-An obvious extension of the work presented here would be to run the same tests on programs that solve problems of types other than software synthesis, such as classification and symbolic regression. Another area for future work is to improve the automatic simplification methods themselves. While we presented results with several simplification methods, all of them used a simple hill-climbing search procedure that can easily get stuck in local minima. Even something only slightly more complex, such as a multi-start hillclimber, might simplify programs more reliably, and it would be interesting to see what effects this would have on generalization.
+An obvious extension of the work presented here would be to run the same tests using different types of problems, such as classification and symbolic regression. Another area for future work is to improve the automatic simplification methods themselves. While we presented results with several simplification methods, all of them used a simple hill-climbing search procedure that can get stuck in local minima, even when using backtracking steps. A multi-start hillclimber, for example, might simplify programs more reliably.
 
-\todo[inline]{Maybe this could/should be two sections, but I bet we won't have room.}
-
-FUTURE WORK BELOW HERE
-
-Testing automatic simplification on other types of problems. Would it work on symbolic regression? Classification? My (TMH) guess is that it would work better on classification than symbolic regression.
-
-How could simplification be adapted for tree-based GP? How about other GP, such as Cartesian or grammar-based? Grammatical evolution could potentially remove numbers from the genome, or could replace trees in the resulting program. Other linear GPs seem like good targets.
-
-Would a multi-restart simplification get us to smaller programs more often than the other methods we've tried? This could potentially avoid unlucky local minima. The backtracking methods are also trying to avoid unlucky local minima, so this would be an interesting comparison.
 
 \begin{acks}
   
-  \todo[inline]{Put acknowledgements here, including grants.}
+Omitted for blind review.
 
 \end{acks}
