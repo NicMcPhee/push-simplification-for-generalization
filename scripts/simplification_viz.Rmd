@@ -149,8 +149,8 @@ all_runs %>%
               size = 0.5) +
   facet_grid(started_generalized ~ post_simp_generalized) +
   theme_bw() +
-  theme(axis.text = element_text(size = 8),
-        axis.title = element_text(size = 8),
+  theme(axis.text = element_text(size = 12),
+        axis.title = element_text(size = 12),
         strip.text = element_text(size = 8),
         legend.position="none") +
   guides(colour = guide_legend(override.aes = list(alpha = 1))) +
@@ -201,11 +201,20 @@ horiz_lines_df <- melt(prog_size_table,
 horiz_lines_df$x1 <- seq(0.55, 23.55, 1)
 horiz_lines_df$x2 <- seq(1.45, 24.45, 1)
 
+num_initial_solutions <- all_runs %>%
+  filter(method != 'none',
+         type == 'unsimplified') %>%
+  group_by(problem) %>%
+  summarise(init_solution_count = n()) %>%
+  mutate(name = str_c(problem, " (", init_solution_count, ")"))
+
 melt(prog_size_table, 
      id.vars = c("problem"), 
      measure.vars = c("none", "Genome", "GenomeBacktracking", "GenomeBacktrackingNoop", "GenomeNoop", "Program"),
      value.name = "size") %>%
   filter(variable != 'none') %>%
+  #inner_join(num_initial_solutions, by = 'problem') %>%
+  #mutate(problem = paste0(problem, " (", as.character(init_solution_count), ")")) %>%
   ggplot(aes(x = problem,
              y = size,
              fill = variable)) + 
@@ -232,7 +241,8 @@ melt(prog_size_table,
        y = "Program Size") +
   scale_fill_manual(values = cbbPalette,
                     name = 'Method',
-                    labels=c("Genome", "GenomeBacktracking", "GenomeBacktrackingNoop", "GenomeNoop", "Unsimplified", "Program"))
+                    labels=c("Genome", "GenomeBacktracking", "GenomeBacktrackingNoop", "GenomeNoop", "Unsimplified", "Program")) +
+  scale_x_discrete(labels = num_initial_solutions$name)
 
   ggsave(paste0(path_to_plots,'Problem_by_Size_bar.pdf'), 
          units = c('in'), width = 7.5, height = 5)
@@ -269,6 +279,14 @@ horiz_lines_df <- melt(perct_generalized_table,
 horiz_lines_df$x1 <- seq(0.55, 23.55, 1)
 horiz_lines_df$x2 <- seq(1.45, 24.45, 1)
 
+num_initial_solutions <- all_runs %>%
+  filter(method != 'none',
+         type == 'unsimplified') %>%
+  group_by(problem) %>%
+  summarise(init_solution_count = n()) %>%
+  mutate(name = str_c(problem, " (", init_solution_count, ")"))
+
+
 melt(perct_generalized_table, 
      id.vars = c("problem"), 
      measure.vars = c("none", "Genome", "GenomeBacktracking", "GenomeBacktrackingNoop", "GenomeNoop", "Program"),
@@ -300,7 +318,8 @@ melt(perct_generalized_table,
        y = "% Generalized") +
   scale_fill_manual(values = cbbPalette,
                     name = 'Method',
-                    labels=c("Genome", "GenomeBacktracking", "GenomeBacktrackingNoop", "GenomeNoop", "Unsimplified", "Program"))
+                    labels=c("Genome", "GenomeBacktracking", "GenomeBacktrackingNoop", "GenomeNoop", "Unsimplified", "Program")) +
+  scale_x_discrete(labels = num_initial_solutions$name)
 
   ggsave(paste0(path_to_plots,'Problem_by_PcntGen_bar.pdf'), 
          units = c('in'), width = 7.5, height = 5)
@@ -448,6 +467,14 @@ all_runs %>%
 ## 2x2 Density Plot
 
 ```{r, fig.width=7.5, fig.height=4.5}
+
+counts <- all_runs %>%
+  filter(type == "simplified") %>%
+  inner_join(started_generalized_lookup, by = c("log", "problem")) %>%
+  mutate(generalized = ifelse(testError == 0, "Generalized Post-Simplification", "Didn't Generalize Post-Simplification")) %>%
+  group_by(started_generalized, generalized) %>%
+  summarise(count = n())
+
 all_runs %>%
   filter(type == "simplified") %>%
   inner_join(started_generalized_lookup, by = c("log", "problem")) %>%
@@ -459,9 +486,9 @@ all_runs %>%
   facet_grid(started_generalized ~ generalized, scales = 'free_y') +
   # facet_grid( generalized ~ started_generalized) +
   theme_bw() + 
-  theme(axis.text = element_text(size = 18),
-        axis.title = element_text(size = 18),
-        strip.text = element_text(size = 16)) +
+  theme(axis.text = element_text(size = 12),
+        axis.title = element_text(size = 12),
+        strip.text = element_text(size = 8)) +
   labs(x = "Post Simplification Program Size",
        y = "Count")
 
