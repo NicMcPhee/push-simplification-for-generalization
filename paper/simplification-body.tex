@@ -1,7 +1,7 @@
 \section{Introduction}
 \label{sec:intro}
 
-Supervised machine learning algorithms are often trained on data for which correct answers (e.g. classes, predictions) are known in advance, but with the goal of producing a system that will subsequently also give the correct answers for new, unseen data. In the context of genetic programming \cite{koza:book}, this means that we seek to evolve a program that will produce correct outputs when run on any reasonable inputs, including inputs not encountered during the evolutionary process. That is, we seek programs that {\it generalize}. While the challenges of evolving generalizing programs have long been recognized and studied (e.g. \cite{1144159,DBLP:conf/gecco/VanneschiG09,Castelli:2010:cec,Goncalves:2015:EuroGP}), the challenges in this area have not yet been fully met, and significant  problems remain open.
+Supervised machine learning algorithms are often trained on data for which correct answers (e.g. classes, predictions) are known in advance, but with the goal of producing a system that will subsequently also give the correct answers for new, unseen data. In the context of genetic programming \cite{koza:book}, this means that we seek to evolve a program that will produce correct outputs when run on any reasonable inputs, including inputs not encountered during the evolutionary process. That is, we seek programs that {\it generalize}. While the challenges of evolving generalizing programs have long been recognized and studied (e.g. \cite{1144159, DBLP:conf/gecco/VanneschiG09, Castelli:2010:cec, Goncalves:2015:EuroGP}), the challenges in this area have not yet been fully met, and significant  problems remain open.
 
 Another set of long-standing, open research questions in genetic programming concerns the growth of programs over evolutionary time, and the presence of unnecessary code in evolved programs (CITE A BUNCH OF SIZE/BLOAT STUFF HERE). Such code growth can consume computational resources, slow down the GP search process, and produce programs that are difficult for users to understand or apply to application problems. 
 
@@ -255,7 +255,7 @@ The benchmark suite we used prescribes using randomly generated training and tes
 
 \begin{figure*}[t] %[t] sets the image at the top of the page; t = top, b = bottom, h = here%
 \centering
-\includegraphics[width=0.95\textwidth]{Problem_by_Size_bar} % \linewidth
+\includegraphics[width=0.9\textwidth]{Problem_by_Size_bar} % \linewidth
 \caption{The average program size of programs produced by our five 
 	simplification methods for each problem set; the average program 
 	sizes of the unchanged programs are represented with black 
@@ -323,7 +323,7 @@ Next, we consider the effect of simplification on the generalization of programs
 
 \begin{figure*}[t] %[t] sets the image at the top of the page; t = top, b = bottom, h = here%
 \centering
-\includegraphics[width=0.95\textwidth]{Problem_by_PcntGen_bar} % \linewidth
+\includegraphics[width=0.9\textwidth]{Problem_by_PcntGen_bar} % \linewidth
 \caption{The proportion of simplified programs that generalize to unseen data
 	for each problem, with the proportion of unchanged programs that generalize 
 	indicated with black horizontal bars.
@@ -432,18 +432,19 @@ We next want to explore how size after simplification corresponds to the general
 
 The bottom two plots in Figure~\ref{fig:count:quad} give the same counts of sizes of the simplified programs, but this time for those unchanged programs that did generalize. First, note that the scale of the $y$-axis is over 5 times as large as for the top row; as we saw previously, about twice as many unchanged programs generalized as those that did not. Here, we are interested in whether many of the unchanged programs that did generalize were broken by simplification. We see that very few such instances occured---only 3735---compared to those that remained generalizing after simplification. Thus while simplification often makes a program go from ungeneralizing to generalizing, it does not often take a generalizing program and make it ungeneralizing.
 
-\hl{We might need to remove the next two paragraphs and the plot if we need the space.}
 
-The correlation between post-simplification size and generalization can also be seen in Figure~\ref{fig:nic-plot}. Here, each point represents one simplified program; which plot it belongs to depends on whether it generalized before or after simplification, with the same configuration as Figure~\ref{fig:count:quad}. The $x$-axis gives pre-simplification size of the program, and the $y$-axis gives simplified program size; thus, every point must lie under the $y = x$ line. Points close to the $y = x$ line did not reduce much during simplification; those further below the $y = x$ line correspond to those that shrank more.
+%%%%%%% KEEP THE FOLLOWING IF WE HAVE SPACE
 
-\begin{figure}[t] %[t] sets the image at the top of the page; t = top, b = bottom, h = here%
-\centering
-\includegraphics[width=\linewidth]{Quad_Scatter} % \linewidth
-\caption{In each of the subgraphs, a simplified program is plotted at each point, with its pre-simplified size on the $x$-axis and its post-simplified size on the $y$-axis. Vertical striping is the result of simplifying each unchanged program 100 times for each of the 5 simplification methods. The top two plots contain programs that did not generalze pre-simplification, and the bottom two plots contain programs that did generalize pre-simplification. The left two plots are simplified programs that do not generalize; the right plots do generalize. For each plot, we also give a linear trend line.}
-\label{fig:nic-plot}
-\end{figure}
-
-In each plot we draw a linear fit line showing the relationship of unchanged size and simplified size. In the plots in the left column, in which simplified programs did not generalize, the slope is considerably higher than in the right column plots where the simplified programs do generalize. This gives further confirmation that programs that shrink considerably from their original sizes are more likely to generalize.
+%The correlation between post-simplification size and generalization can also be seen in Figure~\ref{fig:nic-plot}. Here, each point represents one simplified program; which plot it belongs to depends on whether it generalized before or after simplification, with the same configuration as Figure~\ref{fig:count:quad}. The $x$-axis gives pre-simplification size of the program, and the $y$-axis gives simplified program size; thus, every point must lie under the $y = x$ line. Points close to the $y = x$ line did not reduce much during simplification; those further below the $y = x$ line correspond to those that shrank more.
+%
+%\begin{figure}[t] %[t] sets the image at the top of the page; t = top, b = bottom, h = here%
+%\centering
+%\includegraphics[width=\linewidth]{Quad_Scatter} % \linewidth
+%\caption{In each of the subgraphs, a simplified program is plotted at each point, with its pre-simplified size on the $x$-axis and its post-simplified size on the $y$-axis. Vertical striping is the result of simplifying each unchanged program 100 times for each of the 5 simplification methods. The top two plots contain programs that did not generalze pre-simplification, and the bottom two plots contain programs that did generalize pre-simplification. The left two plots are simplified programs that do not generalize; the right plots do generalize. For each plot, we also give a linear trend line.}
+%\label{fig:nic-plot}
+%\end{figure}
+%
+%In each plot we draw a linear fit line showing the relationship of unchanged size and simplified size. In the plots in the left column, in which simplified programs did not generalize, the slope is considerably higher than in the right column plots where the simplified programs do generalize. This gives further confirmation that programs that shrink considerably from their original sizes are more likely to generalize.
 
 
 %\begin{figure}[t] %[t] sets the image at the top of the page; t = top, b = bottom, h = here%
