@@ -42,44 +42,72 @@
 \title{Improving Generalization of Evolved Programs through Automatic Simplification}
 %\subtitle{Do we want a sub-title?}
 
-\author{Thomas Helmuth}
-\orcid{0000-0002-2330-6809}
+\author{Omitted for Review}
 \affiliation{%
-  \institution{Washington and Lee University}
-  \city{Lexington} 
-  \state{Virginia} 
-  \country{USA}
+  \institution{.}
+  \city{.} 
 }
-\email{helmutht@wlu.edu}
+\email{.}
 
-\author{Nicholas Freitag McPhee}
-\orcid{0000-0002-6495-2612}
+\author{Omitted for Review}
 \affiliation{%
-  \institution{University of Minnesota, Morris}
-  % \streetaddress{600 E. 4th Street}
-  \city{Morris} 
-  \state{Minnesota} 
-  \country{USA}
+  \institution{.}
+  \city{.} 
 }
-\email{mcphee@morris.umn.edu}
+\email{.}
 
-\author{Edward Pantridge}
-\affiliation{
-	\institution{MassMutual Financial Group}
-	\city{Amherst}
-	\state{Massachusetts}
-	\country{USA}
-}
-\email{epantridge@massmutal.com}
-
-\author{Lee Spector}
+\author{Omitted for Review}
 \affiliation{%
-	\institution{Hampshire College}
-	\city{Amherst}
-	\state{Massachusetts}
-	\country{USA}
+  \institution{.}
+  \city{.} 
 }
-\email{lspector@hampshire.edu}
+\email{.}
+
+\author{Omitted for Review}
+\affiliation{%
+  \institution{.}
+  \city{.} 
+}
+\email{.}
+
+%\author{Thomas Helmuth}
+%\orcid{0000-0002-2330-6809}
+%\affiliation{%
+%  \institution{Washington and Lee University}
+%  \city{Lexington} 
+%  \state{Virginia} 
+%  \country{USA}
+%}
+%\email{helmutht@wlu.edu}
+%
+%\author{Nicholas Freitag McPhee}
+%\orcid{0000-0002-6495-2612}
+%\affiliation{%
+%  \institution{University of Minnesota, Morris}
+%  % \streetaddress{600 E. 4th Street}
+%  \city{Morris} 
+%  \state{Minnesota} 
+%  \country{USA}
+%}
+%\email{mcphee@morris.umn.edu}
+%
+%\author{Edward Pantridge}
+%\affiliation{
+%	\institution{MassMutual Financial Group}
+%	\city{Amherst}
+%	\state{Massachusetts}
+%	\country{USA}
+%}
+%\email{epantridge@massmutal.com}
+%
+%\author{Lee Spector}
+%\affiliation{%
+%	\institution{Hampshire College}
+%	\city{Amherst}
+%	\state{Massachusetts}
+%	\country{USA}
+%}
+%\email{lspector@hampshire.edu}
 
 % The default list of authors is too long for headers}
 % \renewcommand{\shortauthors}{B. Trovato et. al.}
@@ -90,8 +118,6 @@ Genetic programming, like many other machine learning techniques, can be prone t
 Like programs evolve by many genetic programming systems, programs evolved by PushGP usually 
 have pieces that can be removed without changing the behavior of the program. We describe methods for automatically simplifying evolved programs to make them smaller and potentially more general. All of our methods us a straightforward hill-climbing procedure to remove pieces of a program while ensuring that the resulting program gives the same errors on the training data as did the original program. We show that automatic simplification, previously used both for post-run analysis and as a genetic operator, can be used on evolved programs to significantly improve their generalization rates. We present five simplification methods and analyze their strengths and weaknesses on a suite of general program synthesis benchmark problems. We conclude that while some simplification methods have slightly more power than others, all methods dramatically decrease program sizes and improve generalization,
 sometimes substantially.
-	\todo[inline]{We need to do the CCS Concepts thing.}
-	\todo[inline]{We need to do the keywords.}
 \end{abstract}
 
 %
@@ -101,35 +127,17 @@ sometimes substantially.
 %
 \begin{CCSXML}
 <ccs2012>
- <concept>
-  <concept_id>10010520.10010553.10010562</concept_id>
-  <concept_desc>Computer systems organization~Embedded systems</concept_desc>
-  <concept_significance>500</concept_significance>
- </concept>
- <concept>
-  <concept_id>10010520.10010575.10010755</concept_id>
-  <concept_desc>Computer systems organization~Redundancy</concept_desc>
-  <concept_significance>300</concept_significance>
- </concept>
- <concept>
-  <concept_id>10010520.10010553.10010554</concept_id>
-  <concept_desc>Computer systems organization~Robotics</concept_desc>
-  <concept_significance>100</concept_significance>
- </concept>
- <concept>
-  <concept_id>10003033.10003083.10003095</concept_id>
-  <concept_desc>Networks~Network reliability</concept_desc>
-  <concept_significance>100</concept_significance>
- </concept>
-</ccs2012>  
+<concept>
+<concept_id>10010147.10010257.10010293.10011809.10011813</concept_id>
+<concept_desc>Computing methodologies~Genetic programming</concept_desc>
+<concept_significance>500</concept_significance>
+</concept>
+</ccs2012>
 \end{CCSXML}
 
-\ccsdesc[500]{Computer systems organization~Embedded systems}
-\ccsdesc[300]{Computer systems organization~Redundancy}
-\ccsdesc{Computer systems organization~Robotics}
-\ccsdesc[100]{Networks~Network reliability}
+\ccsdesc[500]{Computing methodologies~Genetic programming}
 
-\keywords{ACM proceedings, \LaTeX, text tagging}
+\keywords{genetic programming, generalization, overfitting, simplification, Push}
 
 
 \maketitle
