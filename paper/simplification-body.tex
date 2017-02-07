@@ -208,7 +208,7 @@ The benchmark suite we used prescribes using randomly generated training and tes
 
 \begin{figure*}[h] %[t] sets the image at the top of the page; t = top, b = bottom, h = here%
 \centering
-\includegraphics[width=0.9\textwidth]{Problem_by_Size_bar} % \linewidth
+\includegraphics[width=0.95\textwidth]{Problem_by_Size_bar} % \linewidth
 \caption{The average program size of programs produced by our five 
 	simplification methods for each problem set; the average program 
 	sizes of the unchanged solution programs are represented with black 
@@ -276,7 +276,7 @@ The Friedman test on the data in Table~\ref{table:size-ranks} gives a \textit{p}
 
 \begin{figure*}[h] %[t] sets the image at the top of the page; t = top, b = bottom, h = here%
 \centering
-\includegraphics[width=0.9\textwidth]{Problem_by_PcntGen_bar} % \linewidth
+\includegraphics[width=0.95\textwidth]{Problem_by_PcntGen_bar} % \linewidth
 \caption{The proportion of simplified programs that generalize to unseen test data
 	for each problem, with the proportion of unchanged programs that generalize 
 	indicated with black horizontal bars.
@@ -475,7 +475,12 @@ generalized.
 %	early in their simplified programs, which smells really fragile to me,
 %	but I haven't dug into the programs enough to know if that's the issue.}
 
-It's also clear from Figure~\ref{fig:count:quad} that
+Our attempts at improving on simplification of Push programs by simplifying genomes, including with backtracking and NOOPs, seems mostly for naught. Program simplification led to the smallest programs, though as mentioned, this might be due to its ability to remove extraneous parentheses as opposed to potentially overfit code. On the other hand, Genome-Backtracking-Noop simplification had the best rank on generalization, though not significantly so, and had the second smallest rank on simplified size of programs. The backtracking ability of this method may have allowed it to avoid some locally optimal programs. We have anecdotally noticed an example where Program simplification is not able to escape such a local optima, and Genome-Backtracking-Noop might have made improvements in such cases. Adding NOOPs seems to have a lesser effect, since the Genome-Noop method produced larger programs than Genome-Backtracking, yet both were smaller than Genome without either enhancement.
+
+Despite all of these minor differences, all simplification methods performed rather similarly across the board, with all showing major improvements over not using simplification. Thus, the choice of using any simplification method seems like the more significant decision than which simplification method to use.
+
+
+Figure~\ref{fig:count:quad} makes it clear that
 smaller post-simplification sizes were strongly correlated with the
 ability to generalize after simplification. This is consistent with 
 a broad range of work that either argues theoretically (e.g., the minimum
@@ -488,12 +493,13 @@ correlation seems extremely strong in our data.
 
 The relationship between
 program size and generalization is almost certainly driven at least in part
-by both the problem being solved, and the representation being used for
+by both the problem being solved and the representation being used for
 solutions. It's possible, therefore, that the strong correlation we see
 is in some way related to the kinds of software synthesis problems we're using
-as benchmarks, which clearly behave differently from other common application areas such as symbolic regression and classification.
+as benchmarks, which clearly behave differently from other common application areas such as symbolic regression and classification. 
+%It is also possible that the design decisions in PushGP play a role here.
 
-It's also possible that the design decisions in PushGP play a crucial role here. Any
+It is also possible that the design decisions in PushGP play a role here. Any
 attempt to control or reduce program size in GP is premised on the idea that
 there must be some parts of the program that aren't playing an important role
 and can thus be removed; such code has been called many things over the years,
@@ -502,46 +508,47 @@ were bigger than strictly necessary (often by a substantial margin) is arguably
 not attributable to ``bloat'' as it's typically been 
 understood~\cite{poli08:fieldguide}, since in PushGP we don't see a 
 general tendency towards increasing program size over time. 
-
-There is obviously ``unnecessary'' code in these evolved Push programs, 
-however, but understanding the source and role of this removable Push 
+There is obviously ``unnecessary'' code in these evolved Push programs, but understanding the source and role of this removable Push 
 code is complex, in part because there are potentially many categories 
 of ``unused'' or ``unnecessary'' code
-in Push. Examples include:
-\begin{itemize}
-	\item Instructions that do nothing because they require arguments 
-	that are not on the appropriate stacks when they are executed. 
-	\item Instructions that do \emph{something}, but not something that has an 
-	impact on the final result because, e.g., they act on values on stacks 
-	that play no role in the key computation. 
-	\item Instructions whose \emph{presence} is important (e.g., as a marker 
-	or to make sure the \texttt{exec} stack has the right depth), but 
-	whose details or \emph{behavior} is not.
-\end{itemize}
-Note also that the ``activity'' of many of these instructions is highly
-dependent on context. An instruction that does nothing in a parent because
-the arguments it needs aren't available, might play a prominent role in a
-child if a change ``upstream'' causes those arguments to now be available.
+in Push.
 
-These dynamics are very different from many tree-based GP systems, where
-changes in argument subtrees will change the \emph{value} computed at a 
-node, but won't typically change the \emph{semantics} of the operator at that
-node. A plus node in a tree will always do addition, even if changes in its
-arguments lead to different sums; the plus node will (in most tree-based
-systems) never simply fail to act because an argument is missing.
+% Examples include:
+%\begin{itemize}
+%	\item Instructions that do nothing because they require arguments 
+%	that are not on the appropriate stacks when they are executed. 
+%	\item Instructions that do \emph{something}, but not something that has an 
+%	impact on the final result because, e.g., they act on values on stacks 
+%	that play no role in the key computation. 
+%	\item Instructions whose \emph{presence} is important (e.g., as a marker 
+%	or to make sure the \texttt{exec} stack has the right depth), but 
+%	whose details or \emph{behavior} is not.
+%\end{itemize}
+%Note also that the ``activity'' of many of these instructions is highly
+%dependent on context. An instruction that does nothing in a parent because
+%the arguments it needs aren't available, might play a prominent role in a
+%child if a change ``upstream'' causes those arguments to now be available.
+%
+%These dynamics are very different from many tree-based GP systems, where
+%changes in argument subtrees will change the \emph{value} computed at a 
+%node, but won't typically change the \emph{semantics} of the operator at that
+%node. A plus node in a tree will always do addition, even if changes in its
+%arguments lead to different sums; the plus node will (in most tree-based
+%systems) never simply fail to act because an argument is missing.
+%
+%So in the same way that the design of our simplification methods was
+%tightly coupled to the details of Push and Plush, it would not be surprising
+%if at least some of the results (e.g., the relationship between size and
+%generalization) were also tied to the specifics of PushGP. One common
+%anecdotal observation is that unsimplified evolved Push programs often
+%contain large numbers of looping and recursion constructs that are removed
+%in the simplification process. It's possible that in many cases these loops
+%are performing ``unnecessary'' computation and counting on the PushGP
+%execution limits to stop them and force the return of an answer. This sort
+%of approach is likely to be quite brittle, and eliminating these unnecessary
+%loops might be a source of improved generalization. All of which is rather
+%deeply intertwined with key details of PushGP.
 
-So in the same way that the design of our simplification methods was
-tightly coupled to the details of Push and Plush, it would not be surprising
-if at least some of the results (e.g., the relationship between size and
-generalization) were also tied to the specifics of PushGP. One common
-anecdotal observation is that unsimplified evolved Push programs often
-contain large numbers of looping and recursion constructs that are removed
-in the simplification process. It's possible that in many cases these loops
-are performing ``unnecessary'' computation and counting on the PushGP
-execution limits to stop them and force the return of an answer. This sort
-of approach is likely to be quite brittle, and eliminating these unnecessary
-loops might be a source of improved generalization. All of which is rather
-deeply intertwined with key details of PushGP.
 
 
 
