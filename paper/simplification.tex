@@ -114,10 +114,13 @@
 
 
 \begin{abstract}
-Genetic programming, like many other machine learning techniques, can be prone to overfitting of training data. Reliable synthesis of programs that generalize to unseen data is therefore an important open problem. We present evidence that smaller programs evolved using the PushGP system tend to generalize better over a broad range of software synthesis problems. 
-Like programs evolve by many genetic programming systems, programs evolved by PushGP usually 
-have pieces that can be removed without changing the behavior of the program. We describe methods for automatically simplifying evolved programs to make them smaller and potentially more general. All of our methods us a straightforward hill-climbing procedure to remove pieces of a program while ensuring that the resulting program gives the same errors on the training data as did the original program. We show that automatic simplification, previously used both for post-run analysis and as a genetic operator, can be used on evolved programs to significantly improve their generalization rates. We present five simplification methods and analyze their strengths and weaknesses on a suite of general program synthesis benchmark problems. We conclude that while some simplification methods have slightly more power than others, all methods dramatically decrease program sizes and improve generalization,
-sometimes substantially.
+Genetic programming %, like many other machine learning techniques, 
+can be prone to overfitting of training data. Reliable synthesis of programs that generalize to unseen data is therefore an important open problem. We present evidence that smaller programs evolved using the PushGP system tend to generalize better over a range of program synthesis problems. 
+Like in many genetic programming systems, programs evolved by PushGP usually 
+have pieces that can be removed without changing the behavior of the program. We describe methods for automatically simplifying evolved programs to make them smaller and potentially reduce overfitting. 
+We present five simplification methods and analyze their strengths and weaknesses on a suite of general program synthesis benchmark problems.
+All of our methods use a straightforward hill-climbing procedure to remove pieces of a program while ensuring that the resulting program gives the same errors on the training data as did the original program. We show that automatic simplification, previously used both for post-run analysis and as a genetic operator, can be used on evolved programs to significantly improve their generalization rates.
+%We find only minor differences between our simplification methods, yet all methods dramatically decrease program sizes and improve generalization.
 \end{abstract}
 
 %
