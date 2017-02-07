@@ -211,11 +211,11 @@ The benchmark suite we used prescribes using randomly generated training and tes
 \includegraphics[width=0.9\textwidth]{Problem_by_Size_bar} % \linewidth
 \caption{The average program size of programs produced by our five 
 	simplification methods for each problem set; the average program 
-	sizes of the unchanged programs are represented with black 
+	sizes of the unchanged solution programs are represented with black 
 	horizontal bars. Each simplification method performs repeated trials 
 	using the same set of unchanged programs, and therefore has 
 	the same opportunities for simplification as the other methods.
-    The number of unchanged programs taken into account for each problem
+    The number of unchanged solution programs taken into account for each problem
     is given in parentheses, representing the number of starting points for each problem.}
 \label{fig:bar:size}
 \end{figure*}
@@ -235,7 +235,7 @@ and the unchanged programs' sizes.
 
 \begin{table}[tb]
 	\centering
-	\caption{The average rank in size for each simplification method across the data in Figure~\ref{fig:bar:size}, where lower rank means smaller programs. ``Unchanged'' is the rank of the evolved programs without any simplification. Methods are sorted by average rank.}
+	\caption{The average rank in size for each simplification method across the data in Figure~\ref{fig:bar:size}, where lower rank means smaller programs. ``Unchanged'' is the rank of the evolved programs without any simplification.}
 	\label{table:size-ranks}
 	\begin{tabu} to \textwidth {l r}
 		\toprule
@@ -251,9 +251,9 @@ and the unchanged programs' sizes.
 	\end{tabu}
 \end{table}
 
-To examine aggregate performance of each simplification method, in Table~\ref{table:size-ranks} we calculate the average rank for size for each method across the 24 problems, with rank 1 indicating the smallest average program size and rank 6 having largest. Note that we include the unchanged programs as one ``method'', which is why we have 6 possible ranks. Program simplification achieves the smallest programs on average, with both of the Genome backtracking methods coming soon after. The genome methods without backtracking have worse average ranks, with the unchanged programs always having worst rank. Since parentheses are counted as part of the size of a program, and since the Genome methods cannot remove extraneous parentheses as mentioned in Section~\ref{sec:simplification}, we hypothesize that Program simplification is able to achieve smaller sizes largely based on removing such parentheses.
+To examine aggregate performance of each simplification method, in Table~\ref{table:size-ranks} we calculate the average rank of program size for each method across the 24 problems, with rank 1 indicating the smallest average program size and rank 6 having largest. Note that we include the unchanged programs as one ``method'', which is why we have 6 possible ranks. Program simplification achieves the smallest programs on average, with both of the Genome backtracking methods coming soon after. The genome methods without backtracking have worse average ranks, with the unchanged programs always having worst rank. Since parentheses are counted as part of the size of a program, and since the Genome methods cannot remove extraneous parentheses (as mentioned in Section~\ref{sec:simplification}), we hypothesize that Program simplification is able to achieve smaller sizes largely based on removing such parentheses.
 
-The Friedman test on the data in Table~\ref{table:size-ranks} gives a \textit{p}-value $< 0.001$, indicating that at least one method performs significantly differently from the others. We then use a post-hoc Wilcoxon-Nemenyi-McDonald-Thompson test \cite{hollander1999nonparametric} to give the significance in the differences in ranking between each pair of methods at the $0.05$ significance level. Every simplification method besides Genome outranks the Unchanged programs. Program also outranks Genome-Noop and Genome; and both Genome backtracking methods outrank Genome. Note that even though these results show significant differences in rank among the methods, most of the actual differences in average size are relatively small compared to the sizes of the unchanged programs.
+The Friedman test on the data in Table~\ref{table:size-ranks} gives a \textit{p}-value $< 0.001$, indicating that at least one method performs significantly differently from the others. We then use a post-hoc Wilcoxon-Nemenyi-McDonald-Thompson test \cite{hollander1999nonparametric} to give the significance in the differences in ranking between each pair of methods at the $0.05$ significance level. Every simplification method besides Genome significantly outranks the Unchanged programs. Program also outranks Genome-Noop and Genome; and both Genome backtracking methods outrank Genome. Note that even though these results show significant differences in rank among the methods, most of the actual differences in average size are relatively small compared to the sizes of the unchanged programs.
 
 %Program - none                              3.685940e-14
 %GenomeBacktrackingNoop - none               6.733392e-12
@@ -274,8 +274,6 @@ The Friedman test on the data in Table~\ref{table:size-ranks} gives a \textit{p}
 %GenomeBacktrackingNoop - GenomeBacktracking 8.119145e-01
 %Program - GenomeBacktrackingNoop            9.971909e-01
 
-Next, we consider the effect of simplification on the generalization of programs to unseen test data. In Figure~\ref{fig:bar:percent_generalization}, we plot the percent of programs that generalize for each simplification method, as well as a horizontal bar representing the percent of unsimplified programs that generalize.
-
 \begin{figure*}[t] %[t] sets the image at the top of the page; t = top, b = bottom, h = here%
 \centering
 \includegraphics[width=0.9\textwidth]{Problem_by_PcntGen_bar} % \linewidth
@@ -291,12 +289,13 @@ Next, we consider the effect of simplification on the generalization of programs
 \label{fig:bar:percent_generalization}
 \end{figure*}
 
+Next, we consider the effect of simplification on the generalization of programs to unseen test data. In Figure~\ref{fig:bar:percent_generalization}, we plot the percent of programs that generalize for each simplification method, as well as a horizontal bar representing the percent of unchanged programs that generalize.
 Every simplification method either improves generalization or has no effect on every problem besides Double Letters.
 %\footnote{The Double Letters problem has one of the smaller sample sizes of our data set, with only six solution programs as starting points. All six solutions generalize before simplification. Five of the six generalize most of the time after simplification, but one solution program has many simplifications that don't generalize.}
  Some of the increases in generalization appear substantial, 
-improving as much as 25\% in the case of the Median problem.
+improving as much as 25\% in the case of Median.
 
-Also note that the five problems with the worst generalization in Figure~\ref{fig:bar:percent_generalization} are among the problems for which program sizes were largest in Figure~\ref{fig:bar:size}. For whatever reason, programs that solve these problems tend to be large and unable to shrink, and do not generalize well. We hypothesize, but have no data to support, that large programs such as these contain many ad-hoc components that overfit to individual test cases without really ``learning'' the underlying program structure, and therefore do not generalize to unseen data.
+Also note that the five problems with the worst generalization in Figure~\ref{fig:bar:percent_generalization} are among the problems for which program sizes were largest in Figure~\ref{fig:bar:size}. For whatever reason, programs that solve these problems tend to be large and unable to shrink, and do not generalize well. We hypothesize that large programs such as these contain many ad-hoc components that overfit to individual test cases without really ``learning'' the underlying program structure, and therefore do not generalize to unseen data.
 
 %This supports our hypothesis that programs that are smaller but behaviorally identical on the training set tend to generalize better.
 
@@ -304,7 +303,7 @@ As with average program sizes, there do not appear to be large differences betwe
 
 \begin{table}[ht]
 	\centering
-	\caption{The average rank in generalization for each simplification method across the problems in Figure~\ref{fig:bar:percent_generalization}, where lower rank means better generalization. ``Unchanged'' is the rank of the evolved programs without any simplification. Methods are sorted by average rank.}
+	\caption{The average rank in generalization for each simplification method across the problems in Figure~\ref{fig:bar:percent_generalization}, where lower rank means better generalization. ``Unchanged'' is the rank of the evolved programs without any simplification.}
 	\label{table:generalization-ranks}
 	\begin{tabu} to \textwidth {l r}
 		\toprule
