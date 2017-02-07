@@ -17,59 +17,35 @@ In the following section we first briefly describe related work on automatic sim
 \section{Related Work}
 \label{sec:related}
 
-\subsection{Papers about automatic simplification}
+%\subsection{Papers about automatic simplification}
 
-Simplification of evolved programs has been used for various reasons in GP, though as far as we know, never explicitly to improve generalization of an evolved solution. Some of the primary uses include making evolved programs more understandable~\cite{} and controlling bloat during a run~\cite{1144156, Kinzett:2010:cec, Brameier:2001:TEC}. Of particular interest is work that used numerical simplification during a run to reduce overfitting~\cite{Kinzett:2010:cec}. Additionally, algebraic simplification has been used to combat exponential code growth in semantic (crossover?/genetic programming?) \cite{}. Unlike our work, many of these methods (including algebraic simplification) cannot change the semantics of a program, and therefore cannot affect the generalization to unseen data.
+Simplification of evolved programs has been used for various reasons in GP, though as far as we know, never explicitly to improve generalization of an evolved solution. Some of the primary uses include \hl{making evolved programs easier to} understand~\cite{} and controlling bloat during a run~\cite{1144156, Kinzett:2010:cec, Brameier:2001:TEC, ekart:1999:EA}. %Could remove last one if necessary
+Of particular interest is work that uses simplification during a run to reduce overfitting~\cite{Kinzett:2010:cec, hooper:1996:iarGPes}. Additionally, algebraic simplification has been used to combat exponential code growth in geometric semantic genetic programming~\cite{conf/ppsn/MoraglioKJ12}. Unlike our work, most of these methods use algebraic techniques for simplification and cannot change the semantics of a program, and therefore cannot affect the generalization to unseen data.
 
-Are these methods hill climbing? Algebraic?
-
-\begin{itemize}
-
-\item
-Genprog minimization after run (see 7/24/16)
-
-\item
-Field Guide to Genetic Programming: p 64 top: Bahnzaf paper might be precursor to automatic simplification
+Various work has been done to reduce the problems of overfitting in GP, for example through novel parent selection schemes~\cite{goncalves:2013:EuroGP}. In other work, an ensemble of symbolic regression datasets were created using bootstrapping~\cite{conf/ppsn/Agapitos12}. Here, the variance of a individual's error on these datasets was used in combination with the error on the original dataset to create a new fitness function. When this new fitness function is used to drive genetic programming, it was shown to produce better generalizing programs.
+In \cite{Azad:2011:GECCO} a measure of each individual's variance of output values (referred to as smoothness) is used in a modified version of tournament selection. This scheme of tournament selection was shown to produce better generalizing programs on symbolic regression problems.
 
 
 
-\item
-DONE: Algebraic Simplification of GP Programs During Evolution \cite{1144156}
+%\subsection{These papers are referenced in Forrest's software debugging work; probably not worth citing.}
+%
+%\begin{itemize}
+%\item
+%Genprog minimization after run (see 7/24/16)
+%
+%\item
+%Tree-structured differencing: R. Al-Ekram, A. Adma, and O. Baysal. diffX: an algorithm to detect changes in multi-version XML documents. In Conference of the Centre for Advanced Studies on Collaborative research, pages 1–11. IBM Press, 2005.
+%
+%\item
+%Delta debugging: A. Zeller. Yesterday, my program worked. Today, it does not. Why? In Foundations of Software Engineering, pages 253–267, 1999.
+%
+%\end{itemize}
 
-\item
-DONE: Investigation of simplification threshold and noise level of input data in numerical simplification of genetic programs \cite{Kinzett:2010:cec}
+%\subsection{Neural Nets}
 
-\end{itemize}
+Finally, our findings here may provide additional perspectives on discussions about the relations between model simplicity and generality, or the lack thereof, in the neural network and data mining research communities~\cite{domingos2016master}.
 
-\subsection{Papers about generalization and overfitting in GP}
-
-\begin{itemize}
-\item
-GECCO 2011 - Variance based Selection to Improve Test Set Performance in Genetic Programming
-
-\item
-Controlling overfitting in symbolic regression based on a bias/variance error decomposition
-
-
-\end{itemize}
-
-\subsection{Other related papers}
-
-\begin{itemize}
-\item
-Tree-structured differencing: R. Al-Ekram, A. Adma, and O. Baysal. diffX: an algorithm to detect changes in multi-version XML documents. In Conference of the Centre for Advanced Studies on Collaborative research, pages 1–11. IBM Press, 2005.
-
-\item
-Delta debugging: A. Zeller. Yesterday, my program worked. Today, it does not. Why? In Foundations of Software Engineering, pages 253–267, 1999.
-
-\end{itemize}
-
-\subsection{Neural Nets}
-
-Our findings here may provide additional perspectives on discussions about the relations between model simplicity and generality, or the lack thereof, in the neural network and data mining research communities (cite either the Domingos paper or book).
-
-
-This paper in neural networks might be related: GECCO 2016 - Identifying Core Functional Networks and Functional Modules within Artificial Neural Networks via Subsets Regression
+%This paper in neural networks might be related: GECCO 2016 - Identifying Core Functional Networks and Functional Modules within Artificial Neural Networks via Subsets Regression
 
 
 \section{Push, Plush, and PushGP}
