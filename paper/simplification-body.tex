@@ -206,7 +206,7 @@ The benchmark suite we used prescribes using randomly generated training and tes
 \section{Results}
 \label{sec:results}
 
-\begin{figure*}[t] %[t] sets the image at the top of the page; t = top, b = bottom, h = here%
+\begin{figure*}[h] %[t] sets the image at the top of the page; t = top, b = bottom, h = here%
 \centering
 \includegraphics[width=0.9\textwidth]{Problem_by_Size_bar} % \linewidth
 \caption{The average program size of programs produced by our five 
@@ -233,7 +233,7 @@ differences resulting from the various simplification methods are all
 quite small when compared to the difference between the simplified sizes
 and the unchanged programs' sizes.
 
-\begin{table}[tb]
+\begin{table}[t]
 	\centering
 	\caption{The average rank in size for each simplification method across the data in Figure~\ref{fig:bar:size}, where lower rank means smaller programs. ``Unchanged'' is the rank of the evolved programs without any simplification.}
 	\label{table:size-ranks}
@@ -274,13 +274,13 @@ The Friedman test on the data in Table~\ref{table:size-ranks} gives a \textit{p}
 %GenomeBacktrackingNoop - GenomeBacktracking 8.119145e-01
 %Program - GenomeBacktrackingNoop            9.971909e-01
 
-\begin{figure*}[t] %[t] sets the image at the top of the page; t = top, b = bottom, h = here%
+\begin{figure*}[h] %[t] sets the image at the top of the page; t = top, b = bottom, h = here%
 \centering
 \includegraphics[width=0.9\textwidth]{Problem_by_PcntGen_bar} % \linewidth
-\caption{The proportion of simplified programs that generalize to unseen data
+\caption{The proportion of simplified programs that generalize to unseen test data
 	for each problem, with the proportion of unchanged programs that generalize 
 	indicated with black horizontal bars.
-    The number of unchanged programs taken into account for each problem
+    The number of unchanged solution programs taken into account for each problem
     is given in parentheses, representing the number of starting points for each problem.
 % \hl{Question: In this figure, how much of the time are the simplified programs significantly better at generalization than the unsimplified programs? How would we measure this? Do we need to?}}
 % \hl{Is this just a bunch of \texttt{prop.test} in R, or am I not understanding
@@ -301,7 +301,7 @@ Also note that the five problems with the worst generalization in Figure~\ref{fi
 
 As with average program sizes, there do not appear to be large differences between the simplification methods in terms of generalization. To see if the small differences do affect rank, we calculated the average rank of each method across all problems. Here, rank 1 signifies the best (highest) generalization, and rank 6 represents the worst generalization. These average ranks are presented in Table~\ref{table:generalization-ranks}.
 
-\begin{table}[ht]
+\begin{table}[t]
 	\centering
 	\caption{The average rank in generalization for each simplification method across the problems in Figure~\ref{fig:bar:percent_generalization}, where lower rank means better generalization. ``Unchanged'' is the rank of the evolved programs without any simplification.}
 	\label{table:generalization-ranks}
@@ -361,7 +361,7 @@ For generalization, the differences in rank for the simplification methods are n
 \begin{figure}[t] %[t] sets the image at the top of the page; t = top, b = bottom, h = here%
 \centering
 \includegraphics[width=\linewidth]{Quad_Density_labeled3} %{quad_density_new_bad}
-\caption{We plot and record every single simplified program across all problems. The top row corresponds to programs that did not generalize pre-simplification, and the bottom row is those that did generalize. The left column contains all simplified programs that did not generalize, and the right column has those that did. The numbers in each plot give the total number of programs in that subplot. For example, we see that there are 53787 simplified programs that generalize coming from original programs that did not generalize. The lines count the number of simplified programs at each simplified program size. Note the different $y$-axis scales of the top and bottom rows.}
+\caption{We plot and record every simplified program across all problems. The top row corresponds to programs that did not generalize pre-simplification, and the bottom row is those that did generalize. The left column contains all simplified programs that did not generalize, and the right column has those that did. The numbers in each plot give the total number of programs in that subplot. For example, we see that there are 53787 simplified programs that generalize coming from original programs that did not generalize. The lines count the number of simplified programs at each size. Note the different $y$-axis scales of the top and bottom rows.}
 \label{fig:count:quad}
 \end{figure}
 
@@ -379,14 +379,14 @@ For generalization, the differences in rank for the simplification methods are n
 %\label{fig:count:pre-simp-gen-true}
 %\end{figure}
 
-Ignoring the lines for now, the numbers in Figure~\ref{fig:count:quad} give the total count of each combination of programs that did/did not generalize pre-simplification with  did/did not generalize post-simplification. Considering the top row, we see that of the evolved programs that did not generalize, over one third generalized after simplification. This is a large increase in generalization. On the other hand, out of the starting programs that did generalize before simplification (the bottom row), only about 1.2\% of the simplifications broke them so that they did not generalize. This gives strong evidence that simplification can be used to make evolved programs more likely to generalize, without a large risk of breaking programs that already generalize. In total, 65\% of the unchanged programs generalized before simplification; that number rises to 76\% after simplification, an increase in generalization of 11 percentage points.
+Ignoring the lines for now, the numbers in Figure~\ref{fig:count:quad} give the total count of each combination of programs that did/did not generalize pre-simplification with  did/did not generalize post-simplification. Considering the top row of evolved programs that did not generalize, over 33\% generalized after simplification. On the other hand, out of the starting programs that did generalize before simplification (the bottom row), only about 1.2\% of the simplifications broke them so that they did not generalize. This gives strong evidence that simplification can be used to make evolved programs more likely to generalize, without a large risk of breaking programs that already generalize. In total, 65\% of the unchanged programs generalized before simplification; that number rises to 76\% after simplification, an increase in generalization of 11 percentage points.
 
 % Pre:  (3735 + 289265) / (102617 + 53787 + 3735 + 289265) = .652
 % Post: (53787 + 289265) / (102617 + 53787 + 3735 + 289265) = .763
 
-We next want to explore how size after simplification corresponds to the generalization of simplified programs. The lines in Figure \ref{fig:count:quad} plot the counts of the sizes of the simplified programs for the same four sets of programs, aggregated across all problems. The top row only includes those simplifications that started with unchanged programs that did not generalize. These two subplots clearly show that when the resulting simplified program was relatively small (with size less than about 25), it was much more likely to change from ungeneralizing to generalizing, as seen in the upper-right plot. On the other hand, programs that remained larger after simplification were more likely to not have their generalization affected by simplification, shown in the upper-left plot. Thus, most of the improvements in generalization that we described previously come from simplified programs that achieve small sizes. This clearly shows that there is a correlation, if not causation, between post-simplification size and the probability of generalization.
+We next want to explore how size after simplification corresponds to the generalization of simplified programs. The lines in Figure \ref{fig:count:quad} plot the counts of the sizes of the simplified programs for the same four sets of programs, aggregated across all problems. The top row only includes those simplifications that started with unchanged programs that did not generalize. These two subplots clearly show that when the resulting simplified program was relatively small (with size less than about 25), it was much more likely to change from ungeneralizing to generalizing, as seen in the upper-right plot. On the other hand, programs that remained larger after simplification were more likely to remain ungeneralizing, shown in the upper-left plot. Thus, most of the improvements in generalization that we described previously come from simplified programs that achieve small sizes. This clearly shows that there is a correlation, if not causation, between post-simplification size and the probability of generalization.
 
-The bottom two plots in Figure~\ref{fig:count:quad} give the same counts of sizes of the simplified programs, but this time for those unchanged programs that did generalize. First, note that the scale of the $y$-axis is over 5 times as large as for the top row; as we saw previously, about twice as many unchanged programs generalized as those that did not. Here, we are interested in whether many of the unchanged programs that did generalize were broken by simplification. We see that very few such instances occured---only 3735---compared to those that remained generalizing after simplification. Thus while simplification often makes a program go from ungeneralizing to generalizing, it does not often take a generalizing program and make it ungeneralizing.
+The bottom two plots in Figure~\ref{fig:count:quad} also give the counts of sizes of the simplified programs, but this time for those unchanged programs that did generalize. First, note that the scale of the $y$-axis is over 5 times as large as for the top row; as we saw previously, about twice as many unchanged programs generalized as those that did not. We see that generalizing programs tended to be very small here as well.
 
 
 %%%%%%% KEEP THE FOLLOWING IF WE HAVE SPACE
@@ -462,7 +462,7 @@ Checksum, Double Letters, and Vectors Summed, there were very few
 solution programs generated in the initial 100 PushGP runs (5, 6, and 1,
 respectively). With so few data points to work with it's not surprising
 that in some cases (e.g., Checksum and Vectors Summed) there was no change
-in generalization. In the case of double-letters, five of the six initial
+in generalization. In the case of Double Letters, five of the six initial
 solutions were consistently simplified without affecting generalization.
 The sixth solution, however, frequently led to simplifications that no 
 longer generalized. Only 37 of the 100 Program simplification results, 
@@ -475,7 +475,7 @@ generalized.
 %	early in their simplified programs, which smells really fragile to me,
 %	but I haven't dug into the programs enough to know if that's the issue.}
 
-It's also clear from Figures~\ref{fig:count:quad} and~\ref{fig:nic-plot} that
+It's also clear from Figure~\ref{fig:count:quad} that
 smaller post-simplification sizes were strongly correlated with the
 ability to generalize after simplification. This is consistent with 
 a broad range of work that either argues theoretically (e.g., the minimum
@@ -491,11 +491,9 @@ program size and generalization is almost certainly driven at least in part
 by both the problem being solved, and the representation being used for
 solutions. It's possible, therefore, that the strong correlation we see
 is in some way related to the kinds of software synthesis problems we're using
-as benchmarks, which clearly behave differently from the commonly used
-symbolic regression and classification benchmarks. 
+as benchmarks, which clearly behave differently from other common application areas such as symbolic regression and classification.
 
-It's also possible,
-however, that the design decisions in PushGP play a crucial role here. Any
+It's also possible that the design decisions in PushGP play a crucial role here. Any
 attempt to control or reduce program size in GP is premised on the idea that
 there must be some parts of the program that aren't playing an important role
 and can thus be removed; such code has been called many things over the years,
@@ -550,9 +548,9 @@ deeply intertwined with key details of PushGP.
 \section{Conclusions and Future Work}
 \label{sec:conclusions}
 
-The results of our experiments show, across a range of software synthesis benchmark problems, that smaller programs evolved byPushGP tend to generalize better than larger programs. The results also show that evolved programs can be automatically simplified using a variety of simple hill-climbing procedures, and that simplified programs tend to generalize better than unsimplified programs. Furthermore, programs that can be successfully simplified (that is, that the simplification procedure can make much smaller) are more likely to be improved by simplification in terms of generalization. The differences between our simplification methods were not significant, but significant improvements were produced when any of them was used.
+The results of our experiments show, across a range of software synthesis benchmark problems, that smaller programs evolved byPushGP tend to generalize better than larger programs. The results also show that evolved programs can be automatically simplified using a variety of simple hill-climbing procedures, and that simplified programs tend to generalize better than unsimplified programs. Furthermore, programs that can be successfully simplified (that is, that the simplification procedure can make much smaller) are more likely to show improved generalization after simplification. The differences between our simplification methods were not significant, but significant improvements were produced when any of them was used.
 
-The recommendation, therefore, for users of PushGP, is to always perform automatic simplification on the results of evolution, using any of the methods described here. There is a reasonable chance that doing so will improve the generalization of your evolved programs, and a much smaller chance that it will hurt it. If a program is substantially smaller after automatic simplification, then it will have an even better chance of generalizing.
+The recommendation, therefore, for users of PushGP is to always perform automatic simplification on the results of evolution, using any of the methods described here. There is a reasonable chance that doing so will improve the generalization of evolved programs, and a much smaller chance that it will hurt it. If a program is substantially smaller after automatic simplification, then it will have an even better chance of generalizing.
 
 Would the same advice apply to users of other types of GP systems? For some systems, such as tree-based GP with non-numeric functions, automatic simplification based on hill-climbing may be non-trival. Our methods might be applied more easily to other forms of GP, including grammatical evolution, Cartesian GP, and linear GP systems.
 
