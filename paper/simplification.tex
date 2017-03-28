@@ -42,79 +42,52 @@
 \title{Improving Generalization of Evolved Programs through Automatic Simplification}
 %\subtitle{Do we want a sub-title?}
 
-\author{Omitted for Review}
-\affiliation{%
-  \institution{.}
-  \city{.} 
-}
-\email{.}
 
-\author{Omitted for Review}
+\author{Thomas Helmuth}
+\orcid{0000-0002-2330-6809}
 \affiliation{%
-  \institution{.}
-  \city{.} 
+  \institution{Washington and Lee University}
+  \city{Lexington} 
+  \state{Virginia} 
+  \country{USA}
 }
-\email{.}
+\email{helmutht@wlu.edu}
 
-\author{Omitted for Review}
+\author{Nicholas Freitag McPhee}
+\orcid{0000-0002-6495-2612}
 \affiliation{%
-  \institution{.}
-  \city{.} 
+  \institution{University of Minnesota, Morris}
+  % \streetaddress{600 E. 4th Street}
+  \city{Morris} 
+  \state{Minnesota} 
+  \country{USA}
 }
-\email{.}
+\email{mcphee@morris.umn.edu}
 
-\author{Omitted for Review}
+\author{Edward Pantridge}
+\affiliation{
+	\institution{MassMutual Financial Group}
+	\city{Amherst}
+	\state{Massachusetts}
+	\country{USA}
+}
+\email{epantridge@massmutal.com}
+
+\author{Lee Spector}
 \affiliation{%
-  \institution{.}
-  \city{.} 
+	\institution{Hampshire College}
+	\city{Amherst}
+	\state{Massachusetts}
+	\country{USA}
 }
-\email{.}
-
-%\author{Thomas Helmuth}
-%\orcid{0000-0002-2330-6809}
-%\affiliation{%
-%  \institution{Washington and Lee University}
-%  \city{Lexington} 
-%  \state{Virginia} 
-%  \country{USA}
-%}
-%\email{helmutht@wlu.edu}
-%
-%\author{Nicholas Freitag McPhee}
-%\orcid{0000-0002-6495-2612}
-%\affiliation{%
-%  \institution{University of Minnesota, Morris}
-%  % \streetaddress{600 E. 4th Street}
-%  \city{Morris} 
-%  \state{Minnesota} 
-%  \country{USA}
-%}
-%\email{mcphee@morris.umn.edu}
-%
-%\author{Edward Pantridge}
-%\affiliation{
-%	\institution{MassMutual Financial Group}
-%	\city{Amherst}
-%	\state{Massachusetts}
-%	\country{USA}
-%}
-%\email{epantridge@massmutal.com}
-%
-%\author{Lee Spector}
-%\affiliation{%
-%	\institution{Hampshire College}
-%	\city{Amherst}
-%	\state{Massachusetts}
-%	\country{USA}
-%}
-%\email{lspector@hampshire.edu}
+\email{lspector@hampshire.edu}
 
 % The default list of authors is too long for headers}
 % \renewcommand{\shortauthors}{B. Trovato et. al.}
 
 
 \begin{abstract}
-Genetic programming can be prone to overfitting of training data. Reliable synthesis of programs that generalize to unseen data is therefore an important open problem. We present evidence that smaller programs evolved using the PushGP system tend to generalize better over a range of program synthesis problems. Like in many genetic programming systems, programs evolved by PushGP usually have pieces that can be removed without changing the behavior of the program. We describe methods for automatically simplifying evolved programs to make them smaller and potentially reduce overfitting. We present five simplification methods and analyze their strengths and weaknesses on a suite of general program synthesis benchmark problems. All of our methods use a straightforward hill-climbing procedure to remove pieces of a program while ensuring that the resulting program gives the same errors on the training data as did the original program. We show that automatic simplification, previously used both for post-run analysis and as a genetic operator, can be used on evolved programs to significantly improve their generalization rates.
+Genetic programming can be prone to overfitting of training data. Reliable synthesis of programs that generalize to unseen data is therefore an important open problem. We present evidence that smaller programs evolved using the PushGP system tend to generalize better over a range of program synthesis problems. Like in many genetic programming systems, programs evolved by PushGP usually have pieces that can be removed without changing the behavior of the program. We describe methods for automatically simplifying evolved programs to make them smaller and potentially reduce overfitting. We present five simplification methods and analyze their strengths and weaknesses on a suite of general program synthesis benchmark problems. All of our methods use a straightforward hill-climbing procedure to remove pieces of a program while ensuring that the resulting program gives the same errors on the training data as did the original program. We show that automatic simplification, previously used both for post-run analysis and as a genetic operator, can significantly improve the generalization rates of evolved programs.
 %We find only minor differences between our simplification methods, yet all methods dramatically decrease program sizes and improve generalization.
 \end{abstract}
 
