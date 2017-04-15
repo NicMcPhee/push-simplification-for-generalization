@@ -1,7 +1,7 @@
 \section{Introduction}
 \label{sec:intro}
 
-Supervised machine learning algorithms are trained on data for which correct answers (e.g. classes, predictions) are known in advance, with the goal of producing a system that will subsequently also give the correct answers for new, unseen data. In the context of genetic programming (GP) \cite{koza:book}, this means that we seek to evolve a program that will produce correct outputs when run on any reasonable inputs, including inputs not encountered during the evolutionary process. That is, we seek programs that {\it generalize} to \textit{unseen test data}. While the challenges of evolving generalizing programs have long been recognized and studied (e.g. \cite{1144159, DBLP:conf/gecco/VanneschiG09, Castelli:2010:cec, Goncalves:2015:EuroGP}), the challenges in this area have not yet been fully met, and significant  problems remain open.
+Supervised machine learning algorithms are trained on data for which correct answers (e.g. classes, predictions) are known in advance, with the goal of producing a system that will subsequently also give the correct answers for new, unseen data. In the context of genetic programming (GP) \cite{koza:book}, this means that we seek to evolve a program that will produce correct outputs when run on any valid inputs, including inputs not encountered during the evolutionary process. That is, we seek programs that {\it generalize} to \textit{unseen test data}. While the challenges of learning generalizing solutions have long been recognized and studied, both in GP (e.g. \cite{1144159, DBLP:conf/gecco/VanneschiG09, Castelli:2010:cec, Goncalves:2015:EuroGP}) and other machine learning algorithms (e.g. \hl{CITE ONE SURVEY}), the challenges in this area have not yet been fully met, and significant  problems remain open.
 
 Another set of long-standing, open research questions in GP concerns the growth of programs over evolutionary time, and the presence of unnecessary code in evolved programs---see, for example, the survey~\cite{silva2012operator}. Such code growth can consume computational resources, slow down the GP search process, and produce programs that are difficult for users to understand or apply.
 
@@ -21,7 +21,7 @@ In the following section we first briefly describe related work on automatic sim
 %\subsection{Papers about automatic simplification}
 
 Simplification of evolved programs has been used for various reasons in GP, though as far as we know, never explicitly to improve generalization of an evolved solution. Some of the primary uses include making evolved programs easier to understand~\cite{koza:book} and controlling bloat during a run~\cite{1144156, Kinzett:2010:cec, Brameier:2001:TEC, ekart:1999:EA}. %Could remove last one if necessary
-Of particular interest is work that uses simplification during a run to reduce overfitting~\cite{Kinzett:2010:cec, hooper:1996:iarGPes}. Additionally, algebraic simplification has been used to combat exponential code growth in geometric semantic genetic programming~\cite{conf/ppsn/MoraglioKJ12}. Unlike our work, most of these methods use algebraic techniques for simplification and cannot change the semantics of a program, and therefore cannot affect the generalization to unseen data.
+Of particular interest is work that uses simplification during a run to reduce overfitting~\cite{Kinzett:2010:cec, hooper:1996:iarGPes}. Additionally, algebraic simplification has been used to combat exponential code growth in geometric semantic genetic programming~\cite{conf/ppsn/MoraglioKJ12}. Unlike our work, most of these methods use algebraic techniques for simplification that cannot change the output of a program on any input, and therefore cannot affect the generalization to unseen data.
 
 Various work has been done to reduce the problems of overfitting in GP~\cite{goncalves:2013:EuroGP, 1144159, DBLP:conf/gecco/VanneschiG09, Castelli:2010:cec, Goncalves:2015:EuroGP}. In other work, an ensemble of symbolic regression datasets were created using bootstrapping~\cite{conf/ppsn/Agapitos12}. Here, the variance of a individual's error on these datasets was used in combination with the error on the original dataset to create a new fitness function. When this new fitness function is used to drive GP, it was shown to produce better generalizing programs.
 In \cite{Azad:2011:GECCO} a measure of each individual's variance of output values (referred to as smoothness) is used in a modified version of tournament selection. This scheme was shown to produce better generalizing programs on symbolic regression problems.
@@ -104,9 +104,7 @@ as well as not opening or ending any parenthesized code blocks. When picking a r
 
 Note that by silencing genes instead of removing them entirely, it 
 becomes possible to backtrack by unsilencing previously silenced genes. 
-Thus, in several methods 
-we silence some genes while unsilencing others, making it possible to 
-backtrack by activating genes that were previously turned off. We hope that the backtracking enabled by unsilencing will allow simplification to escape some local program size minima that it might otherwise be impossible to escape, resulting in more reliable simplification to smaller programs. We never select an unsilenced gene to unsilence. 
+We hope that the backtracking enabled by unsilencing will allow simplification to escape some local program size minima that it might otherwise be impossible to escape, resulting in more reliable simplification to smaller programs. We never select an unsilenced gene to unsilence. 
 
 Finally, some methods ``NOOP'' genes by replacing their instructions with 
 NOOP instructions that have no effect when executed. 
