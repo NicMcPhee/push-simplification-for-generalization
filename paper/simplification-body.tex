@@ -26,6 +26,8 @@ Of particular interest is work that uses simplification during a run to reduce o
 Various work has been done to reduce the problems of overfitting in GP~\cite{goncalves:2013:EuroGP, 1144159, DBLP:conf/gecco/VanneschiG09, Castelli:2010:cec, Goncalves:2015:EuroGP}. In other work, an ensemble of symbolic regression datasets were created using bootstrapping~\cite{conf/ppsn/Agapitos12}. Here, the variance of a individual's error on these datasets was used in combination with the error on the original dataset to create a new fitness function. When this new fitness function is used to drive GP, it was shown to produce better generalizing programs.
 In \cite{Azad:2011:GECCO} a measure of each individual's variance of output values (referred to as smoothness) is used in a modified version of tournament selection. This scheme was shown to produce better generalizing programs on symbolic regression problems.
 
+Relations between program size and and generalization have been studied previously. Many of these studies have been conducted in the context of tree based genetic programming, which has an idiosyncratic tendency to produce program ``bloat'' \cite{Vanneschi:2010:gecco}. The genetic representations and variation operators that we use here do not share these tendencies \cite{Helmuth:2016:GPTP}, so the relevance of the prior work in this area is unclear.
+Finally, our findings here may provide additional perspectives on discussions about the relations between model simplicity and generality, or the lack thereof, in the neural network and data mining research communities~\cite{domingos2016master}.
 
 
 %\subsection{These papers are referenced in Forrest's software debugging work; probably not worth citing.}
@@ -44,7 +46,6 @@ In \cite{Azad:2011:GECCO} a measure of each individual's variance of output valu
 
 %\subsection{Neural Nets}
 
-Finally, our findings here may provide additional perspectives on discussions about the relations between model simplicity and generality, or the lack thereof, in the neural network and data mining research communities~\cite{domingos2016master}.
 
 %This paper in neural networks might be related: GECCO 2016 - Identifying Core Functional Networks and Functional Modules within Artificial Neural Networks via Subsets Regression
 
@@ -162,8 +163,9 @@ simplification.
 	\end{tabu}
 \end{table}
 
-The four genome methods of simplification are listed in Table \ref{table:genome-methods}. Each method lists the types of steps that can be taken and the probability of each step being chosen. \textbf{Genome} simplification, the most basic of the methods, only allows for the silencing 
+The four genome methods of simplification are listed in Table~\ref{table:genome-methods}. Each method lists the types of steps that can be taken and the probability of each step being chosen. \textbf{Genome} simplification, the most basic of the methods, only allows for the silencing 
 of 1 to 4 random genes in a single step. \textbf{Genome-Backtracking} and \textbf{Genome-Backtracking-Noop} occasionally unsilence a silent gene while silencing another. \textbf{Genome-Noop} and \textbf{Genome-Backtracking-Noop} use NOOPing to turn intructions into NOOPs without removing them entirely.
+We chose the probabilities for each method mostly arbitrarily, and do not believe that the precise values have much affect on our results.
 
 Note that while the Program simplification method can remove unnecessary parentheses from a program, none of the genome methods have this ability. Since the genome methods change the genomes themselves, which have no parentheses, they cannot remove the parentheses that appear in the resulting translated program. They can silence an entire gene, which will omit its instruction and any open parentheses it requires, but they cannot simply remove a pair of extraneous parentheses.
 
@@ -194,8 +196,7 @@ unseen test set (i.e. generalized), and some did not (i.e. did not generalize). 
 
 For each simplification trial, we simplified the unchanged program using 10,000 steps of the simplification algorithm (see Algorithm~\ref{alg:simplification}). 
 While this number of steps is often more than necessary to effectively 
-simplify most programs, the simplification process is not prohibitively expensive. Note that while every simplification step requires evaluating the new program, making 10,000 simplification steps moderately expensive, this is the equivalent number of evaluations to 10 generations of GP with a population of 1000. Since we are advocating for simplification at the end of a GP run, it only needs to happen once, 
-so expending this much computational effort seems reasonable.
+simplify most programs, the simplification process is not prohibitively expensive. While every simplification step requires evaluating the new program, 10,000 steps is the equivalent number of evaluations to 10 generations of GP with a population of 1000. Since we are advocating for one simplification at the end of a GP run, this computational effort seems reasonable compared to GP runs of hundreds of generations.
 
 The benchmark suite we used prescribes using randomly generated training and test cases for most of the input and output data. Since automatic simplification requires use of training data, we use the training and test sets that were used for the original run for every simplification of the solution program from that run.
 
@@ -204,19 +205,54 @@ The benchmark suite we used prescribes using randomly generated training and tes
 \section{Results}
 \label{sec:results}
 
-\begin{figure*}[h] %[t] sets the image at the top of the page; t = top, b = bottom, h = here%
+\begin{figure*}[ht] %[t] sets the image at the top of the page; t = top, b = bottom, h = here%
 \centering
-\includegraphics[width=0.95\textwidth]{Problem_by_Size_bar} % \linewidth
-\caption{The average program size of programs produced by our five 
-	simplification methods for each problem set; the average program 
-	sizes of the unchanged solution programs are represented with black 
-	horizontal bars. Each simplification method performs repeated trials 
+\includegraphics[width=1.0\textwidth]{stacked-bar}
+ % \linewidth
+\caption{The average program size of simplified programs and proportion
+    of simplified programs that generalize to unseen test data of
+    programs produced by our five
+    simplification methods for each problem; the unchanged solution
+    program averages are represented with horizontal black bars.
+    Each simplification method performs repeated trials 
 	using the same set of unchanged programs, and therefore has 
 	the same opportunities for simplification as the other methods.
     The number of unchanged solution programs taken into account for each problem
     is given in parentheses, representing the number of starting points for each problem.}
-\label{fig:bar:size}
+\label{fig:bar:all}
 \end{figure*}
+
+% \begin{figure*}[h] %[t] sets the image at the top of the page; t = top, b = bottom, h = here%
+% \centering
+% \includegraphics[width=0.89\textwidth]{Problem_by_Size_bar}
+% %{stacked-bar}
+%  % \linewidth
+% \caption{The average program size of programs produced by our five 
+% 	simplification methods for each problem set; the average program 
+% 	sizes of the unchanged solution programs are represented with black 
+% 	horizontal bars. Each simplification method performs repeated trials 
+% 	using the same set of unchanged programs, and therefore has 
+% 	the same opportunities for simplification as the other methods.
+%     The number of unchanged solution programs taken into account for each problem
+%     is given in parentheses, representing the number of starting points for each problem.}
+% \label{fig:bar:size}
+% \end{figure*}
+
+% \begin{figure*}[h] %[t] sets the image at the top of the page; t = top, b = bottom, h = here%
+% \centering
+% \includegraphics[width=0.89\textwidth]{Problem_by_PcntGen_bar_no_legend} % \linewidth
+% \caption{The proportion of simplified programs that generalize to unseen test data
+% 	for each problem, with the proportion of unchanged programs that generalize 
+% 	indicated with black horizontal bars.
+%     The number of unchanged solution programs taken into account for each problem
+%     is given in parentheses, representing the number of starting points for each problem.
+% % \hl{Question: In this figure, how much of the time are the simplified programs significantly better at generalization than the unsimplified programs? How would we measure this? Do we need to?}}
+% % \hl{Is this just a bunch of \texttt{prop.test} in R, or am I not understanding
+% % 	the question?
+% }
+% \label{fig:bar:percent_generalization}
+% \end{figure*}
+
 
 %\hl{Question: Should we somehow indicate the number of data points that go into each problem? Some problems have a lot of unchanged solutions ($>$ 90), and some have very few ($<$ 10), with the latter group potentially being small sample size, and the former group having more effect on the aggregate plots across problems.}
 %\todo[inline]{It took me a while to figure out the question, but the 
@@ -225,7 +261,7 @@ The benchmark suite we used prescribes using randomly generated training and tes
 %	would be big. Maybe putting the number of initial successes in parens after 
 %	the problem name in the axis labels? -- Nic}
 
-We first consider the question of how much effect simplification has on the size of each solution program. Figure~\ref{fig:bar:size} presents the average program size of the unchanged solution programs on each problem as a horizontal black line. It then gives the average simplified size of the simplified solution programs, with 100 trials per solution, for each of our five simplification methods. It is immediately clear that every simplification method has a large impact on the average size of the solution programs, with most shrinking to half their original size or smaller. 
+We first consider the question of how much effect simplification has on the size of each solution program. Figure~\ref{fig:bar:all}a presents the average program size of the unchanged solution programs on each problem as a horizontal black line. It then gives the average simplified size of the simplified solution programs, with 100 trials per solution, for each of our five simplification methods. It is immediately clear that every simplification method has a large impact on the average size of the solution programs, with most shrinking to half their original size or smaller. 
 In fact, the size
 differences resulting from the various simplification methods are all 
 quite small when compared to the difference between the simplified sizes
@@ -233,7 +269,7 @@ and the unchanged programs' sizes.
 
 \begin{table}[t]
 	\centering
-	\caption{The average rank in size for each simplification method across the data in Figure~\ref{fig:bar:size}, where lower rank means smaller programs. ``Unchanged'' is the rank of the evolved programs without any simplification.}
+	\caption{The average rank in size for each simplification method across the data in Figure~\ref{fig:bar:all}a, where lower rank means smaller programs. ``Unchanged'' is the rank of the evolved programs without any simplification.}
 	\label{table:size-ranks}
 	\begin{tabu} to \textwidth {l r}
 		\toprule
@@ -249,7 +285,10 @@ and the unchanged programs' sizes.
 	\end{tabu}
 \end{table}
 
-To examine aggregate performance of each simplification method, in Table~\ref{table:size-ranks} we calculate the average rank of program size for each method across the 24 problems, with rank 1 indicating the smallest average program size and rank 6 having largest. Note that we include the unchanged programs as one ``method'', which is why we have 6 possible ranks. Program simplification achieves the smallest programs on average, with both of the Genome backtracking methods coming soon after. The genome methods without backtracking have worse average ranks, with the unchanged programs always having worst rank. Since parentheses are counted as part of the size of a program, and since the Genome methods cannot remove extraneous parentheses (as mentioned in Section~\ref{sec:simplification}), we hypothesize that Program simplification is able to achieve smaller sizes largely based on removing such parentheses.
+
+In Table~\ref{table:size-ranks} we examine aggregate performance of each simplification method by calculating the average rank of program size for each method across the 24 problems, with rank 1 indicating the smallest average program size and rank 6 having largest.
+%To examine aggregate performance of each simplification method, in Table~\ref{table:size-ranks} we calculate the average rank of program size for each method across the 24 problems, with rank 1 indicating the smallest average program size and rank 6 having largest.
+Note that we include the unchanged programs as one ``method'', which is why we have 6 possible ranks. Program simplification achieves the smallest programs on average, with both of the Genome backtracking methods coming soon after. The genome methods without backtracking have worse average ranks, with the unchanged programs always having worst rank. Since parentheses are counted as part of the size of a program, and since the Genome methods cannot remove extraneous parentheses (as mentioned in Section~\ref{sec:simplification}), we hypothesize that Program simplification is able to achieve smaller sizes largely based on removing such parentheses.
 
 The Friedman test on the data in Table~\ref{table:size-ranks} gives a \textit{p}-value $< 0.001$, indicating that at least one method performs significantly differently from the others. We then use a post-hoc Wilcoxon-Nemenyi-McDonald-Thompson test \cite{hollander1999nonparametric} to give the significance in the differences in ranking between each pair of methods at the $0.05$ significance level. Every simplification method besides Genome significantly outranks the Unchanged programs. Program also outranks Genome-Noop and Genome; and both Genome backtracking methods outrank Genome. Note that even though these results show significant differences in rank among the methods, most of the actual differences in average size are relatively small compared to the sizes of the unchanged programs.
 
@@ -272,28 +311,13 @@ The Friedman test on the data in Table~\ref{table:size-ranks} gives a \textit{p}
 %GenomeBacktrackingNoop - GenomeBacktracking 8.119145e-01
 %Program - GenomeBacktrackingNoop            9.971909e-01
 
-\begin{figure*}[h] %[t] sets the image at the top of the page; t = top, b = bottom, h = here%
-\centering
-\includegraphics[width=0.95\textwidth]{Problem_by_PcntGen_bar} % \linewidth
-\caption{The proportion of simplified programs that generalize to unseen test data
-	for each problem, with the proportion of unchanged programs that generalize 
-	indicated with black horizontal bars.
-    The number of unchanged solution programs taken into account for each problem
-    is given in parentheses, representing the number of starting points for each problem.
-% \hl{Question: In this figure, how much of the time are the simplified programs significantly better at generalization than the unsimplified programs? How would we measure this? Do we need to?}}
-% \hl{Is this just a bunch of \texttt{prop.test} in R, or am I not understanding
-% 	the question?
-}
-\label{fig:bar:percent_generalization}
-\end{figure*}
-
-Next, we consider the effect of simplification on the generalization of programs to unseen test data. In Figure~\ref{fig:bar:percent_generalization}, we plot the percent of programs that generalize for each simplification method, as well as a horizontal bar representing the percent of unchanged programs that generalize.
+Next, we consider the effect of simplification on the generalization of programs to unseen test data. In Figure~\ref{fig:bar:all}b, we plot the percent of programs that generalize for each simplification method, as well as a horizontal bar representing the percent of unchanged programs that generalize.
 Every simplification method either improves generalization or has no effect on every problem besides Double Letters.
 %\footnote{The Double Letters problem has one of the smaller sample sizes of our data set, with only six solution programs as starting points. All six solutions generalize before simplification. Five of the six generalize most of the time after simplification, but one solution program has many simplifications that don't generalize.}
  Some of the increases in generalization appear substantial, 
 improving as much as 25\% in the case of Median.
 
-Also note that the five problems with the worst generalization in Figure~\ref{fig:bar:percent_generalization} are among the problems for which program sizes were largest in Figure~\ref{fig:bar:size}. For whatever reason, programs that solve these problems tend to be large and unable to shrink, and do not generalize well. We hypothesize that large programs such as these contain many ad-hoc components that overfit to individual test cases without really ``learning'' the underlying program structure, and therefore do not generalize to unseen data.
+Also note that the five problems with the worst generalization in Figure~\ref{fig:bar:all}b are among the problems for which program sizes were largest in Figure~\ref{fig:bar:all}a. For whatever reason, programs that solve these problems tend to be large and unable to shrink, and do not generalize well. We hypothesize that large programs such as these contain many ad-hoc components that overfit to individual test cases without really ``learning'' the underlying program structure, and therefore do not generalize to unseen data.
 
 %This supports our hypothesis that programs that are smaller but behaviorally identical on the training set tend to generalize better.
 
@@ -301,7 +325,7 @@ As with average program sizes, there do not appear to be large differences betwe
 
 \begin{table}[t]
 	\centering
-	\caption{The average rank in generalization for each simplification method across the problems in Figure~\ref{fig:bar:percent_generalization}, where lower rank means better generalization. ``Unchanged'' is the rank of the evolved programs without any simplification.}
+	\caption{The average rank in generalization for each simplification method across the problems in Figure~\ref{fig:bar:all}b, where lower rank means better generalization. ``Unchanged'' is the rank of the evolved programs without any simplification.}
 	\label{table:generalization-ranks}
 	\begin{tabu} to \textwidth {l r}
 		\toprule
@@ -317,7 +341,7 @@ As with average program sizes, there do not appear to be large differences betwe
 	\end{tabu}
 \end{table}
 
-For generalization, the differences in rank for the simplification methods are not as pronounced as with simplified sizes. Note that Program simplification, while producing the smallest programs, has the worst generalization of the simplification methods; all of the Genome-based methods remain in the same order. The Friedman test on the data in Table~\ref{table:generalization-ranks} gives a \textit{p}-value $< 0.001$, indicating that at least one method performs significantly differently from the others. We then use a post-hoc Wilcoxon-Nemenyi-McDonald-Thompson test \cite{hollander1999nonparametric} to give the significance in the differences in ranking between each pair of methods at the $0.05$ significance level. Here, every simplification method significantly outranks Unchanged. But, there is not a significant difference in generalization rank between any of the simplification methods. Thus the average rank of each method is approximately the same, which is unsurprising considering their similarities in Figure~\ref{fig:bar:percent_generalization}.
+For generalization, the differences in rank for the simplification methods are not as pronounced as with simplified sizes. Note that Program simplification, while producing the smallest programs, has the worst generalization of the simplification methods; all of the Genome-based methods remain in the same order. The Friedman test on the data in Table~\ref{table:generalization-ranks} gives a \textit{p}-value $< 0.001$, indicating that at least one method performs significantly differently from the others. We then use a post-hoc Wilcoxon-Nemenyi-McDonald-Thompson test \cite{hollander1999nonparametric} to give the significance in the differences in ranking between each pair of methods at the $0.05$ significance level. Here, every simplification method significantly outranks Unchanged. But, there is not a significant difference in generalization rank between any of the simplification methods. Thus the average rank of each method is approximately the same, which is unsurprising considering their similarities in Figure~\ref{fig:bar:all}b.
 
 %GenomeBacktrackingNoop - none               1.532704e-06
 %GenomeBacktracking - none                   8.164085e-05
@@ -339,29 +363,30 @@ For generalization, the differences in rank for the simplification methods are n
 %Program - GenomeNoop                        9.505945e-01
 
 
-%\begin{table}[t]
-%	\centering
-%	\caption{This table records every single simplified program across all problems. The top row corresponds to unchanged programs that did not generalize, where the bottom row is those that did generalize. The left column contains all simplified programs that did not generalize, and the right column has those that did. For example, we see that there are 53787 simplified programs that generalize coming from original programs that did not generalize.}
-%	\label{table:total-counts}
-%	\begin{tabu} to \textwidth {l r r}
-%		\toprule
-%		& \multicolumn{2}{p{2.8cm}}{\textbf{Generalizes \newline Post-Simplification}} \\
-%		& \textbf{No} & \textbf{Yes} \\
-%		\midrule
-%		\textbf{Generalizes Pre: No} & 102617 & 53787 \\
-%		\textbf{Generalizes Pre: Yes} & 3735  & 289265 \\
-%		\bottomrule
-%	\end{tabu}
-%\end{table}
-
-
-
 \begin{figure}[t] %[t] sets the image at the top of the page; t = top, b = bottom, h = here%
 \centering
-\includegraphics[width=\linewidth]{Quad_Density_labeled3} %{quad_density_new_bad}
-\caption{We plot and record every simplified program across all problems. The top row corresponds to programs that did not generalize pre-simplification, and the bottom row is those that did generalize. The left column contains all simplified programs that did not generalize, and the right column has those that did. The numbers in each plot give the total number of programs in that subplot. For example, we see that there are 53787 simplified programs that generalize coming from original programs that did not generalize. The lines count the number of simplified programs at each size. Note the different $y$-axis scales of the top and bottom rows.}
+\includegraphics[width=\linewidth]{Size_Density_final}
+%{Size_density_by_generalized_B_no_facet_count}
+%{quad_density_new_bad}
+\caption{We plot the counts of each post-simplification program size for cases where the unchanged program did \underline{not} generalize. Green (false) are programs that continued to not generalize after simplification; yellow (true) are programs that do generalize after simplification. The programs here correspond to the top row in Table~\ref{table:total-counts}.}
 \label{fig:count:quad}
 \end{figure}
+
+\begin{table}[t]
+	\centering
+	\caption{This table records every single simplified program across all problems. The top row corresponds to unchanged programs that did not generalize, where the bottom row is those that did generalize. The left column contains all simplified programs that did not generalize, and the right column has those that did. For example, we see that there are 53787 simplified programs that generalize coming from original programs that did not generalize.}
+	\label{table:total-counts}
+	\begin{tabu} to \textwidth {l r r}
+		\toprule
+		& \multicolumn{2}{p{2.8cm}}{\textbf{Generalizes \newline Post-Simplification}} \\
+		& \textbf{No} & \textbf{Yes} \\
+		\midrule
+		\textbf{Generalizes Pre: No} & 102,617 & 53,787 \\
+		\textbf{Generalizes Pre: Yes} & 3,735  & 289,265 \\
+		\bottomrule
+	\end{tabu}
+\end{table}
+
 
 %\begin{figure}[t] %[t] sets the image at the top of the page; t = top, b = bottom, h = here%
 %\centering
@@ -377,6 +402,7 @@ For generalization, the differences in rank for the simplification methods are n
 %\label{fig:count:pre-simp-gen-true}
 %\end{figure}
 
+\hl{NEED to make this refer to the new table.}
 Ignoring the lines for now, the numbers in Figure~\ref{fig:count:quad} give the total count of each combination of programs that did/did not generalize pre-simplification with  did/did not generalize post-simplification. Considering the top row of evolved programs that did not generalize, over 33\% generalized after simplification. On the other hand, out of the starting programs that did generalize before simplification (the bottom row), only about 1.2\% of the simplifications broke them so that they did not generalize. This gives strong evidence that simplification can be used to make evolved programs more likely to generalize, without a large risk of breaking programs that already generalize. In total, 65\% of the unchanged programs generalized before simplification; that number rises to 76\% after simplification, an increase in generalization of 11 percentage points.
 
 % Pre:  (3735 + 289265) / (102617 + 53787 + 3735 + 289265) = .652
@@ -447,11 +473,11 @@ The bottom two plots in Figure~\ref{fig:count:quad} also give the counts of size
 
 As noted earlier, all five simplification methods lead to substantial
 reductions in program size across all 24 test problems, as shown in
-Figure~\ref{fig:bar:size}, with the average simplified sizes often 
+Figure~\ref{fig:bar:all}a, with the average simplified sizes often 
 well under half the original sizes, and sometimes much smaller than that.
 
 Further, all the simplification methods improved generalization rates for
-all but a few problems (see Figure~\ref{fig:bar:percent_generalization}),
+all but a few problems (see Figure~\ref{fig:bar:all}b),
 but again with little difference among the simplification methods.
 In some cases, e.g., Count Odds, all the unsimplified programs already
 generalized, so the best simplification could do is to not make things
@@ -508,7 +534,7 @@ understood~\cite{poli08:fieldguide}, since in PushGP we don't see a
 general tendency towards increasing program size over time. 
 There is obviously ``unnecessary'' code in these evolved Push programs, but understanding the source and role of this removable Push 
 code is complex, in part because there are potentially many categories 
-of ``unused'' or ``unnecessary'' code
+of unused or unnecessary code
 in Push.
 
 % Examples include:
