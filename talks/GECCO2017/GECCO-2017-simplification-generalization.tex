@@ -1,0 +1,617 @@
+\documentclass{beamer}
+\beamertemplatenavigationsymbolsempty
+%\usepackage{enumitem}
+\mode<presentation>
+{
+  %\usetheme{Madrid}
+  \usetheme{CambridgeUS}
+  %\usecolortheme{seahorse}
+  \setbeamercovered{transparent}
+}
+\usepackage{graphicx}
+\usepackage[english]{babel}
+\usepackage[latin1]{inputenc}
+\usepackage{times}
+\usepackage[T1]{fontenc} 
+% Or whatever. Note that the encoding and the font should match. If T1
+% does not look nice, try deleting the line with the fontenc.
+\usepackage{amsmath}
+\usepackage{color}
+\newcommand{\linespace}{\vskip 0.25cm}
+\usepackage{rotating}
+
+\definecolor{MyForestGreen}{rgb}{0,0.7,0} 
+\newcommand{\tableemph}[1]{{#1}}
+\newcommand{\tablewin}[1]{\tableemph{#1}}
+\newcommand{\tablemid}[1]{\tableemph{#1}}
+\newcommand{\tablelose}[1]{\tableemph{#1}}
+
+\definecolor{MyLightGray}{rgb}{0.6,0.6,0.6}
+\newcommand{\tabletie}[1]{\color{MyLightGray} {#1}}
+
+% The text in square brackets is the short version of your title and will be used in the
+% header/footer depending on your theme.
+\title[Visualizing GP Ancestries]{Visualizing Genetic Programming Ancestries}
+
+% Sub-titles are optional - uncomment and edit the next line if you want one.
+% \subtitle{Why does sub-tree crossover work?} 
+
+% The text in square brackets is the short version of your name(s) and will be used in the
+% header/footer depending on your theme.
+\author[McPhee, Casale, et al]{Nic McPhee\inst{1}, Maggie Casale\inst{2}, Finzel, Helmuth, \& Spector}
+
+% The text in square brackets is the short version of your institution and will be used in the
+% header/footer depending on your theme.
+\institute[]
+{
+	\inst{1} Division of Science and Mathematics \\
+	University of Minnesota, Morris \\
+	Morris, Minnesota, USA \and %
+	\inst{2} Design Center Inc. \\
+	St. Paul, Minnesota, USA}
+
+% The text in square brackets is the short version of the date if you need that.
+\date{21 July 2016 \\ VizGEC}
+
+% Delete this, if you do not want the table of contents to pop up at
+% the beginning of each subsection:
+\AtBeginSection[]
+{
+  \begin{frame}<beamer>
+    \frametitle{Outline}
+    \tableofcontents[currentsection, hideothersubsections]
+  \end{frame}
+}
+
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\section*{The Big Picture}
+
+
+
+
+\subsection*{Silico-paleontology}
+
+\begin{frame}{The great waste}
+\begin{columns}
+% Column 1
+\begin{column}{0.6\textwidth}
+\begin{itemize}
+	\item Genetic programming clearly \emph{works}
+    \item But we rarely know \emph{why} or \emph{how}
+    \item Can generate \emph{huge} amounts of data
+    \item We typically throw it away -- \& paleontologists weep!
+    \item Silico-paleontology can help us understand and improve our tools
+\end{itemize}
+\end{column}
+% Column 2
+\begin{column}{0.4\textwidth}
+\center \includegraphics[height=0.75\textheight]{Illustrations/Trash_dump.jpg} \\
+\tiny \url{https://www.flickr.com/photos/thibaud_saintin/12361648674}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{We have the tools!}
+\begin{columns}
+% Column 1
+\begin{column}{0.5\textwidth}
+\center \includegraphics[width=\textwidth]{Illustrations/run0_RBM_color_full_30000.pdf} 
+\end{column}
+\begin{column}{0.5\textwidth}
+\begin{overprint}
+\onslide<1>
+\begin{itemize}
+    \item Graph databases allow us to collect and analyze lineages
+    \item Processing and \emph{visualizing} these lineages can help us understand run dynamics
+\end{itemize}
+\onslide<2>
+These visualizations help:
+\begin{itemize}
+	\item Turn complex runs into ``readable'' ancestry trees
+    \item Capture and display key data in nodes and edges
+    \item Find valuable properties and patterns in our runs
+\end{itemize}
+\end{overprint}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Other tools also exist}
+We're not alone:
+\begin{itemize}
+	\item Bogdan Burlacu has done very similar work with HeuristicLab~\cite{Burlacu:2013:GECCOcomp:new, Burlacu:CIEES:2015}
+    \item Tools like ELICIT (Cruz, et al)~\cite{cruz2015elicit} and EpochX (Vaseux, et al)~\cite{vaseux2013event} also support lineage exploration
+\end{itemize}
+
+~
+
+All of these are functionality provided by a particular EC system
+
+~
+
+We use:
+\begin{itemize}
+	\item ``Off-the-shelf'' tools (graph DBs \& visualization libraries)
+    \item Could be applied to results from most any EC system
+\end{itemize}
+\end{frame}
+
+\subsection*{Outline}
+
+\begin{frame}{Outline}
+  \tableofcontents[hideallsubsections]
+\end{frame}
+
+%~~~~~~~~~~Background~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+\section{Setup}
+
+\subsection{Run Configuration}
+
+\begin{frame}{GP System}
+GP Tools:
+\vspace{.5em}
+\begin{itemize}
+    \setlength\itemsep{.5em}
+	\item Clojush implementation of the PushGP system
+    % An individual has a linear plush genome
+	\item Plush (Linear Push) genomes~\cite{Helmuth:2016:GPTP}
+    % Individuals are chosen to reproduce through Lexicase selection.
+	\item Lexicase selection~\cite{Helmuth:2014:ieeeTEC}
+\end{itemize}
+\vspace{1em}
+GP Runs:
+\begin{itemize}
+    \item 1,000 individuals per generation
+    \item Up to 300 generations here, 
+    	\\ \hspace{.5cm} Over 1,000 generations in other cases
+        \\ \hspace{.5cm} 100Ks or millions of individuals
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Test problem}
+Replace-Space-With-Newline software synthesis problem:
+\vspace{.5em}
+\begin{itemize}
+    \setlength\itemsep{.5em}
+	\item Two tasks to solve:
+    % Use default numbers not in balls
+    \setbeamertemplate{enumerate items}[default]
+    \begin{enumerate}
+    	\item Print input string with all spaces replaced by newlines
+        \item Return number of non-space characters in input
+    \end{enumerate}
+	\item Results in two error values per test case
+	\item Used 100 test cases, \\ \hspace{.25cm} So a total of 200 error values stored in vector
+\end{itemize}
+\vspace{1em}
+%\centering
+We have hundreds of runs of this problem which we'll use as examples throughout the talk.
+\end{frame}
+
+\subsection{Database Configuration}
+\begin{frame}{Database schema}
+Used TitanDB graph database to store our data.
+\vspace{.5cm}
+\begin{columns}[t]
+% Column 1
+\begin{column}{0.45\textwidth}
+Nodes = individuals
+	\begin{itemize}
+	    % Fill the screen more by adding space
+    	\setlength\itemsep{.5em}
+		\item UUID
+        % These aren't stored in the Individual nodes in the DB -- they're used to generate the edges
+		% \item UUID of parent(s)
+		\item Plush genome
+		\item Error vector
+		\item Number of children
+		\item Number of selections
+	\end{itemize}
+\end{column}
+% Column 2
+\begin{column}{0.5\textwidth}
+Edges = parent-child relationships
+	\begin{itemize}
+	    % Fill the screen more by adding space
+    	\setlength\itemsep{.5em}
+		\item Genetic operator
+		\item Damerau-Levenshtein distance
+	\end{itemize}
+%    \vspace{2cm} % Pushes up second column
+\end{column}
+\end{columns}
+\end{frame}
+
+
+%~~~~~~~~~~Graph Structure~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+\section{Graph Structure \& Visualization}
+
+\subsection{Graphviz and DOT}
+
+\begin{frame}{Graphviz and DOT for visualization}
+\begin{columns}
+\begin{column}{.6\textwidth}
+\begin{itemize}
+    \setlength\itemsep{.5em}
+	\item Load run data into database for processing \& analysis
+    \item Queries extract relevant data
+    \item Scripts generate DOT input
+    \item DOT generates PDF output
+\end{itemize}
+\vspace{0.5cm}
+
+PDF output supports arbitrary zooming \\ \hspace{.5cm} -- huge amounts of detail in paper
+\end{column}
+\begin{column}{.4\textwidth}
+\includegraphics[width=.9\textwidth]{Illustrations/DOT_Graphiz.pdf}
+\end{column}
+\end{columns}
+\end{frame}
+
+\subsection[Edges]{Edges}
+
+\begin{frame}{Genetic Operators}
+Edges represent parent-child relationships
+\\
+\vspace{.75em}
+Styled to indicate genetic operators used to create the child
+\\
+\vspace{.75em}
+
+Two classes of operators: Alternation \& Mutation
+\\
+\vspace{.75em}
+
+Four different operators:
+\begin{itemize}
+% Fill the screen more by adding space
+% \setlength\itemsep{.5em} 
+% Emphasize displaying variety not details of operators
+\item Alternation % A form of Crossover
+\item Uniform-Mutation % A form of Point Mutation
+\item Alternation \& Uniform-Mutation
+\item Uniform-Close-Mutation % Mutates where code blocks end
+\end{itemize} 
+\end{frame}
+
+
+\begin{frame}{Edge Coloring \& Style}
+	\begin{columns}
+		\begin{column}{.55\textwidth}
+		\begin{overprint}
+			\onslide<1>
+				\hspace{.5cm} \textit{Edge Coloring}:  \vspace{.5em}
+                \setbeamertemplate{itemize subitem}{}% Remove subitem bullets for this frame
+				\begin{itemize}
+                % Fill the screen more by adding space
+				\setlength\itemsep{1em}
+					\item Alternation is 
+                    \begin{itemize}
+	                    \item \underline{black} and solid
+                    \end{itemize}
+					\item Uniform-Mutation is
+                    \begin{itemize}
+	                    \item \underline{\color{orange} orange} and solid
+                    \end{itemize}
+					\item Alternation \& Uniform-Mutation
+                    \begin{itemize}
+	                    \item \underline{black} and dashed
+                    \end{itemize}
+					\item Uniform-Close-Mutation is
+                    \begin{itemize}
+	                    \item \underline{\color{orange} orange} and dashed
+                    \end{itemize}
+				\end{itemize} 
+			\onslide<2>
+				\hspace{.5cm} \textit{Edge Opacity}: Based on \\ \vspace{.00cm}
+                \hspace{0.75cm} number of children of \\ \vspace{.00cm}
+                \hspace{0.75cm}  the child. \vspace{.5em}
+				\begin{itemize}
+                % Fill the screen more by adding space
+				\setlength\itemsep{1em}
+					\item Transparent: Few Children
+					\item Opaque: Many Children
+				\end{itemize} 
+			\onslide<3>
+				\hspace{.5cm} Edge Thickness: Based on \\ \vspace{.00cm}
+                \hspace{0.75cm} Damerau-Levenshtein distance, \\ \vspace{.00cm}
+                \hspace{0.75cm} (measure of genome difference) \vspace{.5em}
+				\begin{itemize}
+                % Fill the screen more by adding space
+				\setlength\itemsep{1em}
+					\item Thin: Very Different Genome \\ \hspace{.5cm} -- High DL-Distance 
+					\item Wide: Very Similar Genome \\ \hspace{.5cm} -- Low DL-Distance
+				\end{itemize}
+		\end{overprint}
+		\end{column}
+		
+		\begin{column}{.5\textwidth}
+		\begin{overprint}
+			\onslide<1-3>
+			 	\includegraphics[width=\textwidth]{Illustrations/family_edges.pdf} 
+		\end{overprint}
+		\end{column}
+\end{columns}
+\end{frame}
+
+
+\begin{frame}{Edge Coloring \& Style Example}
+				\includegraphics[width=\textwidth]{Illustrations/run0_edges_detail.pdf}
+\end{frame}
+
+
+\subsection[Nodes]{Nodes}
+
+\begin{frame}{Node Basics}
+Nodes represent an individual or program:
+\begin{itemize}
+\item Number of selections: Width
+\item Number of children: Height
+\end{itemize}
+\bigskip
+\hspace{6.25cm} $\leftarrow$ Number of Selections $\rightarrow$
+\begin{tabular}{rc}
+\begin{tabular}{r}
+\hspace{1cm} $\uparrow$ Number of Children $\downarrow$
+\end{tabular}
+\begin{tabular}{c}
+\includegraphics[width=.45\textwidth]{Illustrations/node_and_edge.pdf}
+\end{tabular}
+\end{tabular}
+\end{frame}
+
+\begin{frame}{Run 0: No Node Color}
+\center \includegraphics[width=.93\textwidth]{Illustrations/run0_RBM_colored_edges_full_30000.pdf} 
+\end{frame}
+
+\begin{frame}{Node Coloring}
+\center
+{There are two different techniques we use:  \\ Error Based \& RBM}
+\includegraphics[width=\textwidth]{Illustrations/run0_dual_and_RBM_full.pdf}
+\end{frame}
+
+\begin{frame}{Error Based Node Coloring}
+	\begin{overprint}
+		\onslide<1-2> 			\centering
+\includegraphics[width=.85\textwidth]{Illustrations/run0_bi_color_shaded_percent0.pdf}
+	\end{overprint}
+	\begin{overprint}
+		\onslide<1>
+		\centering
+		Two colors based on the percent of solved test cases for each task
+		\onslide<2>
+		\centering
+		Additional shading (i.e., darker) for exceptionally high total errors
+	\end{overprint}
+\end{frame}
+
+\begin{frame}{Restricted Boltzmann Machine Node Coloring}
+\centering
+\includegraphics[width=.85\textwidth]{Illustrations/run0_RBM_color_full_30000.pdf} \\
+Dimensionality Reduction Problem: 200 test cases $\rightarrow$ 24 bit RGB color
+\end{frame}
+
+\begin{frame}{Restricted Boltzmann Machine Technique}
+\centering
+Train an RBM to be a simple autoencoder: \\ 200 inputs to 24 bits to 3 RGB color values
+\vspace{1em}
+
+\setbeamertemplate{itemize item}{}% Remove item bullets for this frame
+\begin{itemize}
+\centering
+\item 200 test case vector, each case is assigned 1 or 0 \\ (1 for has error or 0 for no error)
+\item $\downarrow$
+\item New vector made into binary string for machine input
+\item $\downarrow$
+\item Training RBM analyzes and discovers patterns
+\item $\downarrow$
+\item Returns RBG values
+\end{itemize}
+\vspace{1em}
+
+Similarly colored individuals indicate similar patterns in test cases
+\end{frame}
+
+\begin{frame}{Restricted Boltzmann Machine Node Coloring}
+\centering
+\includegraphics[width=.9\textwidth]{Illustrations/run0_RBM_color_full_30000.pdf}
+\end{frame}
+
+% \begin{frame}{RBM Example with Run 1: 129 Generations}
+% \centering
+% \includegraphics[width=.35\textwidth]{Illustrations/run1_RBM_color_full_60000.pdf} 
+% \end{frame}
+
+%~~~~~~~~~~What did I learn?~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+\section{What did we learn?}
+
+\subsection{Hyperselection is common -- is it important?}
+\begin{frame}{Hyperselected nodes are highly visible}
+\center \includegraphics[width=\textwidth]{Illustrations/cropped.pdf} \\
+In our graphs, we can easily see hyperselection as very wide nodes. 
+\end{frame}
+
+\begin{frame}{Hyperselection is very common}
+\begin{center}
+\includegraphics[width=0.8 \textwidth]{Illustrations/run0_RBM_color_full_30000.pdf} \\
+Lots of hyperselection -- how important is it to the success of runs?~\cite{Helmuth:2016:GECCO}
+\end{center}
+\end{frame}
+
+\subsection{Filtering ancestry trees}
+
+\begin{frame}{Filtering ancestry trees}
+\begin{columns}
+% Column 1
+\begin{column}{.6\textwidth}
+\begin{overprint}
+\onslide<1>
+We only graph ancestors of ``winning'' individuals.
+
+~
+
+But still a lot of data!
+\begin{itemize}
+\item 22,435 individuals
+\item 35,403 edges
+\item (Avg. branching factor of 1.5)
+\end{itemize}
+
+\onslide<2>
+
+So we filter out parents who did not contribute much genetic information.
+
+~
+
+Much more ``readable'':
+\begin{itemize}
+	\item 1,597 individuals (vs 22,435)
+    \item 1,795 edges (vs 35,403)
+    \item Avg. branching factor of 1.1
+\end{itemize}
+
+\onslide<3>
+\begin{itemize}
+\item Filtering in paper is a bit of a hack
+\item Currently (last few weeks) working on tracking every gene (instruction) as it passes from parent to child
+\item Allows us to visualize \emph{exactly} the parents that contributed genetic material
+\end{itemize}
+\end{overprint}
+
+%\begin{itemize}
+%\item Numbers on edges indicate similarity.
+%\item The smaller the number is, the more similar they are.
+%\end{itemize}
+\end{column}
+% Column 2
+\begin{column}{.4\textwidth}
+\begin{overprint}
+\onslide<1>
+\includegraphics[height=.85\textheight]{Illustrations/run1_RBM_color_full_60000.pdf} 
+\onslide<2-3>
+\includegraphics[height=.85\textheight]{Illustrations/run1_RBM_color_filtered_and_full_60000_2.pdf} 
+\end{overprint}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Close-up of filtering}
+\includegraphics[width=\textwidth]{Illustrations/run1_RBM_filtered_and_full_crop.pdf} 
+\end{frame}
+ 
+\begin{frame}{Another filtering example}
+\center
+394 Individuals \hspace{4.5cm} 54 Individuals \\
+\includegraphics[height=.8\textheight]{Illustrations/run0_RBM_color_both_runs_40.pdf} 
+\end{frame}
+
+\subsection{Long (nearly) linear chains}
+\begin{frame}{Long (nearly) linear chains}
+\includegraphics[width=\textwidth]{Illustrations/run1_RBM_color_filtered_crop.pdf}
+\\
+Filtering reveals long nearly linear sequences of pseudo-mutations
+\end{frame}
+
+\subsection{Ability to compare runs}
+
+\begin{frame}{Ability to compare runs}
+\begin{center}
+\includegraphics[width=0.9\textwidth]{Illustrations/runs_1_99_6_RBM_color_filtered3_rotated.pdf}
+\end{center}
+\end{frame}
+
+\section{Conclusions}
+\begin{frame}{Conclusions}
+These visualizations have:
+\begin{itemize}
+\item Helped turn complex runs into ``readable'' ancestry trees
+\item Modified aspects of both nodes and edges to capture key information from the run dynamics
+\item Explored ways to filter ancestry trees
+\item Highlighted prevalence of hyperselection in lexicase selection runs
+\item Highlighted long chains of pseudo-mutations
+\item Suggested numerous research directions
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Future work}
+\begin{itemize}
+	\item Improve the filtering
+    \begin{itemize}
+    	\item Currently working to track at the level of genomes (instructions)
+        \item Allows more precise tracking of genetic contributions
+    \end{itemize}
+	\item Enable more dynamic visualizations 
+    \begin{itemize}
+    	\item Deep Tree exhibit~\cite{block2012deeptree}
+        \item Burlacu's work~\cite{Burlacu:CIEES:2015}
+    \end{itemize}
+    \item Enable more ``on-line'' visualization during runs
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Thanks!}
+\center \Large
+Thank you for your time \& attention! \\ \medskip
+\includegraphics[width=.1\textwidth]{Illustrations/smile.png} \\ \medskip
+\normalsize
+~
+Special thanks to Bill Tozier, and the folks at the Computational Intelligence Lab at Hampshire College.
+
+~
+
+This material is based upon work supported by the National Science Foundation under 
+Grants No. 1129139 and 1331283.
+
+\end{frame}
+
+%~~~~~~~~~~References~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+\section*{References}
+
+\begin{frame}[allowframebreaks]
+\frametitle{References}
+\bibliographystyle{abbrv}
+\bibliography{GECCO-2016.bib}
+\end{frame}
+
+\end{document}
+
+\begin{frame} 
+	\frametitle{References} 
+	
+	\begin{thebibliography}{lskdjf}
+	\small 
+	\bibitem{Burlacu:2013:GECCOcomp:new}
+B.~Burlacu, M.~Affenzeller, M.~	Kommenda, S.~Winkler, and G.~Kronberger.
+\newblock Visualization of genetic lineages and inheritance
+information in genetic programming.
+\newblock In Christian Blum, \emph{et al}, editors, {\em GECCO '13}, pages 1351--1358, New York, NY, USA, 2013.
+	
+	\bibitem{hyper:2016}
+	T.~Helmuth, N.~F.~McPhee, and L.~Spector.
+\newblock The Impact of Hyperselection on Lexicase Selection.
+\newblock {\em GECCO '16}, Denver, CO, USA 2016.
+  
+	\bibitem{vis:2016}
+	N.~F.~McPhee, M.~Casale, M.~Finzel, T.~Helmuth, and L.~Spector.
+\newblock Visualizing genetic programming ancestries using graph databases.
+\newblock {\em GECCO '16}, Denver, CO, USA 2016.
+	
+	\bibitem{gptp:2016}
+	N.~F.~McPhee, M.~Finzel, M.~Casale, T.~Helmuth, and L.~Spector.
+\newblock A detailed analysis of a PushGP run.
+\newblock (Forthcoming) {\em GPTP '16}, Ann Arbor, MI, USA 2016.
+	
+
+  
+  	\end{thebibliography}
+	
+\end{frame} 
+
