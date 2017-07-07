@@ -90,7 +90,7 @@
 \end{column}
 % Column 2
 \begin{column}{0.4\textwidth}
-\center \includegraphics[height=0.75\textheight]{Illustrations/Trash_dump.jpg} \\
+% \center \includegraphics[height=0.75\textheight]{Illustrations/Trash_dump.jpg} \\
 \tiny \url{https://www.flickr.com/photos/thibaud_saintin/12361648674}
 \end{column}
 \end{columns}
@@ -100,7 +100,7 @@
 \begin{columns}
 % Column 1
 \begin{column}{0.5\textwidth}
-\center \includegraphics[width=\textwidth]{Illustrations/run0_RBM_color_full_30000.pdf} 
+% \center \includegraphics[width=\textwidth]{Illustrations/run0_RBM_color_full_30000.pdf} 
 \end{column}
 \begin{column}{0.5\textwidth}
 \begin{overprint}
@@ -249,7 +249,7 @@ Edges = parent-child relationships
 PDF output supports arbitrary zooming \\ \hspace{.5cm} -- huge amounts of detail in paper
 \end{column}
 \begin{column}{.4\textwidth}
-\includegraphics[width=.9\textwidth]{Illustrations/DOT_Graphiz.pdf}
+% \includegraphics[width=.9\textwidth]{Illustrations/DOT_Graphiz.pdf}
 \end{column}
 \end{columns}
 \end{frame}
@@ -334,7 +334,7 @@ Four different operators:
 		\begin{column}{.5\textwidth}
 		\begin{overprint}
 			\onslide<1-3>
-			 	\includegraphics[width=\textwidth]{Illustrations/family_edges.pdf} 
+			 	% \includegraphics[width=\textwidth]{Illustrations/family_edges.pdf} 
 		\end{overprint}
 		\end{column}
 \end{columns}
@@ -342,7 +342,7 @@ Four different operators:
 
 
 \begin{frame}{Edge Coloring \& Style Example}
-				\includegraphics[width=\textwidth]{Illustrations/run0_edges_detail.pdf}
+				% \includegraphics[width=\textwidth]{Illustrations/run0_edges_detail.pdf}
 \end{frame}
 
 
@@ -361,25 +361,21 @@ Nodes represent an individual or program:
 \hspace{1cm} $\uparrow$ Number of Children $\downarrow$
 \end{tabular}
 \begin{tabular}{c}
-\includegraphics[width=.45\textwidth]{Illustrations/node_and_edge.pdf}
+% \includegraphics[width=.45\textwidth]{Illustrations/node_and_edge.pdf}
 \end{tabular}
 \end{tabular}
-\end{frame}
-
-\begin{frame}{Run 0: No Node Color}
-\center \includegraphics[width=.93\textwidth]{Illustrations/run0_RBM_colored_edges_full_30000.pdf} 
 \end{frame}
 
 \begin{frame}{Node Coloring}
-\center
+% \center
 {There are two different techniques we use:  \\ Error Based \& RBM}
-\includegraphics[width=\textwidth]{Illustrations/run0_dual_and_RBM_full.pdf}
+% \includegraphics[width=\textwidth]{Illustrations/run0_dual_and_RBM_full.pdf}
 \end{frame}
 
 \begin{frame}{Error Based Node Coloring}
 	\begin{overprint}
 		\onslide<1-2> 			\centering
-\includegraphics[width=.85\textwidth]{Illustrations/run0_bi_color_shaded_percent0.pdf}
+% \includegraphics[width=.85\textwidth]{Illustrations/run0_bi_color_shaded_percent0.pdf}
 	\end{overprint}
 	\begin{overprint}
 		\onslide<1>
@@ -393,34 +389,13 @@ Nodes represent an individual or program:
 
 \begin{frame}{Restricted Boltzmann Machine Node Coloring}
 \centering
-\includegraphics[width=.85\textwidth]{Illustrations/run0_RBM_color_full_30000.pdf} \\
+%\includegraphics[width=.85\textwidth]{Illustrations/run0_RBM_color_full_30000.pdf} \\
 Dimensionality Reduction Problem: 200 test cases $\rightarrow$ 24 bit RGB color
-\end{frame}
-
-\begin{frame}{Restricted Boltzmann Machine Technique}
-\centering
-Train an RBM to be a simple autoencoder: \\ 200 inputs to 24 bits to 3 RGB color values
-\vspace{1em}
-
-\setbeamertemplate{itemize item}{}% Remove item bullets for this frame
-\begin{itemize}
-\centering
-\item 200 test case vector, each case is assigned 1 or 0 \\ (1 for has error or 0 for no error)
-\item $\downarrow$
-\item New vector made into binary string for machine input
-\item $\downarrow$
-\item Training RBM analyzes and discovers patterns
-\item $\downarrow$
-\item Returns RBG values
-\end{itemize}
-\vspace{1em}
-
-Similarly colored individuals indicate similar patterns in test cases
 \end{frame}
 
 \begin{frame}{Restricted Boltzmann Machine Node Coloring}
 \centering
-\includegraphics[width=.9\textwidth]{Illustrations/run0_RBM_color_full_30000.pdf}
+% \includegraphics[width=.9\textwidth]{Illustrations/run0_RBM_color_full_30000.pdf}
 \end{frame}
 
 % \begin{frame}{RBM Example with Run 1: 129 Generations}
@@ -434,16 +409,16 @@ Similarly colored individuals indicate similar patterns in test cases
 
 \subsection{Hyperselection is common -- is it important?}
 \begin{frame}{Hyperselected nodes are highly visible}
-\center \includegraphics[width=\textwidth]{Illustrations/cropped.pdf} \\
+% \center \includegraphics[width=\textwidth]{Illustrations/cropped.pdf} \\
 In our graphs, we can easily see hyperselection as very wide nodes. 
 \end{frame}
 
-\begin{frame}{Hyperselection is very common}
-\begin{center}
-\includegraphics[width=0.8 \textwidth]{Illustrations/run0_RBM_color_full_30000.pdf} \\
-Lots of hyperselection -- how important is it to the success of runs?~\cite{Helmuth:2016:GECCO}
-\end{center}
-\end{frame}
+%\begin{frame}{Hyperselection is very common}
+%\begin{center}
+%% \includegraphics[width=0.8 \textwidth]{Illustrations/run0_RBM_color_full_30000.pdf} \\
+%Lots of hyperselection -- how important is it to the success of runs?~\cite{Helmuth:2016:GECCO}
+%\end{center}
+%\end{frame}
 
 \subsection{Filtering ancestry trees}
 
@@ -494,28 +469,28 @@ Much more ``readable'':
 \begin{column}{.4\textwidth}
 \begin{overprint}
 \onslide<1>
-\includegraphics[height=.85\textheight]{Illustrations/run1_RBM_color_full_60000.pdf} 
+% \includegraphics[height=.85\textheight]{Illustrations/run1_RBM_color_full_60000.pdf} 
 \onslide<2-3>
-\includegraphics[height=.85\textheight]{Illustrations/run1_RBM_color_filtered_and_full_60000_2.pdf} 
+% \includegraphics[height=.85\textheight]{Illustrations/run1_RBM_color_filtered_and_full_60000_2.pdf} 
 \end{overprint}
 \end{column}
 \end{columns}
 \end{frame}
 
 \begin{frame}{Close-up of filtering}
-\includegraphics[width=\textwidth]{Illustrations/run1_RBM_filtered_and_full_crop.pdf} 
+% \includegraphics[width=\textwidth]{Illustrations/run1_RBM_filtered_and_full_crop.pdf} 
 \end{frame}
  
 \begin{frame}{Another filtering example}
 \center
 394 Individuals \hspace{4.5cm} 54 Individuals \\
-\includegraphics[height=.8\textheight]{Illustrations/run0_RBM_color_both_runs_40.pdf} 
+% \includegraphics[height=.8\textheight]{Illustrations/run0_RBM_color_both_runs_40.pdf} 
 \end{frame}
 
 \subsection{Long (nearly) linear chains}
 \begin{frame}{Long (nearly) linear chains}
-\includegraphics[width=\textwidth]{Illustrations/run1_RBM_color_filtered_crop.pdf}
-\\
+% \includegraphics[width=\textwidth]{Illustrations/run1_RBM_color_filtered_crop.pdf}
+% \\
 Filtering reveals long nearly linear sequences of pseudo-mutations
 \end{frame}
 
@@ -523,7 +498,7 @@ Filtering reveals long nearly linear sequences of pseudo-mutations
 
 \begin{frame}{Ability to compare runs}
 \begin{center}
-\includegraphics[width=0.9\textwidth]{Illustrations/runs_1_99_6_RBM_color_filtered3_rotated.pdf}
+% \includegraphics[width=0.9\textwidth]{Illustrations/runs_1_99_6_RBM_color_filtered3_rotated.pdf}
 \end{center}
 \end{frame}
 
