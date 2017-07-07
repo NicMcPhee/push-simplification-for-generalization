@@ -31,14 +31,14 @@
 
 % The text in square brackets is the short version of your title and will be used in the
 % header/footer depending on your theme.
-\title[Visualizing GP Ancestries]{Visualizing Genetic Programming Ancestries}
+\title[Improving generalization via simplification]{Improving Generalization of Evolved Programs through Automatic Simplification}
 
 % Sub-titles are optional - uncomment and edit the next line if you want one.
 % \subtitle{Why does sub-tree crossover work?} 
 
 % The text in square brackets is the short version of your name(s) and will be used in the
 % header/footer depending on your theme.
-\author[McPhee, Casale, et al]{Nic McPhee\inst{1}, Maggie Casale\inst{2}, Finzel, Helmuth, \& Spector}
+\author[Helmuth, McPhee, et al]{Thomas Helmuth, Nic McPhee\inst{1}, Edward Pantridge, \& Lee Spector}
 
 % The text in square brackets is the short version of your institution and will be used in the
 % header/footer depending on your theme.
@@ -46,12 +46,11 @@
 {
 	\inst{1} Division of Science and Mathematics \\
 	University of Minnesota, Morris \\
-	Morris, Minnesota, USA \and %
-	\inst{2} Design Center Inc. \\
-	St. Paul, Minnesota, USA}
+	Morris, Minnesota, USA
+}
 
 % The text in square brackets is the short version of the date if you need that.
-\date{21 July 2016 \\ VizGEC}
+\date{18 July -- GECCO 2017 -- Berlin}
 
 % Delete this, if you do not want the table of contents to pop up at
 % the beginning of each subsection:
@@ -71,74 +70,23 @@
 
 \section*{The Big Picture}
 
-
-
-
-\subsection*{Silico-paleontology}
-
-\begin{frame}{The great waste}
+\begin{frame}{Simplification: Can be good in multiple ways}
 \begin{columns}
 % Column 1
 \begin{column}{0.6\textwidth}
 \begin{itemize}
-	\item Genetic programming clearly \emph{works}
-    \item But we rarely know \emph{why} or \emph{how}
-    \item Can generate \emph{huge} amounts of data
-    \item We typically throw it away -- \& paleontologists weep!
-    \item Silico-paleontology can help us understand and improve our tools
+	\item Searching for simplifications is ``easy'' in Push+Plush~\cite{GPTP:2016}
+	\item Simplification allows us to better understand evolved programs
+	\item Not great as a genetic operator but\ldots
+	\item Turned out to substantially improve generalization!
 \end{itemize}
 \end{column}
 % Column 2
 \begin{column}{0.4\textwidth}
-% \center \includegraphics[height=0.75\textheight]{Illustrations/Trash_dump.jpg} \\
-\tiny \url{https://www.flickr.com/photos/thibaud_saintin/12361648674}
+\center \includegraphics[height=0.7\textheight]{Illustrations/zen.jpg} \\
+\tiny \url{https://www.flickr.com/photos/lauradeponte/2236562103/}
 \end{column}
 \end{columns}
-\end{frame}
-
-\begin{frame}{We have the tools!}
-\begin{columns}
-% Column 1
-\begin{column}{0.5\textwidth}
-% \center \includegraphics[width=\textwidth]{Illustrations/run0_RBM_color_full_30000.pdf} 
-\end{column}
-\begin{column}{0.5\textwidth}
-\begin{overprint}
-\onslide<1>
-\begin{itemize}
-    \item Graph databases allow us to collect and analyze lineages
-    \item Processing and \emph{visualizing} these lineages can help us understand run dynamics
-\end{itemize}
-\onslide<2>
-These visualizations help:
-\begin{itemize}
-	\item Turn complex runs into ``readable'' ancestry trees
-    \item Capture and display key data in nodes and edges
-    \item Find valuable properties and patterns in our runs
-\end{itemize}
-\end{overprint}
-\end{column}
-\end{columns}
-\end{frame}
-
-\begin{frame}{Other tools also exist}
-We're not alone:
-\begin{itemize}
-	\item Bogdan Burlacu has done very similar work with HeuristicLab~\cite{Burlacu:2013:GECCOcomp:new, Burlacu:CIEES:2015}
-    \item Tools like ELICIT (Cruz, et al)~\cite{cruz2015elicit} and EpochX (Vaseux, et al)~\cite{vaseux2013event} also support lineage exploration
-\end{itemize}
-
-~
-
-All of these are functionality provided by a particular EC system
-
-~
-
-We use:
-\begin{itemize}
-	\item ``Off-the-shelf'' tools (graph DBs \& visualization libraries)
-    \item Could be applied to results from most any EC system
-\end{itemize}
 \end{frame}
 
 \subsection*{Outline}
@@ -149,7 +97,99 @@ We use:
 
 %~~~~~~~~~~Background~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-\section{Setup}
+\section{Background}
+
+\subsection{Push \& Plush}
+
+\begin{frame}{Push: Stack-based GP}
+In Push-GP:
+\begin{itemize}
+	\item instructions read data from and write to typed stacks
+	\item e.g., \texttt{string-length} reads a value from the \texttt{string} stack, and writes the length of that string to the \texttt{integer} stack
+	\item Programs are nested sequences of instructions
+\end{itemize}
+
+~
+
+Clojush, a Clojure implmentation of PushGP, uses \emph{Plush genomes}:
+\begin{itemize}
+	\item A linear sequence of ``genes''
+	\item Each gene contains an instruction along with other metadata
+\end{itemize}
+
+~
+
+\emph{Every Plush genome generates a working Push program!}
+
+\end{frame}
+
+\subsection{Early simplification}
+
+\begin{frame}{Ad hoc simplification}
+Because every Plush genome maps to a working Push program, it's easy to (try to) simplify evolved structures:
+\begin{itemize}
+	\item Remove a random instruction (or a few)
+	\item See if that changed things (by re-running the tests)
+	\item Put the instruction(s) back if removal changed things; leave them out otherwise
+\end{itemize}
+ 
+ ~
+ 
+ Substantially shortens evolved programs and makes it much easier to
+ understand them.
+ \begin{itemize}
+ 	\item E.g., simplified 194 instructions down to just 9
+ \end{itemize}
+\end{frame}
+
+\subsection{Surprising generalization}
+
+\begin{frame}{``Accidental'' improvements in generalization}
+
+In~\cite{benchmark}, each problem has a set of \emph{training cases} and a set of \emph{test cases} for \emph{validation}.
+\begin{itemize}
+	\item Training cases are used during evolution to determine the quality of potential solutions
+	\item Test cases are run after a ``solution'' has been found to gauge how well that program generalizes to unseen data.
+\end{itemize}
+
+~
+
+In earlier work, it was informally noted that simplification occasionally improved generalization:
+\begin{itemize}
+	\item Evolved ``solutions'' didn't generalize (failed some unseen test cases)
+	\item Simplified versions, however, passed all the test cases
+\end{itemize}
+
+\end{frame}
+
+\section{Exploring simplification}
+
+\subsection{(Lots of) related work}
+
+\begin{frame}{Occam's razor? Or maybe not\ldots}
+A long history of speculation and experimentation on the relationship between simplification and generalization in GP
+\begin{itemize}
+	\item Koza's first book~\cite{} contains methods for simplifying programs
+	\item Early focus often on simplification to make evolved programs easier to understand, and/or as a mechanism for bloat control
+\end{itemize}
+
+~
+
+Also arguments that simpler programs are more likely to generalize
+\begin{itemize}
+	\item Short programs less likely (or capable) of ``memorizing'' noise
+	\item So include things like Minimum Description Length in the fitness
+\end{itemize}
+
+~
+
+\emph{However}
+\begin{itemize}
+	\item (Over)simplifying \emph{during} runs often appears harmful
+	\item \cite{Goncalves} argues that sometime large programs can act as \emph{ensembles} and generalize more effectively
+\end{itemize}
+
+\end{frame}
 
 \subsection{Run Configuration}
 
