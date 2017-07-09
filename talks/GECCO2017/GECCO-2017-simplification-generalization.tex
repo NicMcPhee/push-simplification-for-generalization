@@ -111,7 +111,7 @@
 \begin{frame}{Push: Stack-based GP}
 In Push-GP:
 \begin{itemize}
-	\item instructions read data from and write to typed stacks
+	\item Instructions read data from and write to typed stacks
 	\item e.g., \texttt{string-length} reads a value from the \texttt{string} stack, and writes the length of that string to the \texttt{integer} stack
 	\item Programs are nested sequences of instructions
 \end{itemize}
@@ -122,6 +122,9 @@ Clojush, a Clojure implmentation of PushGP, uses \emph{Plush genomes}~\cite{Helm
 \begin{itemize}
 	\item A linear sequence of ``genes''
 	\item Each gene contains an instruction along with other metadata
+	\begin{itemize}
+		\item Includes a \emph{silent} flag that can be used to disable a gene
+	\end{itemize}
 \end{itemize}
 
 ~
@@ -133,7 +136,7 @@ Every Plush genome generates a working Push program!
 \subsection{Early simplification}
 
 \begin{frame}{Ad hoc simplification}
-Because every Plush genome maps to a working Push program, it's easy to (try to) simplify evolved structures~\cite{Spector:2014:GECCOcomp}:
+Because \emph{every} Push program can run, it's easy to (try to) simplify evolved structures through simple hill-climbing~\cite{Spector:2014:GECCOcomp}:
 \begin{itemize}
 	\item Remove a random instruction (or a few)
 	\item See if that changed things (by re-running the tests)
@@ -153,19 +156,21 @@ Because every Plush genome maps to a working Push program, it's easy to (try to)
 
 \begin{frame}{``Accidental'' improvements in generalization}
 
-In~\cite{Helmuth:2015:GECCO}, each problem has a set of \emph{training cases} and a set of \emph{test cases} for \emph{validation}.
+Each problem has a set of \emph{training cases} and a set of \emph{test cases} for \emph{validation}~\cite{Helmuth:2015:GECCO}
 \begin{itemize}
 	\item Training cases are used during evolution to determine the quality of potential solutions
-	\item Test cases are run after a ``solution'' has been found to gauge how well that program generalizes to unseen data.
+	\item Test cases are run after a solution has been found to gauge how well that program generalizes to unseen data
 \end{itemize}
 
 ~
 
-In~\cite{Helmuth:2015:dissertation}, it was noted that simplification occasionally improved generalization:
+In~\cite{Helmuth:2015:dissertation} it was noted that this simplification (done primarily to improve readability) occasionally improved generalization:
 \begin{itemize}
 	\item Evolved solutions failed some unseen test cases
 	\item Simplified versions, however, passed all the test cases
 \end{itemize}
+
+\note{Tom's dissertation notes that simplification improves generalization.}
 
 \end{frame}
 
@@ -185,7 +190,6 @@ A long history of speculation and experimentation on the relationship between si
 Also arguments that simpler programs are more likely to generalize~\cite{hooper:1996:iarGPes}
 \begin{itemize}
 	\item Short programs less likely (or capable) of ``memorizing'' noise
-	\item Include things like Minimum Description Length in the fitness~\cite{iba1994genetic}
 \end{itemize}
 
 ~
@@ -196,12 +200,19 @@ Also arguments that simpler programs are more likely to generalize~\cite{hooper:
 	\item Possible that some large programs can act as \emph{ensembles} and generalize more effectively~\cite{gonccalves2015generalization}
 \end{itemize}
 
+\note{
+	\begin{itemize}
+		\item Do we want citations for the bloat stuff?
+		\item There are citations for the simplifying during runs comment -- do we care?
+	\end{itemize}
+}
+
 \end{frame}
 
 \subsection{Experimental design}
 
 \begin{frame}{The Big Plan}
-Explore the impact on generalization of different approaches to simplification in PushGP 
+Explore the impact on generalization of different simplification techniques in PushGP 
 
 ~
 
@@ -232,7 +243,7 @@ For each problem we have a set of
 
 ~
 
-Simplification is basically a simple hill climber trying to reduce size
+Simplification is a simple hill climber trying to reduce size
 
 ~
 
@@ -242,6 +253,14 @@ Repeatedly (for a fixed number of steps):
 	\item See if result generates the same errors on all the \emph{training} cases
 	\item If it does, make it the current program; otherwise discard it
 \end{itemize}
+
+\note{
+	\begin{itemize}
+		\item 10K simplification steps
+		\item Or 10 generations of GP with a pop size of 1K
+		\item More than necessary in most cases, but we're only advocating doing this once at the end of runs, so not a huge expense
+	\end{itemize}
+}
 
 ~
 
@@ -253,19 +272,26 @@ Apply final result to the \emph{test} cases to see if it generalizes
 
 First method (\textbf{Program}) simplifies \emph{programs}
 \begin{itemize}
-	\item This is the original simplification method; pre-dates Plush
-	\item Removes random instructions, blocks of code, or pairs of parentheses
+	\item This is the original simplification method~\cite{Spector:2014:GECCOcomp}; pre-dates Plush
+	\item Removes random 
+	\begin{itemize}
+		\item Instructions
+		\item Blocks of code
+		\item Pairs of parentheses
+	\end{itemize}
 \end{itemize}
+
+\note{Removing a pair of parens flattens that section of the program}
 
 \end{frame}
 
 \begin{frame}{Five different simplification methods (Other four)}
 
-Four methods simplify Plush genomes, and then convert to programs
+Other four methods simplify Plush genomes, then convert to programs
 
 ~
 
-Use two primary operations
+Based on two primary operations
 \begin{itemize}
 	\item Silencing and unsilencing genes
 %	\begin{itemize}
@@ -294,6 +320,8 @@ Use two primary operations
 	NOOPs & \textbf{Genome-Noop} & \textbf{Genome-Back\-tracking-Noop } \\ 
 \end{tabular} 
 \end{center}
+
+\note{None of these actually \emph{remove} anything, right?}
 
 ~
 
@@ -395,13 +423,13 @@ Additional details are in the paper.
 
 \begin{frame}{Most simplification methods about the same}
 
-As the earlier graphs showed, no big differences in impact of different simplification methods
+As the earlier graphs showed, no big differences in impact across different simplification methods
 
 ~
 
 \begin{itemize}
 	\item Shrinkage is statistically significant for all but \textbf{Genome}
-	\item Improvements in generalization is statistically significant for all methods
+	\item Generalization improvement versus unsimplified programs is statistically significant for all methods
 \end{itemize}
 
 %\begin{overprint}
@@ -455,6 +483,8 @@ As the earlier graphs showed, no big differences in impact of different simplifi
 	\includegraphics[width=\linewidth]{Illustrations/Generalization_counts}
 \end{center}
 
+\note{Maybe drop this?}
+
 \end{frame}
 
 \begin{frame}{Short programs far more likely to generalize}
@@ -468,14 +498,14 @@ As the earlier graphs showed, no big differences in impact of different simplifi
 
 \begin{frame}{Big wins all around! (generally)}
 
-All simplification methods led to substantial simplification on all problems
+All methods led to substantial simplification on all problems
 \begin{itemize}
-	\item Usually trimmed well over 50\%
+	\item Usually removed more than 50\%
 \end{itemize}
 
 ~
 
-All simplification methods improved generalization most problems
+All methods improved generalization on most problems
 \begin{itemize}
 	\item Only hurt on one problem
 	\item No change on a few
@@ -486,7 +516,7 @@ All simplification methods improved generalization most problems
 Do the \emph{results} generalize?
 \begin{itemize}
 	\item In many ways these results are very Push dependent, and somewhat Plush dependent.
-	\item Not obvious, e.g., how to directly map these ideas to trees.
+	\item Not obvious, e.g., how to directly map these ideas to trees
 	\item Could potentially apply to Linear GP, GE, Cartesian GP, etc.
 \end{itemize}
 
