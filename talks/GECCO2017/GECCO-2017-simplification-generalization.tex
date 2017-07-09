@@ -85,7 +85,17 @@
 	\item Can dramatically shrink programs (less than 5\% of original size)
 	\item Simplification allows us to better understand evolved programs
 	\item Not great as a genetic operator but\ldots
-	\item Turned out to substantially improve generalization!
+\end{itemize}
+
+\vspace{-0.6cm}
+
+\begin{center}
+	\item \textbf{Substantially improved generalization!}
+\end{center}
+
+\begin{itemize}
+	\item Across dozens of problems
+	\item Using multiple simplification methods
 \end{itemize}
 \end{column}
 % Column 2
@@ -136,11 +146,11 @@ Every Plush genome generates a working Push program!
 \subsection{Early simplification}
 
 \begin{frame}{Ad hoc simplification}
-Because \emph{every} Push program can run, it's easy to (try to) simplify evolved structures through simple hill-climbing~\cite{Spector:2014:GECCOcomp}:
+Because \emph{every} Push program is ``legel'' and will execute, it's easy to (try to) simplify evolved structures through simple hill-climbing~\cite{Spector:2014:GECCOcomp}:
 \begin{itemize}
-	\item Remove a random instruction (or a few)
+	\item Remove some random stuff (e.g., an instruction)
 	\item See if that changed things (by re-running the tests)
-	\item Put the instruction(s) back if removal changed things; leave them out otherwise
+	\item Put the instruction(s) back if removal changed things; otherwise keep simplifying from there
 \end{itemize}
  
  ~
@@ -159,7 +169,7 @@ Because \emph{every} Push program can run, it's easy to (try to) simplify evolve
 Each problem has a set of \emph{training cases} and a set of \emph{test cases} for \emph{validation}~\cite{Helmuth:2015:GECCO}
 \begin{itemize}
 	\item Training cases are used during evolution to determine the quality of potential solutions
-	\item Test cases are run after a solution has been found to gauge how well that program generalizes to unseen data
+	\item Test cases are run after a solution has been found to gauge how well that program \emph{generalizes} to unseen data
 \end{itemize}
 
 ~
@@ -272,8 +282,8 @@ Apply final result to the \emph{test} cases to see if it generalizes
 
 First method (\textbf{Program}) simplifies \emph{programs}
 \begin{itemize}
-	\item This is the original simplification method~\cite{Spector:2014:GECCOcomp}; pre-dates Plush
-	\item Removes random 
+	\item Original Push simplification method~\cite{Spector:2014:GECCOcomp}; pre-dates Plush
+	\item Removes random program elements
 	\begin{itemize}
 		\item Instructions
 		\item Blocks of code
@@ -314,8 +324,9 @@ Based on two primary operations
 %	Silencing & \textbf{Genome} & \textbf{Genome-Noop} \\ 
 %	Sil. \& unsil. & \textbf{Genome-Backtracking} & \textbf{Genome-Back\-tracking-Noop } \\ 
 %\end{tabular} 
-\begin{tabular}{rcc} % {p{0.3\linewidth}cmp{0.3\linewidth}}
+\begin{tabular}{r|cc} % {p{0.3\linewidth}cmp{0.3\linewidth}}
 	&  Silencing & Silencing \& unsilencing \\ 
+	\hline
 	No NOOPs & \textbf{Genome} & \textbf{Genome-Backtracking} \\ 
 	NOOPs & \textbf{Genome-Noop} & \textbf{Genome-Back\-tracking-Noop } \\ 
 \end{tabular} 
@@ -325,7 +336,7 @@ Based on two primary operations
 
 ~
 
-Additional details are in the paper.
+Additional details in the paper
 
 \end{frame}
 
