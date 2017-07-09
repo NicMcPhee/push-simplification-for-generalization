@@ -1,0 +1,537 @@
+\documentclass{beamer}
+%\usepackage{enumitem}
+\mode<presentation>
+{
+  %\usetheme{Madrid}
+  \usetheme{CambridgeUS}
+  %\usecolortheme{seahorse}
+  \setbeamercovered{transparent}
+  \beamertemplatenavigationsymbolsempty
+  \setbeameroption{show notes}
+}
+\usepackage{graphicx}
+\usepackage[english]{babel}
+\usepackage[latin1]{inputenc}
+\usepackage{times}
+\usepackage[T1]{fontenc} 
+% Or whatever. Note that the encoding and the font should match. If T1
+% does not look nice, try deleting the line with the fontenc.
+\usepackage{amsmath}
+\usepackage{color}
+\usepackage{rotating}
+\usepackage{tabu}
+
+\newcommand{\linespace}{\vskip 0.25cm}
+
+\definecolor{MyForestGreen}{rgb}{0,0.7,0} 
+\newcommand{\tableemph}[1]{{#1}}
+\newcommand{\tablewin}[1]{\tableemph{#1}}
+\newcommand{\tablemid}[1]{\tableemph{#1}}
+\newcommand{\tablelose}[1]{\tableemph{#1}}
+
+\definecolor{MyLightGray}{rgb}{0.6,0.6,0.6}
+\newcommand{\tabletie}[1]{\color{MyLightGray} {#1}}
+
+% The text in square brackets is the short version of your title and will be used in the
+% header/footer depending on your theme.
+\title[Improving generalization via simplification]{Improving Generalization of Evolved Programs through Automatic Simplification}
+
+% Sub-titles are optional - uncomment and edit the next line if you want one.
+% \subtitle{Why does sub-tree crossover work?} 
+
+% The text in square brackets is the short version of your name(s) and will be used in the
+% header/footer depending on your theme.
+\author[Helmuth, McPhee, et al]{Thomas Helmuth, Nic McPhee\inst{1}, Edward Pantridge, \& Lee Spector}
+
+% The text in square brackets is the short version of your institution and will be used in the
+% header/footer depending on your theme.
+\institute[]
+{
+	\inst{1} Division of Science and Mathematics \\
+	University of Minnesota, Morris \\
+	Morris, Minnesota, USA
+}
+
+% The text in square brackets is the short version of the date if you need that.
+\date[GECCO 2017]{18 July -- GECCO 2017 -- Berlin}
+
+% Delete this, if you do not want the table of contents to pop up at
+% the beginning of each subsection:
+\AtBeginSection[]
+{
+  \begin{frame}<beamer>
+    \frametitle{Outline}
+    \tableofcontents[currentsection, hideothersubsections]
+  \end{frame}
+}
+
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\section*{The Big Picture}
+
+\begin{frame}{Simplification: Can be good in multiple ways}
+\begin{columns}
+% Column 1
+\begin{column}{0.6\textwidth}
+\begin{itemize}
+	\item Simplifying programs is ``easy'' in Push+Plush~\cite{Spector:2014:GECCOcomp}
+	\item Can dramatically shrink programs (less than 5\% of original size)
+	\item Simplification allows us to better understand evolved programs
+	\item Not great as a genetic operator but\ldots
+	\item Turned out to substantially improve generalization!
+\end{itemize}
+\end{column}
+% Column 2
+\begin{column}{0.4\textwidth}
+\center \includegraphics[height=0.7\textheight]{Illustrations/zen.jpg} \\
+\tiny \url{https://www.flickr.com/photos/lauradeponte/2236562103/}
+\end{column}
+\end{columns}
+\end{frame}
+
+\subsection*{Outline}
+
+\begin{frame}{Outline}
+  \tableofcontents[hideallsubsections]
+\end{frame}
+
+%~~~~~~~~~~Background~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+\section{Background}
+
+\subsection{Push \& Plush}
+
+\begin{frame}{Push: Stack-based GP}
+In Push-GP:
+\begin{itemize}
+	\item instructions read data from and write to typed stacks
+	\item e.g., \texttt{string-length} reads a value from the \texttt{string} stack, and writes the length of that string to the \texttt{integer} stack
+	\item Programs are nested sequences of instructions
+\end{itemize}
+
+~
+
+Clojush, a Clojure implmentation of PushGP, uses \emph{Plush genomes}~\cite{Helmuth:2016:GPTP}:
+\begin{itemize}
+	\item A linear sequence of ``genes''
+	\item Each gene contains an instruction along with other metadata
+\end{itemize}
+
+~
+
+Every Plush genome generates a working Push program!
+
+\end{frame}
+
+\subsection{Early simplification}
+
+\begin{frame}{Ad hoc simplification}
+Because every Plush genome maps to a working Push program, it's easy to (try to) simplify evolved structures~\cite{Spector:2014:GECCOcomp}:
+\begin{itemize}
+	\item Remove a random instruction (or a few)
+	\item See if that changed things (by re-running the tests)
+	\item Put the instruction(s) back if removal changed things; leave them out otherwise
+\end{itemize}
+ 
+ ~
+ 
+ Substantially shortens evolved programs and makes it much easier to
+ understand them.
+ \begin{itemize}
+ 	\item E.g., simplified 194 instructions down to just 9
+ \end{itemize}
+\end{frame}
+
+\subsection{Surprising generalization}
+
+\begin{frame}{``Accidental'' improvements in generalization}
+
+In~\cite{Helmuth:2015:GECCO}, each problem has a set of \emph{training cases} and a set of \emph{test cases} for \emph{validation}.
+\begin{itemize}
+	\item Training cases are used during evolution to determine the quality of potential solutions
+	\item Test cases are run after a ``solution'' has been found to gauge how well that program generalizes to unseen data.
+\end{itemize}
+
+~
+
+In~\cite{Helmuth:2015:dissertation}, it was noted that simplification occasionally improved generalization:
+\begin{itemize}
+	\item Evolved solutions failed some unseen test cases
+	\item Simplified versions, however, passed all the test cases
+\end{itemize}
+
+\end{frame}
+
+\section{Exploring simplification}
+
+\subsection{(Lots of) related work}
+
+\begin{frame}{Occam's razor? Or maybe not\ldots}
+A long history of speculation and experimentation on the relationship between simplification and generalization in GP
+\begin{itemize}
+	\item Koza's first book~\cite{koza1992genetic} contains methods for simplifying programs
+	\item Early focus often on simplification to make evolved programs easier to understand, and/or as a mechanism for bloat control
+\end{itemize}
+
+~
+
+Also arguments that simpler programs are more likely to generalize~\cite{hooper:1996:iarGPes}
+\begin{itemize}
+	\item Short programs less likely (or capable) of ``memorizing'' noise
+	\item Include things like Minimum Description Length in the fitness~\cite{iba1994genetic}
+\end{itemize}
+
+~
+
+\emph{However}
+\begin{itemize}
+	\item (Over)simplifying \emph{during} runs often appears harmful
+	\item Possible that some large programs can act as \emph{ensembles} and generalize more effectively~\cite{gonccalves2015generalization}
+\end{itemize}
+
+\end{frame}
+
+\subsection{Experimental design}
+
+\begin{frame}{The Big Plan}
+Explore the impact on generalization of different approaches to simplification in PushGP 
+
+~
+
+\begin{itemize}
+	\item Five different simplification methods
+	\item 24 software synthesis benchmark problems
+\end{itemize}
+
+~ 
+
+Simplify 100 times for each ``solution'' for each problem
+\begin{itemize}
+	\item How much do they simplify the programs?
+	\item How many generalize?
+\end{itemize} 
+
+\end{frame}
+
+\subsection{Simplification methods}
+
+\begin{frame}{Simplification framework}
+
+For each problem we have a set of
+\begin{itemize}
+	\item Training cases (usually hundreds)
+	\item Test (or validation) cases (usually thousands)
+\end{itemize}
+
+~
+
+Simplification is basically a simple hill climber trying to reduce size
+
+~
+
+Repeatedly (for a fixed number of steps):
+\begin{itemize}
+	\item Apply the simplification operator (more shortly)
+	\item See if result generates the same errors on all the \emph{training} cases
+	\item If it does, make it the current program; otherwise discard it
+\end{itemize}
+
+~
+
+Apply final result to the \emph{test} cases to see if it generalizes
+
+\end{frame}
+
+\begin{frame}{Five different simplification methods (First one)}
+
+First method (\textbf{Program}) simplifies \emph{programs}
+\begin{itemize}
+	\item This is the original simplification method; pre-dates Plush
+	\item Removes random instructions, blocks of code, or pairs of parentheses
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Five different simplification methods (Other four)}
+
+Four methods simplify Plush genomes, and then convert to programs
+
+~
+
+Use two primary operations
+\begin{itemize}
+	\item Silencing and unsilencing genes
+%	\begin{itemize}
+%		\item Ability to silence \& unsilence allows for backtracking
+%	\end{itemize}
+	\item Replacing instructions with NOOPs
+%	\begin{itemize}
+%		\item Can't be easily undone
+%	\end{itemize}
+\end{itemize}
+
+\begin{center}
+%\begin{tabular}{rcc} % {p{0.3\linewidth}cmp{0.3\linewidth}}
+%	& \textbf{No NOOPs}  & \textbf{NOOPs}  \\ 
+%	\textbf{Silencing} & Genome & Genome-Noop \\ 
+%	\textbf{Sil. \& unsil.} & Genome-Backtracking & Genome-Back\-tracking-Noop  \\ 
+%\end{tabular} 
+%\begin{tabular}{rcc} % {p{0.3\linewidth}cmp{0.3\linewidth}}
+%	& No NOOPs  & NOOPs \\ 
+%	Silencing & \textbf{Genome} & \textbf{Genome-Noop} \\ 
+%	Sil. \& unsil. & \textbf{Genome-Backtracking} & \textbf{Genome-Back\-tracking-Noop } \\ 
+%\end{tabular} 
+\begin{tabular}{rcc} % {p{0.3\linewidth}cmp{0.3\linewidth}}
+	&  Silencing & Silencing \& unsilencing \\ 
+	No NOOPs & \textbf{Genome} & \textbf{Genome-Backtracking} \\ 
+	NOOPs & \textbf{Genome-Noop} & \textbf{Genome-Back\-tracking-Noop } \\ 
+\end{tabular} 
+\end{center}
+
+~
+
+Additional details are in the paper.
+
+\end{frame}
+
+\begin{frame}{Benchmark problems}
+
+24 software synthesis benchmark problems
+\begin{itemize}
+	\item Large subset of benchmark suite~\cite{Helmuth:2015:GECCO}
+	\item Some easy to solve, others much harder
+	\item Solutions to some have high degree of generalization ``out of the box'', others have no solutions that generalize
+\end{itemize}
+
+\note{
+	\begin{itemize}
+		\item Taken from intro programming texts	
+		\item 29 in suite
+		\item 23 had generalizing solutions (if we count Checksum)
+		\item Super Anagrams had 14 solutions, none of which generalized, but we included it just in case new simplification methods might fix that
+	\end{itemize}
+}
+
+\end{frame}
+
+\begin{frame}{Benchmark problems}
+\begin{center}
+	\includegraphics[width=0.9\linewidth]{Illustrations/Pct_gener_SLIDE}
+\end{center}
+
+\note{
+	\begin{itemize}
+		\item Count Odds has 8 solutions, all generalize
+		\item Number IO has 100 solutions, almost all of which generalize
+		\item Mirror Image has 97 solutions, about 80\% generalize
+		\item Checksum has 5 solutions, 4 of which generalize
+		\item Last Index Of Zero has 78 solutions, around a quarter generalize
+		\item Super Anagrams has 14 solutions, none generalize
+	\end{itemize}
+}
+
+\end{frame}
+
+\section{Simplification results}
+
+\subsection{Size reductions}
+
+\begin{frame}{Substantial size reductions across the board}
+\begin{center}
+	\includegraphics[width=0.9\linewidth]{Illustrations/Problem_by_Size_bar_SLIDE}
+\end{center}
+
+\note{
+	\begin{itemize}
+		\item \emph{Explain the graph!}
+		\item Reductions for all problems, most major
+		\item A few see less dramatic reductions
+		\begin{itemize}
+			\item Small Or Large (33 sols)
+			\item Compare String Lengths (60 sols)
+			\item Super Anagrams (14 sols)
+			\item All of these have low levels of generalizations; right-most three on previous graph
+		\end{itemize}
+		\item \emph{Doesn't seem to matter which simplification is used!}
+	\end{itemize}
+}
+
+\end{frame}
+
+\subsection{Improved generalization}
+
+\begin{frame}{(Generally) improved generalization}
+
+\begin{center}
+	\includegraphics[width=0.9\linewidth]{Illustrations/Problem_by_PcntGen_bar_no_legend_SLIDE}
+\end{center}
+
+
+\note{
+	\begin{itemize}
+		\item \emph{Explain the graph!}
+		\item Only one problem Double Letters sees a \emph{drop} in generalization
+		\begin{itemize}
+			\item Only 6 solutions, 5 of which generalize nicely after simplification; 1 didn't
+		\end{itemize}
+		\item 5 worst generalizers were among largest after simplification
+		\begin{itemize}
+			\item Simplification struggled to make them smaller, and often broke generalization.'
+			\item Hypothesis: Sol'ns composed of ad hoc components that made them hard to simplify, and broke generalization, i.e., ``memorizing test cases''.
+		\end{itemize}
+		\item \emph{Again, doesn't matter much which simplification is used!}
+	\end{itemize}
+}
+
+\end{frame}
+
+\subsection{Discussion}
+
+\begin{frame}{Most simplification methods about the same}
+
+As the earlier graphs showed, no big differences in impact of different simplification methods
+
+~
+
+\begin{itemize}
+	\item Shrinkage is statistically significant for all but \textbf{Genome}
+	\item Improvements in generalization is statistically significant for all methods
+\end{itemize}
+
+%\begin{overprint}
+%	\onslide<1>
+%Ranking based on amount of simplification:
+%\begin{center}
+%\begin{tabular}{lr}
+%	\textbf{Method} & \textbf{Average Rank} \\
+%	Program & 1.87 \\
+%	Genome-Backtracking-Noop & 2.13 \\
+%	Genome-Backtracking & 2.79 \\
+%	Genome-Noop & 3.60 \\
+%	Genome & 4.60 \\
+%	Unchanged & 6.00 \\
+%\end{tabular}
+%\end{center}
+%\note{
+%	\begin{itemize}
+%		\item Rank 1 is smallest average size, 6 is largest
+%		\item Across all 24 problems
+%		\item ``Unchanged'' is the evolved solution before any simplification applied
+%		\item Some of these differences are stat sig (all but Genome beat Unchanged), but in general amounts are so small as to not really matter. Details in paper.
+%	\end{itemize}
+%}
+%	\onslide<2>
+%Ranking based on generalization \%:
+%\begin{center}
+%	\begin{tabular}{lr}
+%		\textbf{Method} & \textbf{Average Rank} \\
+%		Genome-Backtracking-Noop & 2.73 \\
+%		Genome-Backtracking & 3.02 \\
+%		Genome-Noop & 3.29 \\
+%		Genome & 3.33 \\
+%		Program & 3.67 \\
+%		Unchanged & 4.96 \\
+%	\end{tabular}
+%\end{center}
+%\note{
+%	\begin{itemize}
+%		\item Every simp stat sig diff from Unchanged
+%		\item No other stat sig diff
+%	\end{itemize}
+%}
+%\end{overprint}
+
+\end{frame}
+
+\section{Conclusion}
+
+\begin{frame}{Big wins all around! (generally)}
+
+All simplification methods led to substantial simplification on all problems
+\begin{itemize}
+	\item Usually trimmed well over 50\%
+\end{itemize}
+
+~
+
+All simplification methods improved generalization most problems
+\begin{itemize}
+	\item Only hurt on one problem
+	\item No change on a few
+\end{itemize}
+
+~
+
+Do the \emph{results} generalize?
+\begin{itemize}
+	\item In many ways these results are very Push dependent, and somewhat Plush dependent.
+	\item Not obvious, e.g., how to directly map these ideas to trees.
+	\item Could potentially apply to Linear GP, GE, Cartesian GP, etc.
+\end{itemize}
+
+
+\end{frame}
+
+\begin{frame}{Thanks!}
+\center \Large
+Thank you for your time \& attention! \\ \medskip
+\includegraphics[width=.1\textwidth]{Illustrations/smile.png} \\ \medskip
+\normalsize
+~
+Special thanks to Bill Tozier, and the folks at the Computational Intelligence Lab at Hampshire College.
+
+~
+
+This material is based upon work supported by the National Science Foundation under 
+Grants No. 1129139 and 1331283.
+
+\end{frame}
+
+%~~~~~~~~~~References~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+\section*{References}
+
+\begin{frame}[allowframebreaks]
+\frametitle{References}
+\bibliographystyle{abbrv}
+\bibliography{simplification.bib}
+\end{frame}
+
+\end{document}
+
+\begin{frame} 
+	\frametitle{References} 
+	
+	\begin{thebibliography}{lskdjf}
+	\small 
+	\bibitem{Burlacu:2013:GECCOcomp:new}
+B.~Burlacu, M.~Affenzeller, M.~	Kommenda, S.~Winkler, and G.~Kronberger.
+\newblock Visualization of genetic lineages and inheritance
+information in genetic programming.
+\newblock In Christian Blum, \emph{et al}, editors, {\em GECCO '13}, pages 1351--1358, New York, NY, USA, 2013.
+	
+	\bibitem{hyper:2016}
+	T.~Helmuth, N.~F.~McPhee, and L.~Spector.
+\newblock The Impact of Hyperselection on Lexicase Selection.
+\newblock {\em GECCO '16}, Denver, CO, USA 2016.
+  
+	\bibitem{vis:2016}
+	N.~F.~McPhee, M.~Casale, M.~Finzel, T.~Helmuth, and L.~Spector.
+\newblock Visualizing genetic programming ancestries using graph databases.
+\newblock {\em GECCO '16}, Denver, CO, USA 2016.
+	
+	\bibitem{gptp:2016}
+	N.~F.~McPhee, M.~Finzel, M.~Casale, T.~Helmuth, and L.~Spector.
+\newblock A detailed analysis of a PushGP run.
+\newblock (Forthcoming) {\em GPTP '16}, Ann Arbor, MI, USA 2016.
+	
+
+  
+  	\end{thebibliography}
+	
+\end{frame} 
+
