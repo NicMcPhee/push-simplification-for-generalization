@@ -80,23 +80,49 @@
 \begin{columns}
 % Column 1
 \begin{column}{0.6\textwidth}
+
+\begin{overprint}
+	\onslide<1>
+	\vspace{-1cm}
 \begin{itemize}
-	\item Simplifying programs is ``easy'' in Push+Plush~\cite{Spector:2014:GECCOcomp}
-	\item Can dramatically shrink programs (less than 5\% of original size)
+	\item Simplifying programs is ``easy'' in Push~\cite{Spector:2014:GECCOcomp}
+	\item Can dramatically shrink programs without changing their functionality
+	\begin{itemize}
+		\item Usually less than 50\% of original size, sometimes less than 5\%!
+	\end{itemize}
 	\item Simplification allows us to better understand evolved programs
-	\item Not great as a genetic operator but\ldots
+	\item So far not great as a genetic operator 
+	\item but\ldots
 \end{itemize}
 
-\vspace{-0.6cm}
+\vspace{-1cm}
 
 \begin{center}
-	\item \textbf{Substantially improved generalization!}
+	\item \textbf{Can Substantially improve generalization!}
+\end{center}
+
+\onslide<2>
+
+\vspace{-1cm}
+\begin{center}
+	\item \textbf{Can Substantially improve generalization!}
 \end{center}
 
 \begin{itemize}
-	\item Across dozens of problems
+	\item Tested across dozens of software synthesis problems
 	\item Using multiple simplification methods
 \end{itemize}
+
+~
+
+\begin{itemize}
+	\item 65\% of programs generalized before simplification 
+	\item 76\% generalized after simplification
+	\item Size correlates with generalization
+\end{itemize}
+
+\end{overprint}
+
 \end{column}
 % Column 2
 \begin{column}{0.4\textwidth}
@@ -124,6 +150,7 @@ In Push-GP:
 	\item Instructions read data from and write to typed stacks
 	\item e.g., \texttt{string-length} reads a value from the \texttt{string} stack, and writes the length of that string to the \texttt{integer} stack
 	\item Programs are nested sequences of instructions
+	\item Forgiving; data flows through stacks instead of syntax
 \end{itemize}
 
 ~
@@ -146,7 +173,7 @@ Every Plush genome generates a working Push program!
 \subsection{Early simplification}
 
 \begin{frame}{Ad hoc simplification}
-Because \emph{every} Push program is ``legel'' and will execute, it's easy to (try to) simplify evolved structures through simple hill-climbing~\cite{Spector:2014:GECCOcomp}:
+Because \emph{every} Push program is ``legal'' and will execute, it's easy to (try to) simplify evolved structures through simple hill-climbing~\cite{Spector:2014:GECCOcomp}:
 \begin{itemize}
 	\item Remove some random stuff (e.g., an instruction)
 	\item See if that changed things (by re-running the tests)
@@ -169,7 +196,8 @@ Because \emph{every} Push program is ``legel'' and will execute, it's easy to (t
 Each problem has a set of \emph{training cases} and a set of \emph{test cases} for \emph{validation}~\cite{Helmuth:2015:GECCO}
 \begin{itemize}
 	\item Training cases are used during evolution to determine the quality of potential solutions
-	\item Test cases are run after a solution has been found to gauge how well that program \emph{generalizes} to unseen data
+	\item Test cases are run after a solution has been found to gauge how well that program generalizes to unseen data
+	\item We say a solution \emph{generalizes} if it has zero error on the unseen test cases
 \end{itemize}
 
 ~
@@ -200,6 +228,7 @@ A long history of speculation and experimentation on the relationship between si
 Also arguments that simpler programs are more likely to generalize~\cite{hooper:1996:iarGPes}
 \begin{itemize}
 	\item Short programs less likely (or capable) of ``memorizing'' noise
+	\item E.g., include Minimum Description Length in the fitness~\cite{iba1994genetic}
 \end{itemize}
 
 ~
@@ -222,7 +251,7 @@ Also arguments that simpler programs are more likely to generalize~\cite{hooper:
 \subsection{Experimental design}
 
 \begin{frame}{The Big Plan}
-Explore the impact on generalization of different simplification techniques in PushGP 
+Explore the impact of different simplification techniques on generalization in PushGP 
 
 ~
 
@@ -332,7 +361,7 @@ Based on two primary operations
 \end{tabular} 
 \end{center}
 
-\note{None of these actually \emph{remove} anything, right?}
+\note{Say a little more about backtracking if there's time}
 
 ~
 
@@ -345,6 +374,9 @@ Additional details in the paper
 24 software synthesis benchmark problems
 \begin{itemize}
 	\item Large subset of benchmark suite~\cite{Helmuth:2015:GECCO}
+	\begin{itemize}
+		\item All of the 29 that we have solutions for
+	\end{itemize}
 	\item Some easy to solve, others much harder
 	\item Solutions to some have high degree of generalization ``out of the box'', others have no solutions that generalize
 \end{itemize}
@@ -374,6 +406,8 @@ Additional details in the paper
 		\item Last Index Of Zero has 78 solutions, around a quarter generalize
 		\item Super Anagrams has 14 solutions, none generalize
 	\end{itemize}
+
+Super anagrams might have trouble because it has binary outputs (so limited slope) [this is common to last three on slide 15].
 }
 
 \end{frame}
@@ -488,16 +522,6 @@ As the earlier graphs showed, no big differences in impact across different simp
 
 \end{frame}
 
-\begin{frame}{Most solutions generalize}
-
-\begin{center}
-	\includegraphics[width=\linewidth]{Illustrations/Generalization_counts}
-\end{center}
-
-\note{Maybe drop this?}
-
-\end{frame}
-
 \begin{frame}{Short programs far more likely to generalize}
 \begin{center}
 	\includegraphics[width=0.9\linewidth]{Illustrations/Size_Density_final}
@@ -518,6 +542,8 @@ All methods led to substantial simplification on all problems
 
 All methods improved generalization on most problems
 \begin{itemize}
+	\item 65\% of programs generalized before simplification
+	\item 76\% generalized after simplification
 	\item Only hurt on one problem
 	\item No change on a few
 \end{itemize}
@@ -526,9 +552,9 @@ All methods improved generalization on most problems
 
 Do the \emph{results} generalize?
 \begin{itemize}
-	\item In many ways these results are very Push dependent, and somewhat Plush dependent.
+	\item In many ways these results are very Push dependent
 	\item Not obvious, e.g., how to directly map these ideas to trees
-	\item Could potentially apply to Linear GP, GE, Cartesian GP, etc.
+	\item Should be tried on, e.g., Linear GP, GE, Cartesian GP, etc.
 \end{itemize}
 
 
