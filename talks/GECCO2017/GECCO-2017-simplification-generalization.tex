@@ -76,13 +76,15 @@
 
 \section*{The Big Picture}
 
+\subsection*{Simplify your life}
+
 \begin{frame}{Simplification: Can be good in multiple ways}
+		
 \begin{columns}
 % Column 1
 \begin{column}{0.6\textwidth}
-
 \begin{overprint}
-	\onslide<1>
+	\onslide<1-2>
 	\vspace{-1cm}
 \begin{itemize}
 	\item Simplifying programs is ``easy'' in Push~\cite{Spector:2014:GECCOcomp}
@@ -92,25 +94,22 @@
 	\end{itemize}
 	\item Simplification allows us to better understand evolved programs
 	\item So far not great as a genetic operator 
-	\item but\ldots
 \end{itemize}
 
-\vspace{-1cm}
-
 \begin{center}
-	\item \textbf{Can Substantially improve generalization!}
+	 \textbf{but\ldots}
 \end{center}
 
-\onslide<2>
+\onslide<3>
 
 \vspace{-1cm}
 \begin{center}
-	\item \textbf{Can Substantially improve generalization!}
+	\textbf{Can substantially improve generalization!}
 \end{center}
 
 \begin{itemize}
-	\item Tested across dozens of software synthesis problems
 	\item Using multiple simplification methods
+	\item Tested across dozens of software synthesis problems
 \end{itemize}
 
 ~
@@ -126,10 +125,28 @@
 \end{column}
 % Column 2
 \begin{column}{0.4\textwidth}
-\center \includegraphics[height=0.7\textheight]{Illustrations/zen.jpg} \\
-\tiny \url{https://www.flickr.com/photos/lauradeponte/2236562103/}
+	\begin{overprint}
+		\onslide<1>
+		\begin{center}
+		\includegraphics[height=0.7\textheight]{Illustrations/zen.jpg} \\
+		\tiny \url{https://www.flickr.com/photos/lauradeponte/2236562103/}
+		\end{center} 
+		\onslide<2>
+		\begin{center}
+		\includegraphics[height=0.7\textheight]{Illustrations/chihuahua-smaller} \\
+		\tiny \url{https://pixabay.com/p-820086/}
+		\end{center} 
+		\onslide<3>
+		\begin{center}
+		\includegraphics[height=0.7\textheight]{Illustrations/zen.jpg} \\
+		\tiny \url{https://www.flickr.com/photos/lauradeponte/2236562103/}
+		\end{center} 
+	\end{overprint}
 \end{column}
 \end{columns}
+
+\note{Remember to switch to the cute dog!}
+
 \end{frame}
 
 \subsection*{Outline}
@@ -145,19 +162,20 @@
 \subsection{Push \& Plush}
 
 \begin{frame}{Push: Stack-based GP}
-In Push-GP:
+In PushGP:
 \begin{itemize}
 	\item Instructions read data from and write to typed stacks
-	\item e.g., \texttt{string-length} reads a value from the \texttt{string} stack, and writes the length of that string to the \texttt{integer} stack
+	\item E.g., \texttt{string-length} reads a value from the \texttt{string} stack, and writes the length of that string to the \texttt{integer} stack
 	\item Programs are nested sequences of instructions
 	\item Forgiving; data flows through stacks instead of syntax
 \end{itemize}
+Every Push program ``works''!
 
 ~
 
 Clojush, a Clojure implmentation of PushGP, uses \emph{Plush genomes}~\cite{Helmuth:2016:GPTP}:
 \begin{itemize}
-	\item A linear sequence of ``genes''
+	\item A linear sequence of \emph{genes}
 	\item Each gene contains an instruction along with other metadata
 	\begin{itemize}
 		\item Includes a \emph{silent} flag that can be used to disable a gene
@@ -182,7 +200,7 @@ Because \emph{every} Push program is ``legal'' and will execute, it's easy to (t
  
  ~
  
- Substantially shortens evolved programs and makes it much easier to
+ Substantially shortens end-of-run evolved programs and makes it much easier to
  understand them.
  \begin{itemize}
  	\item E.g., simplified 194 instructions down to just 9
@@ -211,8 +229,6 @@ In~\cite{Helmuth:2015:dissertation} it was noted that this simplification (done 
 \note{Tom's dissertation notes that simplification improves generalization.}
 
 \end{frame}
-
-\section{Exploring simplification}
 
 \subsection{(Lots of) related work}
 
@@ -248,10 +264,12 @@ Also arguments that simpler programs are more likely to generalize~\cite{hooper:
 
 \end{frame}
 
+\section{Exploring simplification}
+
 \subsection{Experimental design}
 
 \begin{frame}{The Big Plan}
-Explore the impact of different simplification techniques on generalization in PushGP 
+Explore the impact of different \emph{post-run} simplification techniques on generalization in PushGP 
 
 ~
 
@@ -262,7 +280,7 @@ Explore the impact of different simplification techniques on generalization in P
 
 ~ 
 
-Simplify 100 times for each ``solution'' for each problem
+Simplify 100 times for every evolved solution for each problem
 \begin{itemize}
 	\item How much do they simplify the programs?
 	\item How many generalize?
@@ -332,7 +350,7 @@ Other four methods simplify Plush genomes, then convert to programs
 
 Based on two primary operations
 \begin{itemize}
-	\item Silencing and unsilencing genes
+	\item Silencing (and unsilencing) genes
 %	\begin{itemize}
 %		\item Ability to silence \& unsilence allows for backtracking
 %	\end{itemize}
@@ -343,16 +361,6 @@ Based on two primary operations
 \end{itemize}
 
 \begin{center}
-%\begin{tabular}{rcc} % {p{0.3\linewidth}cmp{0.3\linewidth}}
-%	& \textbf{No NOOPs}  & \textbf{NOOPs}  \\ 
-%	\textbf{Silencing} & Genome & Genome-Noop \\ 
-%	\textbf{Sil. \& unsil.} & Genome-Backtracking & Genome-Back\-tracking-Noop  \\ 
-%\end{tabular} 
-%\begin{tabular}{rcc} % {p{0.3\linewidth}cmp{0.3\linewidth}}
-%	& No NOOPs  & NOOPs \\ 
-%	Silencing & \textbf{Genome} & \textbf{Genome-Noop} \\ 
-%	Sil. \& unsil. & \textbf{Genome-Backtracking} & \textbf{Genome-Back\-tracking-Noop } \\ 
-%\end{tabular} 
 \begin{tabular}{r|cc} % {p{0.3\linewidth}cmp{0.3\linewidth}}
 	&  Silencing & Silencing \& unsilencing \\ 
 	\hline
@@ -369,13 +377,15 @@ Additional details in the paper
 
 \end{frame}
 
+\subsection{Benchmark problems}
+
 \begin{frame}{Benchmark problems}
 
 24 software synthesis benchmark problems
 \begin{itemize}
 	\item Large subset of benchmark suite~\cite{Helmuth:2015:GECCO}
 	\begin{itemize}
-		\item All of the 29 that we have solutions for
+		\item The 24 of the 29 that we have solutions for
 	\end{itemize}
 	\item Some easy to solve, others much harder
 	\item Solutions to some have high degree of generalization ``out of the box'', others have no solutions that generalize
@@ -387,6 +397,7 @@ Additional details in the paper
 		\item 29 in suite
 		\item 23 had generalizing solutions (if we count Checksum)
 		\item Super Anagrams had 14 solutions, none of which generalized, but we included it just in case new simplification methods might fix that
+		\item Every solution we had; nearly 800 solutions
 	\end{itemize}
 }
 
@@ -443,7 +454,7 @@ Super anagrams might have trouble because it has binary outputs (so limited slop
 \begin{frame}{(Generally) improved generalization}
 
 \begin{center}
-	\includegraphics[width=0.95\linewidth]{Illustrations/Problem_by_PcntGen_bar_no_legend_SLIDE}
+	\includegraphics[width=0.95\linewidth]{Illustrations/Problem_by_PcntGen_bar_no_legend_SLIDE-3}
 \end{center}
 
 \note{
@@ -477,48 +488,7 @@ As the earlier graphs showed, no big differences in impact across different simp
 	\item Generalization improvement versus unsimplified programs is statistically significant for all methods
 \end{itemize}
 
-%\begin{overprint}
-%	\onslide<1>
-%Ranking based on amount of simplification:
-%\begin{center}
-%\begin{tabular}{lr}
-%	\textbf{Method} & \textbf{Average Rank} \\
-%	Program & 1.87 \\
-%	Genome-Backtracking-Noop & 2.13 \\
-%	Genome-Backtracking & 2.79 \\
-%	Genome-Noop & 3.60 \\
-%	Genome & 4.60 \\
-%	Unchanged & 6.00 \\
-%\end{tabular}
-%\end{center}
-%\note{
-%	\begin{itemize}
-%		\item Rank 1 is smallest average size, 6 is largest
-%		\item Across all 24 problems
-%		\item ``Unchanged'' is the evolved solution before any simplification applied
-%		\item Some of these differences are stat sig (all but Genome beat Unchanged), but in general amounts are so small as to not really matter. Details in paper.
-%	\end{itemize}
-%}
-%	\onslide<2>
-%Ranking based on generalization \%:
-%\begin{center}
-%	\begin{tabular}{lr}
-%		\textbf{Method} & \textbf{Average Rank} \\
-%		Genome-Backtracking-Noop & 2.73 \\
-%		Genome-Backtracking & 3.02 \\
-%		Genome-Noop & 3.29 \\
-%		Genome & 3.33 \\
-%		Program & 3.67 \\
-%		Unchanged & 4.96 \\
-%	\end{tabular}
-%\end{center}
-%\note{
-%	\begin{itemize}
-%		\item Every simp stat sig diff from Unchanged
-%		\item No other stat sig diff
-%	\end{itemize}
-%}
-%\end{overprint}
+\note{Using pairwise Freidman rank test (I think)}
 
 \end{frame}
 
@@ -531,11 +501,13 @@ As the earlier graphs showed, no big differences in impact across different simp
 
 \section{Conclusion}
 
+\subsection*{Little dogs are cute}
+
 \begin{frame}{Big wins all around! (generally)}
 
 All methods led to substantial simplification on all problems
 \begin{itemize}
-	\item Usually removed more than 50\%
+	\item Typically cut program size by more than 50\%
 \end{itemize}
 
 ~
@@ -552,7 +524,7 @@ All methods improved generalization on most problems
 
 Do the \emph{results} generalize?
 \begin{itemize}
-	\item In many ways these results are very Push dependent
+	\item These results are fairly Push dependent
 	\item Not obvious, e.g., how to directly map these ideas to trees
 	\item Should be tried on, e.g., Linear GP, GE, Cartesian GP, etc.
 \end{itemize}
@@ -561,17 +533,28 @@ Do the \emph{results} generalize?
 \end{frame}
 
 \begin{frame}{Thanks!}
-\center \Large
-Thank you for your time \& attention! \\ \medskip
-\includegraphics[width=.1\textwidth]{Illustrations/smile.png} \\ \medskip
-\normalsize
-~
-Special thanks to Bill Tozier, and the folks at the Computational Intelligence Lab at Hampshire College.
+\begin{columns}
+\begin{column}{0.6\textwidth}
+	\center \Large
+	Thank you for your time \& attention! \\ \medskip
+	\includegraphics[width=.1\textwidth]{Illustrations/smile.png} \\ \medskip
+	\normalsize
+	~
+	Special thanks to Bill Tozier, and the folks at the Computational Intelligence Lab at Hampshire College.
+	
+	~
+	
+	This material is based upon work supported by the National Science Foundation under 
+	Grants No. 1129139 and 1331283.
+\end{column}
 
-~
-
-This material is based upon work supported by the National Science Foundation under 
-Grants No. 1129139 and 1331283.
+\begin{column}{0.4\textwidth}
+		\begin{center}
+			\includegraphics[height=0.7\textheight]{Illustrations/chihuahua-smaller} \\
+			\tiny \url{https://pixabay.com/p-820086/}
+		\end{center} 
+	\end{column}
+\end{columns}
 
 \end{frame}
 
