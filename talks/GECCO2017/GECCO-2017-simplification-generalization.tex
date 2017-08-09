@@ -1,14 +1,5 @@
 \documentclass{beamer}
 %\usepackage{enumitem}
-\mode<presentation>
-{
-  %\usetheme{Madrid}
-  \usetheme{CambridgeUS}
-  %\usecolortheme{seahorse}
-  \setbeamercovered{transparent}
-  \beamertemplatenavigationsymbolsempty
-  \setbeameroption{show notes}
-}
 \usepackage{graphicx}
 \usepackage[english]{babel}
 \usepackage[latin1]{inputenc}
@@ -20,6 +11,18 @@
 \usepackage{color}
 \usepackage{rotating}
 \usepackage{tabu}
+\usepackage{pgfpages}
+
+\mode<presentation>
+{
+	%\usetheme{Madrid}
+	\usetheme{CambridgeUS}
+	%\usecolortheme{seahorse}
+	\setbeamercovered{transparent}
+	\beamertemplatenavigationsymbolsempty
+	% \setbeameroption{show notes}
+	% \setbeameroption{show notes on second screen}
+}
 
 \newcommand{\linespace}{\vskip 0.25cm}
 
@@ -73,24 +76,77 @@
 
 \section*{The Big Picture}
 
+\subsection*{Simplify your life}
+
 \begin{frame}{Simplification: Can be good in multiple ways}
+		
 \begin{columns}
 % Column 1
 \begin{column}{0.6\textwidth}
+\begin{overprint}
+	\onslide<1-2>
+	\vspace{-1cm}
 \begin{itemize}
-	\item Simplifying programs is ``easy'' in Push+Plush~\cite{Spector:2014:GECCOcomp}
-	\item Can dramatically shrink programs (less than 5\% of original size)
+	\item Simplifying programs is ``easy'' in Push~\cite{Spector:2014:GECCOcomp}
+	\item Can dramatically shrink programs without changing their functionality
+	\begin{itemize}
+		\item Usually less than 50\% of original size, sometimes less than 5\%!
+	\end{itemize}
 	\item Simplification allows us to better understand evolved programs
-	\item Not great as a genetic operator but\ldots
-	\item Turned out to substantially improve generalization!
+	\item So far not great as a genetic operator 
 \end{itemize}
+
+\begin{center}
+	 \textbf{but\ldots}
+\end{center}
+
+\onslide<3>
+
+\vspace{-1cm}
+\begin{center}
+	\textbf{Can substantially improve generalization!}
+\end{center}
+
+\begin{itemize}
+	\item Using multiple simplification methods
+	\item Tested across dozens of software synthesis problems
+\end{itemize}
+
+~
+
+\begin{itemize}
+	\item 65\% of programs generalized before simplification 
+	\item 76\% generalized after simplification
+	\item Size correlates with generalization
+\end{itemize}
+
+\end{overprint}
+
 \end{column}
 % Column 2
 \begin{column}{0.4\textwidth}
-\center \includegraphics[height=0.7\textheight]{Illustrations/zen.jpg} \\
-\tiny \url{https://www.flickr.com/photos/lauradeponte/2236562103/}
+	\begin{overprint}
+		\onslide<1>
+		\begin{center}
+		\includegraphics[height=0.7\textheight]{Illustrations/zen.jpg} \\
+		\tiny \url{https://www.flickr.com/photos/lauradeponte/2236562103/}
+		\end{center} 
+		\onslide<2>
+		\begin{center}
+		\includegraphics[height=0.7\textheight]{Illustrations/chihuahua-smaller} \\
+		\tiny \url{https://pixabay.com/p-820086/}
+		\end{center} 
+		\onslide<3>
+		\begin{center}
+		\includegraphics[height=0.7\textheight]{Illustrations/zen.jpg} \\
+		\tiny \url{https://www.flickr.com/photos/lauradeponte/2236562103/}
+		\end{center} 
+	\end{overprint}
 \end{column}
 \end{columns}
+
+\note{Remember to switch to the cute dog!}
+
 \end{frame}
 
 \subsection*{Outline}
@@ -106,19 +162,24 @@
 \subsection{Push \& Plush}
 
 \begin{frame}{Push: Stack-based GP}
-In Push-GP:
+In PushGP:
 \begin{itemize}
-	\item instructions read data from and write to typed stacks
-	\item e.g., \texttt{string-length} reads a value from the \texttt{string} stack, and writes the length of that string to the \texttt{integer} stack
+	\item Instructions read data from and write to typed stacks
+	\item E.g., \texttt{string-length} reads a value from the \texttt{string} stack, and writes the length of that string to the \texttt{integer} stack
 	\item Programs are nested sequences of instructions
+	\item Forgiving; data flows through stacks instead of syntax
 \end{itemize}
+Every Push program ``works''!
 
 ~
 
 Clojush, a Clojure implmentation of PushGP, uses \emph{Plush genomes}~\cite{Helmuth:2016:GPTP}:
 \begin{itemize}
-	\item A linear sequence of ``genes''
+	\item A linear sequence of \emph{genes}
 	\item Each gene contains an instruction along with other metadata
+	\begin{itemize}
+		\item Includes a \emph{silent} flag that can be used to disable a gene
+	\end{itemize}
 \end{itemize}
 
 ~
@@ -130,16 +191,16 @@ Every Plush genome generates a working Push program!
 \subsection{Early simplification}
 
 \begin{frame}{Ad hoc simplification}
-Because every Plush genome maps to a working Push program, it's easy to (try to) simplify evolved structures~\cite{Spector:2014:GECCOcomp}:
+Because \emph{every} Push program is ``legal'' and will execute, it's easy to (try to) simplify evolved structures through simple hill-climbing~\cite{Spector:2014:GECCOcomp}:
 \begin{itemize}
-	\item Remove a random instruction (or a few)
+	\item Remove some random stuff (e.g., an instruction)
 	\item See if that changed things (by re-running the tests)
-	\item Put the instruction(s) back if removal changed things; leave them out otherwise
+	\item Put the instruction(s) back if removal changed things; otherwise keep simplifying from there
 \end{itemize}
  
  ~
  
- Substantially shortens evolved programs and makes it much easier to
+ Substantially shortens end-of-run evolved programs and makes it much easier to
  understand them.
  \begin{itemize}
  	\item E.g., simplified 194 instructions down to just 9
@@ -150,23 +211,24 @@ Because every Plush genome maps to a working Push program, it's easy to (try to)
 
 \begin{frame}{``Accidental'' improvements in generalization}
 
-In~\cite{Helmuth:2015:GECCO}, each problem has a set of \emph{training cases} and a set of \emph{test cases} for \emph{validation}.
+Each problem has a set of \emph{training cases} and a set of \emph{test cases} for \emph{validation}~\cite{Helmuth:2015:GECCO}
 \begin{itemize}
 	\item Training cases are used during evolution to determine the quality of potential solutions
-	\item Test cases are run after a ``solution'' has been found to gauge how well that program generalizes to unseen data.
+	\item Test cases are run after a solution has been found to gauge how well that program generalizes to unseen data
+	\item We say a solution \emph{generalizes} if it has zero error on the unseen test cases
 \end{itemize}
 
 ~
 
-In~\cite{Helmuth:2015:dissertation}, it was noted that simplification occasionally improved generalization:
+In~\cite{Helmuth:2015:dissertation} it was noted that this simplification (done primarily to improve readability) occasionally improved generalization:
 \begin{itemize}
 	\item Evolved solutions failed some unseen test cases
 	\item Simplified versions, however, passed all the test cases
 \end{itemize}
 
-\end{frame}
+\note{Tom's dissertation notes that simplification improves generalization.}
 
-\section{Exploring simplification}
+\end{frame}
 
 \subsection{(Lots of) related work}
 
@@ -182,7 +244,7 @@ A long history of speculation and experimentation on the relationship between si
 Also arguments that simpler programs are more likely to generalize~\cite{hooper:1996:iarGPes}
 \begin{itemize}
 	\item Short programs less likely (or capable) of ``memorizing'' noise
-	\item Include things like Minimum Description Length in the fitness~\cite{iba1994genetic}
+	\item E.g., include Minimum Description Length in the fitness~\cite{iba1994genetic}
 \end{itemize}
 
 ~
@@ -193,12 +255,21 @@ Also arguments that simpler programs are more likely to generalize~\cite{hooper:
 	\item Possible that some large programs can act as \emph{ensembles} and generalize more effectively~\cite{gonccalves2015generalization}
 \end{itemize}
 
+\note{
+	\begin{itemize}
+		\item Do we want citations for the bloat stuff?
+		\item There are citations for the simplifying during runs comment -- do we care?
+	\end{itemize}
+}
+
 \end{frame}
+
+\section{Exploring simplification}
 
 \subsection{Experimental design}
 
 \begin{frame}{The Big Plan}
-Explore the impact on generalization of different approaches to simplification in PushGP 
+Explore the impact of different \emph{post-run} simplification techniques on generalization in PushGP 
 
 ~
 
@@ -209,7 +280,7 @@ Explore the impact on generalization of different approaches to simplification i
 
 ~ 
 
-Simplify 100 times for each ``solution'' for each problem
+Simplify 100 times for every evolved solution for each problem
 \begin{itemize}
 	\item How much do they simplify the programs?
 	\item How many generalize?
@@ -229,7 +300,7 @@ For each problem we have a set of
 
 ~
 
-Simplification is basically a simple hill climber trying to reduce size
+Simplification is a simple hill climber trying to reduce size
 
 ~
 
@@ -239,6 +310,14 @@ Repeatedly (for a fixed number of steps):
 	\item See if result generates the same errors on all the \emph{training} cases
 	\item If it does, make it the current program; otherwise discard it
 \end{itemize}
+
+\note{
+	\begin{itemize}
+		\item 10K simplification steps
+		\item Or 10 generations of GP with a pop size of 1K
+		\item More than necessary in most cases, but we're only advocating doing this once at the end of runs, so not a huge expense
+	\end{itemize}
+}
 
 ~
 
@@ -250,21 +329,28 @@ Apply final result to the \emph{test} cases to see if it generalizes
 
 First method (\textbf{Program}) simplifies \emph{programs}
 \begin{itemize}
-	\item This is the original simplification method; pre-dates Plush
-	\item Removes random instructions, blocks of code, or pairs of parentheses
+	\item Original Push simplification method~\cite{Spector:2014:GECCOcomp}; pre-dates Plush
+	\item Removes random program elements
+	\begin{itemize}
+		\item Instructions
+		\item Blocks of code
+		\item Pairs of parentheses
+	\end{itemize}
 \end{itemize}
+
+\note{Removing a pair of parens flattens that section of the program}
 
 \end{frame}
 
 \begin{frame}{Five different simplification methods (Other four)}
 
-Four methods simplify Plush genomes, and then convert to programs
+Other four methods simplify Plush genomes, then convert to programs
 
 ~
 
-Use two primary operations
+Based on two primary operations
 \begin{itemize}
-	\item Silencing and unsilencing genes
+	\item Silencing (and unsilencing) genes
 %	\begin{itemize}
 %		\item Ability to silence \& unsilence allows for backtracking
 %	\end{itemize}
@@ -275,34 +361,32 @@ Use two primary operations
 \end{itemize}
 
 \begin{center}
-%\begin{tabular}{rcc} % {p{0.3\linewidth}cmp{0.3\linewidth}}
-%	& \textbf{No NOOPs}  & \textbf{NOOPs}  \\ 
-%	\textbf{Silencing} & Genome & Genome-Noop \\ 
-%	\textbf{Sil. \& unsil.} & Genome-Backtracking & Genome-Back\-tracking-Noop  \\ 
-%\end{tabular} 
-%\begin{tabular}{rcc} % {p{0.3\linewidth}cmp{0.3\linewidth}}
-%	& No NOOPs  & NOOPs \\ 
-%	Silencing & \textbf{Genome} & \textbf{Genome-Noop} \\ 
-%	Sil. \& unsil. & \textbf{Genome-Backtracking} & \textbf{Genome-Back\-tracking-Noop } \\ 
-%\end{tabular} 
-\begin{tabular}{rcc} % {p{0.3\linewidth}cmp{0.3\linewidth}}
+\begin{tabular}{r|cc} % {p{0.3\linewidth}cmp{0.3\linewidth}}
 	&  Silencing & Silencing \& unsilencing \\ 
+	\hline
 	No NOOPs & \textbf{Genome} & \textbf{Genome-Backtracking} \\ 
 	NOOPs & \textbf{Genome-Noop} & \textbf{Genome-Back\-tracking-Noop } \\ 
 \end{tabular} 
 \end{center}
 
+\note{Say a little more about backtracking if there's time}
+
 ~
 
-Additional details are in the paper.
+Additional details in the paper
 
 \end{frame}
+
+\subsection{Benchmark problems}
 
 \begin{frame}{Benchmark problems}
 
 24 software synthesis benchmark problems
 \begin{itemize}
 	\item Large subset of benchmark suite~\cite{Helmuth:2015:GECCO}
+	\begin{itemize}
+		\item The 24 of the 29 that we have solutions for
+	\end{itemize}
 	\item Some easy to solve, others much harder
 	\item Solutions to some have high degree of generalization ``out of the box'', others have no solutions that generalize
 \end{itemize}
@@ -313,6 +397,7 @@ Additional details are in the paper.
 		\item 29 in suite
 		\item 23 had generalizing solutions (if we count Checksum)
 		\item Super Anagrams had 14 solutions, none of which generalized, but we included it just in case new simplification methods might fix that
+		\item Every solution we had; nearly 800 solutions
 	\end{itemize}
 }
 
@@ -320,7 +405,7 @@ Additional details are in the paper.
 
 \begin{frame}{Benchmark problems}
 \begin{center}
-	\includegraphics[width=0.9\linewidth]{Illustrations/Pct_gener_SLIDE}
+	\includegraphics[width=0.95\linewidth]{Illustrations/Pct_gener_SLIDE}
 \end{center}
 
 \note{
@@ -332,6 +417,8 @@ Additional details are in the paper.
 		\item Last Index Of Zero has 78 solutions, around a quarter generalize
 		\item Super Anagrams has 14 solutions, none generalize
 	\end{itemize}
+
+Super anagrams might have trouble because it has binary outputs (so limited slope) [this is common to last three on slide 15].
 }
 
 \end{frame}
@@ -342,7 +429,7 @@ Additional details are in the paper.
 
 \begin{frame}{Substantial size reductions across the board}
 \begin{center}
-	\includegraphics[width=0.9\linewidth]{Illustrations/Problem_by_Size_bar_SLIDE}
+	\includegraphics[width=\linewidth]{Illustrations/Problem_by_Size_bar_SLIDE}
 \end{center}
 
 \note{
@@ -367,9 +454,8 @@ Additional details are in the paper.
 \begin{frame}{(Generally) improved generalization}
 
 \begin{center}
-	\includegraphics[width=0.9\linewidth]{Illustrations/Problem_by_PcntGen_bar_no_legend_SLIDE}
+	\includegraphics[width=0.95\linewidth]{Illustrations/Problem_by_PcntGen_bar_no_legend_SLIDE-3}
 \end{center}
-
 
 \note{
 	\begin{itemize}
@@ -393,73 +479,43 @@ Additional details are in the paper.
 
 \begin{frame}{Most simplification methods about the same}
 
-As the earlier graphs showed, no big differences in impact of different simplification methods
+As the earlier graphs showed, no big differences in impact across different simplification methods
 
 ~
 
 \begin{itemize}
 	\item Shrinkage is statistically significant for all but \textbf{Genome}
-	\item Improvements in generalization is statistically significant for all methods
+	\item Generalization improvement versus unsimplified programs is statistically significant for all methods
 \end{itemize}
 
-%\begin{overprint}
-%	\onslide<1>
-%Ranking based on amount of simplification:
-%\begin{center}
-%\begin{tabular}{lr}
-%	\textbf{Method} & \textbf{Average Rank} \\
-%	Program & 1.87 \\
-%	Genome-Backtracking-Noop & 2.13 \\
-%	Genome-Backtracking & 2.79 \\
-%	Genome-Noop & 3.60 \\
-%	Genome & 4.60 \\
-%	Unchanged & 6.00 \\
-%\end{tabular}
-%\end{center}
-%\note{
-%	\begin{itemize}
-%		\item Rank 1 is smallest average size, 6 is largest
-%		\item Across all 24 problems
-%		\item ``Unchanged'' is the evolved solution before any simplification applied
-%		\item Some of these differences are stat sig (all but Genome beat Unchanged), but in general amounts are so small as to not really matter. Details in paper.
-%	\end{itemize}
-%}
-%	\onslide<2>
-%Ranking based on generalization \%:
-%\begin{center}
-%	\begin{tabular}{lr}
-%		\textbf{Method} & \textbf{Average Rank} \\
-%		Genome-Backtracking-Noop & 2.73 \\
-%		Genome-Backtracking & 3.02 \\
-%		Genome-Noop & 3.29 \\
-%		Genome & 3.33 \\
-%		Program & 3.67 \\
-%		Unchanged & 4.96 \\
-%	\end{tabular}
-%\end{center}
-%\note{
-%	\begin{itemize}
-%		\item Every simp stat sig diff from Unchanged
-%		\item No other stat sig diff
-%	\end{itemize}
-%}
-%\end{overprint}
+\note{Using pairwise Freidman rank test (I think)}
+
+\end{frame}
+
+\begin{frame}{Short programs far more likely to generalize}
+\begin{center}
+	\includegraphics[width=0.9\linewidth]{Illustrations/Size_Density_final}
+\end{center}
 
 \end{frame}
 
 \section{Conclusion}
 
+\subsection*{Little dogs are cute}
+
 \begin{frame}{Big wins all around! (generally)}
 
-All simplification methods led to substantial simplification on all problems
+All methods led to substantial simplification on all problems
 \begin{itemize}
-	\item Usually trimmed well over 50\%
+	\item Typically cut program size by more than 50\%
 \end{itemize}
 
 ~
 
-All simplification methods improved generalization most problems
+All methods improved generalization on most problems
 \begin{itemize}
+	\item 65\% of programs generalized before simplification
+	\item 76\% generalized after simplification
 	\item Only hurt on one problem
 	\item No change on a few
 \end{itemize}
@@ -468,26 +524,37 @@ All simplification methods improved generalization most problems
 
 Do the \emph{results} generalize?
 \begin{itemize}
-	\item In many ways these results are very Push dependent, and somewhat Plush dependent.
-	\item Not obvious, e.g., how to directly map these ideas to trees.
-	\item Could potentially apply to Linear GP, GE, Cartesian GP, etc.
+	\item These results are fairly Push dependent
+	\item Not obvious, e.g., how to directly map these ideas to trees
+	\item Should be tried on, e.g., Linear GP, GE, Cartesian GP, etc.
 \end{itemize}
 
 
 \end{frame}
 
 \begin{frame}{Thanks!}
-\center \Large
-Thank you for your time \& attention! \\ \medskip
-\includegraphics[width=.1\textwidth]{Illustrations/smile.png} \\ \medskip
-\normalsize
-~
-Special thanks to Bill Tozier, and the folks at the Computational Intelligence Lab at Hampshire College.
+\begin{columns}
+\begin{column}{0.6\textwidth}
+	\center \Large
+	Thank you for your time \& attention! \\ \medskip
+	\includegraphics[width=.1\textwidth]{Illustrations/smile.png} \\ \medskip
+	\normalsize
+	~
+	Special thanks to Bill Tozier, and the folks at the Computational Intelligence Lab at Hampshire College.
+	
+	~
+	
+	This material is based upon work supported by the National Science Foundation under 
+	Grants No. 1129139 and 1331283.
+\end{column}
 
-~
-
-This material is based upon work supported by the National Science Foundation under 
-Grants No. 1129139 and 1331283.
+\begin{column}{0.4\textwidth}
+		\begin{center}
+			\includegraphics[height=0.7\textheight]{Illustrations/chihuahua-smaller} \\
+			\tiny \url{https://pixabay.com/p-820086/}
+		\end{center} 
+	\end{column}
+\end{columns}
 
 \end{frame}
 
